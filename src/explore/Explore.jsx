@@ -1,10 +1,6 @@
 import Navigation from "../navigation/Navigation";
 import Song from "../song/Song";
 import styles from './Explore.module.css'
-import dontSpeakThumbnail from '../assets/images/dontspeakthumbnail.jpg';
-import nodoubtartist from '../assets/images/nodoubtartist.jpg';
-import iwasmadeThumbnail from '../assets/images/iwasmadethumbnail.jpg';
-import kissartist from '../assets/images/kissartist.jpg';
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 
