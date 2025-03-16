@@ -5,73 +5,102 @@ import { supabase } from "../supabase";
 import AuthContext from "../context/AuthContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from 'yup';
+import { MDBContainer, MDBInput, MDBBtn } from "mdb-react-ui-kit";
 
 export default function Login() {
 
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
-
     const [user, setUser] = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
-    console.log(user);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (user.id) {
-          console.log("User is authenticated, redirecting...");
-          navigate("/");
+            navigate("/");
         } else {
-          setIsLoading(false);
+            setIsLoading(false);
         }
-      }, [user, navigate]);
+    }, [user, navigate]);
 
-    const changeHandler = (e) => {
-        const name = e.currentTarget.name;
-        const value = e.currentTarget.value;
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    }
+    const SignupSchema = Yup.object().shape({
+        email: Yup.string()
+            .required('Please enter your email address.')
+            .email('Please enter a valid email address.'),
+        password: Yup.string()
+            .required('Please enter your password.')
+            .min(6, 'Password must be at least 6 symbols.')
+    });
 
     const submitHandler = async (e) => {
-        e.preventDefault();
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: formik.values.email,
+                password: formik.values.password
+            });
 
-        console.log('Logging in');
+            if (error) {
+                throw new Error(error.message);
+            }
 
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: formData.email,
-            password: formData.password
-        });
-
-        if (error) {
-            console.error(error.message);
-            return;
+            setUser({
+                email: data.user.email,
+                id: data.user.id
+            });
+            console.log(data);
+            navigate('/');
+        } catch (e) {
+            console.error(e.message);
         }
 
-        setUser({
-            email: data.user.email,
-            id: data.user.id
-        });
-        console.log(data);
-        navigate('/');
     }
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+        validationSchema: SignupSchema,
+        onSubmit: submitHandler
+    });
 
     return (
         <>
             <Navigation showSearchBar={false} />
             {!isLoading && !user.id && <>
                 <main className={styles["main"]}>
-                    <form onSubmit={submitHandler}>
-                        <label htmlFor="email">Email: </label>
-                        <input onChange={changeHandler} type="email" placeholder="user@example.com" id="email" name="email" value={formData.email} />
-                        <label htmlFor="password">Email: </label>
-                        <input onChange={changeHandler} type="password" placeholder="******" id="password" name="password" value={formData.password} />
-                        <button>Login</button>
-                    </form>
+                    <MDBContainer fluid>
+                        <form onSubmit={formik.handleSubmit} className={styles["form"]}>
+                            <div>
+                                <MDBInput
+                                    label="Email"
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
+                            </div>
+
+                            <div>
+                                <MDBInput
+                                    label="Password"
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
+                            </div>
+
+                            <MDBBtn type="submit">Login</MDBBtn>
+                        </form>
+                    </MDBContainer>
                 </main>
             </>}
         </>

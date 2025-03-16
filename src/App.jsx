@@ -12,8 +12,8 @@ import DeleteSong from "./delete-song/DeleteSong"
 import EditSong from "./edit-song/EditSong"
 
 function App() {
+    const [user, setUser] = useState({});
 
-    const [user, setUser] = useState({})
     useEffect(() => {
         const getUser = async () => {
             const { data, error } = await supabase.auth.getUser();

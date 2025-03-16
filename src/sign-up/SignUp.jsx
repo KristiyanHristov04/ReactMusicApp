@@ -5,50 +5,43 @@ import { supabase } from "../supabase";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
+import { MDBInput, MDBBtn, MDBContainer } from 'mdb-react-ui-kit';
+import { useFormik } from "formik";
+import * as Yup from 'yup';
 
 export default function SignUp() {
-
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
 
     const [user, setUser] = useContext(AuthContext);
     const navigate = useNavigate();
 
+    //Extract logic in Route Guard
     useEffect(() => {
         if (user.id) {
             navigate('/');
         }
+    }, []);
+
+    const SignupSchema = Yup.object().shape({
+        email: Yup.string()
+            .required('Please enter your email address.')
+            .email('Please enter a valid email address.'),
+        password: Yup.string()
+            .required('Please enter your password.')
+            .min(6, 'Password must be at least 6 symbols.'),
+        confirmPassword: Yup.string()
+            .required('Please enter your password.')
+            .oneOf([Yup.ref('password'), null], 'Passwords do not match.')
     });
 
-    const changeHandler = (e) => {
-        const name = e.currentTarget.name;
-        const value = e.currentTarget.value;
-
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    }
-
-    const submitHandler = async (e) => {
-        e.preventDefault();
-
-        if (formData.password !== formData.confirmPassword) {
-            console.log('Password mismatch');
-        } else {
-            console.log('Signing up');
-
+    const submitHandler = async () => {
+        try {
             const { data, error } = await supabase.auth.signUp({
-                email: formData.email,
-                password: formData.password
+                email: formik.values.email,
+                password: formik.values.password
             });
 
             if (error) {
-                console.error(error.message);
-                return;
+                throw new Error(error.message);
             }
 
             console.log(data);
@@ -57,23 +50,70 @@ export default function SignUp() {
                 id: data.user.id
             });
             navigate('/');
+        } catch (e) {
+            console.error(e.message);
         }
     }
+
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+        validationSchema: SignupSchema,
+        onSubmit: submitHandler
+    });
 
     return (
         <>
             <Navigation showSearchBar={false} />
             {!user.id && <>
                 <main className={styles["main"]}>
-                    <form onSubmit={submitHandler}>
-                        <label htmlFor="email">Email: </label>
-                        <input onChange={changeHandler} type="email" placeholder="user@example.com" id="email" name="email" value={formData.email} />
-                        <label htmlFor="password">Password: </label>
-                        <input onChange={changeHandler} type="password" placeholder="******" id="password" name="password" value={formData.password} />
-                        <label htmlFor="confirm-password">Confirm Password: </label>
-                        <input onChange={changeHandler} type="password" placeholder="******" id="confirm-password" name="confirmPassword" value={formData.confirmPassword} />
-                        <button>Sign up</button>
-                    </form>
+                    <MDBContainer fluid>
+                        <form onSubmit={formik.handleSubmit} className={styles["form"]}>
+                            <div>
+                                <MDBInput
+                                    label="Email"
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
+                            </div>
+
+                            <div>
+                                <MDBInput
+                                    label="Password"
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
+                            </div>
+
+                            <div>
+                                <MDBInput
+                                    label="Cofirm Password"
+                                    id="confirm-password"
+                                    name="confirmPassword"
+                                    type="password"
+                                    value={formik.values.confirmPassword}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.confirmPassword && formik.errors.confirmPassword && <span className={styles["error"]}>{formik.errors.confirmPassword}</span>}
+                            </div>
+
+                            <MDBBtn type="submit">SignUp</MDBBtn>
+                        </form>
+                    </MDBContainer>
                 </main>
             </>}
 

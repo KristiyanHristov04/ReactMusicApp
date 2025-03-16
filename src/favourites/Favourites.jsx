@@ -12,12 +12,12 @@ export default function Favourites() {
     const [user] = useContext(AuthContext);
 
     useEffect(() => {
-        const getFavouriteSongsIds = async() => {
+        const getFavouriteSongsIds = async () => {
             console.log(user.id);
             const { data, error } = await supabase
-            .from('users_favourite_songs')
-            .select('song_id')
-            .eq('user_id', user.id);
+                .from('users_favourite_songs')
+                .select('song_id')
+                .eq('user_id', user.id);
 
             if (error) {
                 console.error(error.message);
@@ -39,26 +39,33 @@ export default function Favourites() {
                     .select()
                     .in('id', songIds)
                     .order('id', { ascending: false });
-    
+
                 if (error) {
                     console.error(error.message);
                     return;
                 }
-    
+
                 console.log(data);
                 setSongs(data);
             }
 
             getSongs();
         }
-        
+
     }, [user]);
 
     return (
         <>
             <Navigation showSearchBar={true} setSongs={setSongs} favouriteSongsIds={favouriteSongsIds} />
             <main className={styles["main"]}>
-                {songs.map(song => <Song key={song.id} id={song.id} name={song.name} artist={song.artist} thumbnailImage={song.song_image_url} artistImage={song.artist_image_url} />)}
+                {songs.map(song => <Song
+                    key={song.id}
+                    id={song.id}
+                    name={song.name}
+                    artist={song.artist}
+                    thumbnailImage={song.song_image_url}
+                    artistImage={song.artist_image_url}
+                />)}
             </main>
         </>
 

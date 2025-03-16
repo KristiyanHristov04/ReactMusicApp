@@ -29,7 +29,7 @@ export default function Explore() {
 
     return (
         <>
-            <Navigation showSearchBar={true} setSongs={setSongs} />
+            <Navigation showSearchBar={true} songs={songs} setSongs={setSongs} />
             <main className={styles["main"]}>
                 {songs.map(song => <Song key={song.id} id={song.id} name={song.name} artist={song.artist} thumbnailImage={song.song_image_url} artistImage={song.artist_image_url} />)}
             </main>
