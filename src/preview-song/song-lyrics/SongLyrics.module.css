@@ -1,0 +1,15 @@
+.lyrics-container {
+    width: 600px;
+    height: 500px;
+    background-color: rgb(89, 89, 89);
+    border-radius: 10px;
+    overflow-y: scroll;
+}
+
+.lyrics-container pre {
+    margin: 0;
+    padding: 10px;
+    line-height: 30px;
+    font-size: 18px;
+    font-family: 'Roboto'
+}
