@@ -36,6 +36,13 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
 .form input,
 .form textarea {
     background-color: #3E3E3E !important;
@@ -72,11 +79,4 @@
     color: #ff4444;
     font-size: 0.8rem;
     margin-top: 4px;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
 }
