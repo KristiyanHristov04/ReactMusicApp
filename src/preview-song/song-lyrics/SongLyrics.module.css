@@ -11,5 +11,7 @@
     padding: 10px;
     line-height: 30px;
     font-size: 18px;
-    font-family: 'Roboto'
+    font-family: 'Roboto';
+    color: #fff;
+    text-wrap: auto;
 }

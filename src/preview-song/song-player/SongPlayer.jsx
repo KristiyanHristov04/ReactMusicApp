@@ -4,6 +4,7 @@ import { FaHeart } from "react-icons/fa";
 import { useState, useEffect, useContext } from 'react';
 import AuthContext from '../../context/AuthContext';
 import { supabase } from '../../supabase';
+import CustomAudioPlayer from './CustomAudioPlayer';
 
 export default function SongPlayer(props) {
 
@@ -91,8 +92,7 @@ export default function SongPlayer(props) {
                                 <p>{props.name}</p>
                                 <span>{props.artist}</span>
                             </div>
-                            <audio src={props.songUrl} controls>
-                            </audio>
+                            <CustomAudioPlayer songUrl={props.songUrl} />
                         </div>
                     </div>
                 </>
