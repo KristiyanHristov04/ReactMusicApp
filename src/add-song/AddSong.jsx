@@ -14,17 +14,23 @@ export default function AddSong() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const validateUser = async () => {
-            const { data, error } = await supabase.auth.getUser();
+        // console.log(user);
+        // if (!user.id) {
+        //     navigate('/login');
+        //     return;
+        // }
 
-            if (error || !data.user) {
-                console.log('User not logged in.')
-                setUser({});
-                navigate('/login');
-            }
-        };
+        // const validateUser = async () => {
+        //     const { data, error } = await supabase.auth.getUser();
 
-        validateUser();
+        //     if (error || !data.user) {
+        //         console.log('User not logged in.')
+        //         setUser({});
+        //         navigate('/login');
+        //     }
+        // };
+
+        // validateUser();
     }, []);
 
     const SignupSchema = Yup.object().shape({
@@ -123,89 +129,99 @@ export default function AddSong() {
             <Navigation />
             {user.id && <>
                 <main className={styles["main"]}>
-                    <MDBContainer fluid>
+                    <div className={styles["form-container"]}>
+                        <h1 className={styles["title"]}>Add Your <span>Favorite</span> Song</h1>
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
-                                    label="Name"
+                                    label="Song Name"
                                     id="name"
                                     name="name"
                                     type="text"
                                     value={formik.values.name}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.name && formik.errors.name && <span className={styles["error"]}>{formik.errors.name}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
-                                    label="Artist"
+                                    label="Artist Name"
                                     id="artist"
                                     name="artist"
                                     type="text"
                                     value={formik.values.artist}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.artist && formik.errors.artist && <span className={styles["error"]}>{formik.errors.artist}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBTextArea
-                                    rows={10}
-                                    label="Lyrics"
+                                    rows={6}
+                                    label="Song Lyrics"
                                     id="lyrics"
                                     name="lyrics"
                                     value={formik.values.lyrics}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.lyrics && formik.errors.lyrics && <span className={styles["error"]}>{formik.errors.lyrics}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBFile
-                                    label="Song"
+                                    label="Upload Song Audio"
                                     id="song"
                                     name="song"
                                     type="file"
                                     value={formik.values.song}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
+                                    accept="audio/*"
                                 />
                                 {formik.touched.song && formik.errors.song && <span className={styles["error"]}>{formik.errors.song}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBFile
-                                    label="Song Image"
+                                    label="Upload Song Cover Image"
                                     id="song-image"
                                     name="songImage"
                                     type="file"
                                     value={formik.values.songImage}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
+                                    accept="image/*"
                                 />
                                 {formik.touched.songImage && formik.errors.songImage && <span className={styles["error"]}>{formik.errors.songImage}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBFile
-                                    label="Artist Image"
+                                    label="Upload Artist Image"
                                     id="artist-image"
                                     name="artistImage"
                                     type="file"
                                     value={formik.values.artistImage}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
+                                    accept="image/*"
                                 />
                                 {formik.touched.artistImage && formik.errors.artistImage && <span className={styles["error"]}>{formik.errors.artistImage}</span>}
                             </div>
 
                             <MDBBtn type="submit">Add Song</MDBBtn>
                         </form>
-                    </MDBContainer>
+                    </div>
                 </main></>}
         </>
     );

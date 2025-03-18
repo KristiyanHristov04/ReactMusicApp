@@ -5,19 +5,16 @@ import { supabase } from "../supabase";
 import Song from "../song/Song";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../spinner/Spinner";
 
 export default function Favourites() {
     const [songs, setSongs] = useState([]);
     const [favouriteSongsIds, setFavouriteSongsIds] = useState(null);
     const [user] = useContext(AuthContext);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(user);
-        if (!user.id) {
-            navigate('/login');
-        }
-
         const getFavouriteSongsIds = async () => {
             console.log(user.id);
             const { data, error } = await supabase
@@ -36,29 +33,40 @@ export default function Favourites() {
             return songIds;
         };
 
-        if (user.id) {
-            const getSongs = async () => {
-                const songIds = await getFavouriteSongsIds();
-                setFavouriteSongsIds(songIds);
-                const { data, error } = await supabase
-                    .from('songs')
-                    .select()
-                    .in('id', songIds)
-                    .order('id', { ascending: false });
+        const getSongs = async () => {
+            const songIds = await getFavouriteSongsIds();
+            setFavouriteSongsIds(songIds);
+            const { data, error } = await supabase
+                .from('songs')
+                .select()
+                .in('id', songIds)
+                .order('id', { ascending: false });
 
-                if (error) {
-                    console.error(error.message);
-                    return;
-                }
-
-                console.log(data);
-                setSongs(data);
+            if (error) {
+                console.error(error.message);
+                return;
             }
 
-            getSongs();
+            console.log(data);
+            setSongs(data);
+            setIsLoading(false);
+            
         }
 
-    }, [user]);
+        getSongs();
+
+    }, []);
+
+    // if (isLoading) {
+    //     return (
+    //         <>
+    //             <Navigation showSearchBar={true} setSongs={setSongs} />
+    //             <main className={styles.main}>
+    //                 <Spinner />
+    //             </main>
+    //         </>
+    //     )
+    // }
 
     return (
         <>

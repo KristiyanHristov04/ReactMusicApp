@@ -10,7 +10,7 @@ import { supabase } from "./supabase"
 import Favourites from "./favourites/Favourites"
 import DeleteSong from "./delete-song/DeleteSong"
 import EditSong from "./edit-song/EditSong"
-
+import ProtectedGuard from "./guards/ProtectedGuard"
 function App() {
     const [user, setUser] = useState({});
 
@@ -38,13 +38,13 @@ function App() {
             <AuthContext.Provider value={[ user, setUser ]}>
                 <Routes>
                     <Route path="/" element={<Explore />} />
-                    <Route path="/add-song" element={<AddSong />} />
-                    <Route path="/preview-song/:id" element={<PreviewSong />} />
-                    <Route path="/favourite-songs" element={<Favourites />} />
+                    <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
+                    <Route path="/preview-song/:id" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
+                    <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
                     <Route path="/signup" element={<SignUp />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/:id/edit" element={<EditSong />} />
-                    <Route path="/:id/delete" element={<DeleteSong />} />
+                    <Route path="/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
+                    <Route path="/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
                 </Routes>
             </AuthContext.Provider>
         </>
