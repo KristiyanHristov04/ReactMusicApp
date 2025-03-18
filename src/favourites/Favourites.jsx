@@ -4,14 +4,20 @@ import { useState, useEffect, useContext } from "react";
 import { supabase } from "../supabase";
 import Song from "../song/Song";
 import AuthContext from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Favourites() {
-
     const [songs, setSongs] = useState([]);
     const [favouriteSongsIds, setFavouriteSongsIds] = useState(null);
     const [user] = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
+        console.log(user);
+        if (!user.id) {
+            navigate('/login');
+        }
+
         const getFavouriteSongsIds = async () => {
             console.log(user.id);
             const { data, error } = await supabase

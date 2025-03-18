@@ -7,7 +7,6 @@ import AuthContext from '../context/AuthContext';
 import { supabase } from '../supabase';
 
 export default function Song(props) {
-
     const [isLiked, setIsLiked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
@@ -39,24 +38,31 @@ export default function Song(props) {
             setIsLoading(false);
         }
 
-    }, []);
+    }, [user.id, props.id]);
 
-    const clickHandlerAddToFavourite = async () => {
+    const clickHandlerAddToFavourite = async (e) => {
+        e.stopPropagation(); // Prevent triggering the card click
+        
         if (!user.id) {
             navigate('/login');
+            return;
         }
 
         if (isLiked) {
-            const response = await supabase
+            const { error } = await supabase
                 .from('users_favourite_songs')
                 .delete()
                 .eq('user_id', user.id)
                 .eq('song_id', props.id);
 
-            console.log(response);
+            if (error) {
+                console.error(error.message);
+                return;
+            }
+
             setIsLiked(false);
         } else {
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('users_favourite_songs')
                 .insert({
                     user_id: user.id,
@@ -72,35 +78,42 @@ export default function Song(props) {
         }
     }
 
-    const clickHandlerPreviewSong = (e) => {
+    const clickHandlerPreviewSong = () => {
         const id = props.id;
-        console.log(id);
         navigate(`/preview-song/${id}`);
     };
 
+    if (isLoading) {
+        return null;
+    }
+
     return (
-        <>
-            {!isLoading &&
-                <>
-                    <article id={props.id} className={styles["card"]}>
-                        <div className={styles["card-top"]}>
-                            <img src={props.thumbnailImage} onClick={clickHandlerPreviewSong} alt='thumbnail' />
-                            <span
-                                onClick={clickHandlerAddToFavourite}
-                                className={styles["favourite-icon"]}>
-                                {!isLiked ? <FaRegHeart /> : <FaHeart style={{ color: '#f36d6d' }} />}
-                            </span>
-                            <div className={styles["card-avatar"]}>
-                                <img src={props.artistImage} alt='artist' onClick={clickHandlerPreviewSong} />
-                            </div>
-                        </div>
-                        <div className={styles["card-bottom"]} onClick={clickHandlerPreviewSong}>
-                            <p>{props.name}</p>
-                            <span>{props.artist}</span>
-                        </div>
-                    </article>
-                </>
-            }
-        </>
+        <article id={props.id} className={styles.card} onClick={clickHandlerPreviewSong}>
+            <div className={styles["card-top"]}>
+                <img 
+                    src={props.thumbnailImage} 
+                    alt={`${props.name} by ${props.artist}`} 
+                    loading="lazy"
+                />
+                <span
+                    onClick={clickHandlerAddToFavourite}
+                    className={styles["favourite-icon"]}
+                    aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
+                >
+                    {!isLiked ? <FaRegHeart /> : <FaHeart style={{ color: '#f36d6d' }} />}
+                </span>
+                <div className={styles["card-avatar"]}>
+                    <img 
+                        src={props.artistImage} 
+                        alt={props.artist} 
+                        loading="lazy"
+                    />
+                </div>
+            </div>
+            <div className={styles["card-bottom"]}>
+                <p>{props.name}</p>
+                <span>{props.artist}</span>
+            </div>
+        </article>
     );
 }
