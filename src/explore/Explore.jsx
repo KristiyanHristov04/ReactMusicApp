@@ -4,7 +4,7 @@ import styles from './Explore.module.css'
 import { useEffect, useState } from "react";
 import { supabase } from "../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
-
+import Spinner from "../spinner/Spinner";
 export default function Explore() {
     const [songs, setSongs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -36,10 +36,7 @@ export default function Explore() {
             <>
                 <Navigation showSearchBar={true} setSongs={setSongs} />
                 <main className={styles.main}>
-                    <div className={styles.emptyState}>
-                        <div className={styles.loader}></div>
-                        <p>Loading songs...</p>
-                    </div>
+                    <Spinner />
                 </main>
             </>
         )
@@ -59,7 +56,7 @@ export default function Explore() {
                         artistImage={song.artist_image_url}
                     />
                 )) :
-                    (<div className={styles.emptyState}>
+                    (<div className={styles["no-songs-container"]}>
                         <MdOutlineLibraryMusic />
                         <h2>No songs found</h2>
                         <p>
