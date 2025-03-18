@@ -70,9 +70,10 @@ export default function SignUp() {
             <Navigation showSearchBar={false} />
             {!user.id && <>
                 <main className={styles["main"]}>
-                    <MDBContainer fluid>
+                    <div className={styles["form-container"]}>
+                        <h1 className={styles["title"]}>Create Your <span>Account</span></h1>
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
                                     label="Email"
                                     id="email"
@@ -81,11 +82,12 @@ export default function SignUp() {
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
                                     label="Password"
                                     id="password"
@@ -94,26 +96,28 @@ export default function SignUp() {
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
-                                    label="Cofirm Password"
+                                    label="Confirm Password"
                                     id="confirm-password"
                                     name="confirmPassword"
                                     type="password"
                                     value={formik.values.confirmPassword}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.confirmPassword && formik.errors.confirmPassword && <span className={styles["error"]}>{formik.errors.confirmPassword}</span>}
                             </div>
 
-                            <MDBBtn type="submit">SignUp</MDBBtn>
+                            <MDBBtn type="submit">Sign Up</MDBBtn>
                         </form>
-                    </MDBContainer>
+                    </div>
                 </main>
             </>}
 

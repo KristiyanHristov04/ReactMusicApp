@@ -52,18 +52,18 @@
 }
 
 .form button {
-    background-color: #1DB954 !important;
-    border: none !important;
-    padding: 12px 24px !important;
-    font-weight: bold !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-    margin-top: 10px !important;
-    width: 100% !important;
+    background-color: #1DB954;
+    border: none;
+    padding: 12px 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
+    width: 100%;
 }
 
 .form button:hover {
-    background-color: #1ed760 !important;
+    background-color: #1ed760;
     transform: scale(1.02);
     transition: all 0.2s ease;
 }

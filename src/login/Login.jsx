@@ -70,9 +70,10 @@ export default function Login() {
             <Navigation showSearchBar={false} />
             {!isLoading && !user.id && <>
                 <main className={styles["main"]}>
-                    <MDBContainer fluid>
+                    <div className={styles["form-container"]}>
+                        <h1 className={styles["title"]}>Welcome <span>Back</span></h1>
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
                                     label="Email"
                                     id="email"
@@ -81,11 +82,12 @@ export default function Login() {
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
                             </div>
 
-                            <div>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
                                     label="Password"
                                     id="password"
@@ -94,13 +96,14 @@ export default function Login() {
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
+                                    contrast
                                 />
                                 {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
                             </div>
 
                             <MDBBtn type="submit">Login</MDBBtn>
                         </form>
-                    </MDBContainer>
+                    </div>
                 </main>
             </>}
         </>
