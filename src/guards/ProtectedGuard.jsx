@@ -9,7 +9,7 @@ export default function ProtectedGuard({ children }) {
     const [authenticated, setAuthenticated] = useState(false);
     const [user, setUser] = useContext(AuthContext);
 
-    const location = useLocation();
+    // const location = useLocation();
 
     useEffect(() => {
         console.log('ProtectedGuard');
@@ -31,7 +31,7 @@ export default function ProtectedGuard({ children }) {
         }
 
         checkAuth();
-    }, [location]);
+    }, []);
 
     if (isLoading) {
         return null;

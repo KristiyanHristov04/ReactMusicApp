@@ -15,11 +15,12 @@ export default function SignUp() {
     const navigate = useNavigate();
 
     //Extract logic in Route Guard
-    useEffect(() => {
-        if (user.id) {
-            navigate('/');
-        }
-    }, []);
+    // useEffect(() => {
+    //     console.log(user);
+    //     if (user.id) {
+    //         navigate('/');
+    //     }
+    // }, []);
 
     const SignupSchema = Yup.object().shape({
         email: Yup.string()

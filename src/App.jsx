@@ -11,6 +11,8 @@ import Favourites from "./favourites/Favourites"
 import DeleteSong from "./delete-song/DeleteSong"
 import EditSong from "./edit-song/EditSong"
 import ProtectedGuard from "./guards/ProtectedGuard"
+import GuestGuard from "./guards/GuestGuard"
+
 function App() {
     const [user, setUser] = useState({});
 
@@ -23,6 +25,7 @@ function App() {
                 return;
             }
 
+            console.log(data.user.id);
             console.log(data.user.email);
             setUser({
                 email: data.user.email,
@@ -41,8 +44,8 @@ function App() {
                     <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
                     <Route path="/preview-song/:id" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
                     <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/signup" element={<GuestGuard><SignUp /></GuestGuard>} />
+                    <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
                     <Route path="/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
                     <Route path="/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
                 </Routes>

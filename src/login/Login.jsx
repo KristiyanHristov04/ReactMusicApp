@@ -10,9 +10,9 @@ import * as Yup from 'yup';
 import { MDBContainer, MDBInput, MDBBtn } from "mdb-react-ui-kit";
 
 export default function Login() {
-
     const [user, setUser] = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,6 +34,7 @@ export default function Login() {
 
     const submitHandler = async (e) => {
         try {
+            setError(null);
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: formik.values.email,
                 password: formik.values.password
@@ -47,65 +48,66 @@ export default function Login() {
                 email: data.user.email,
                 id: data.user.id
             });
-            console.log(data);
             navigate('/');
         } catch (e) {
+            setError(e.message);
             console.error(e.message);
         }
-
     }
 
     const formik = useFormik({
         initialValues: {
             email: '',
             password: '',
-            confirmPassword: '',
         },
         validationSchema: SignupSchema,
         onSubmit: submitHandler
     });
 
+    if (isLoading) {
+        return null;
+    }
+
     return (
         <>
             <Navigation showSearchBar={false} />
-            {!isLoading && !user.id && <>
-                <main className={styles["main"]}>
-                    <div className={styles["form-container"]}>
-                        <h1 className={styles["title"]}>Welcome <span>Back</span></h1>
-                        <form onSubmit={formik.handleSubmit} className={styles["form"]}>
-                            <div className={styles["input-group"]}>
-                                <MDBInput
-                                    label="Email"
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    value={formik.values.email}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    contrast
-                                />
-                                {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
-                            </div>
+            <main className={styles["main"]}>
+                <div className={styles["form-container"]}>
+                    <h1 className={styles["title"]}>Welcome <span>Back</span></h1>
+                    {error && <div className={styles["error"]}>{error}</div>}
+                    <form onSubmit={formik.handleSubmit} className={styles["form"]}>
+                        <div className={styles["input-group"]}>
+                            <MDBInput
+                                label="Email"
+                                id="email"
+                                name="email"
+                                type="email"
+                                value={formik.values.email}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                contrast
+                            />
+                            {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
+                        </div>
 
-                            <div className={styles["input-group"]}>
-                                <MDBInput
-                                    label="Password"
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    value={formik.values.password}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    contrast
-                                />
-                                {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
-                            </div>
+                        <div className={styles["input-group"]}>
+                            <MDBInput
+                                label="Password"
+                                id="password"
+                                name="password"
+                                type="password"
+                                value={formik.values.password}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                contrast
+                            />
+                            {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
+                        </div>
 
-                            <MDBBtn type="submit">Login</MDBBtn>
-                        </form>
-                    </div>
-                </main>
-            </>}
+                        <MDBBtn type="submit">Login</MDBBtn>
+                    </form>
+                </div>
+            </main>
         </>
     );
 }
