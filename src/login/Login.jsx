@@ -8,20 +8,37 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { MDBContainer, MDBInput, MDBBtn } from "mdb-react-ui-kit";
+import Spinner from "../spinner/Spinner";
 
 export default function Login() {
     const [user, setUser] = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user.id) {
-            navigate("/");
-        } else {
-            setIsLoading(false);
-        }
-    }, [user, navigate]);
+        console.log('Login component mounted');
+        console.log('Current user:', user);
+        
+        const checkInitialAuth = async () => {
+            try {
+                const { data } = await supabase.auth.getUser();
+                console.log('Initial auth check:', data);
+                
+                if (data?.user) {
+                    console.log('User already logged in, redirecting...');
+                    navigate("/");
+                }
+            } catch (err) {
+                console.error('Initial auth check error:', err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        checkInitialAuth();
+    }, []);
 
     const SignupSchema = Yup.object().shape({
         email: Yup.string()
@@ -32,26 +49,36 @@ export default function Login() {
             .min(6, 'Password must be at least 6 symbols.')
     });
 
-    const submitHandler = async (e) => {
+    const submitHandler = async (values) => {
+        console.log('Attempting login...');
+        setIsSubmitting(true);
+        setError(null);
+        
         try {
-            setError(null);
             const { data, error } = await supabase.auth.signInWithPassword({
-                email: formik.values.email,
-                password: formik.values.password
+                email: values.email,
+                password: values.password
             });
+
+            console.log('Login response:', data);
 
             if (error) {
-                throw new Error(error.message);
+                throw error;
             }
 
-            setUser({
-                email: data.user.email,
-                id: data.user.id
-            });
-            navigate('/');
+            if (data?.user) {
+                console.log('Login successful, updating user context...');
+                setUser({
+                    email: data.user.email,
+                    id: data.user.id
+                });
+                navigate('/');
+            }
         } catch (e) {
+            console.error('Login error:', e);
             setError(e.message);
-            console.error(e.message);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
@@ -65,7 +92,11 @@ export default function Login() {
     });
 
     if (isLoading) {
-        return null;
+        return (
+            <div className={styles.loadingContainer}>
+                <Spinner />
+            </div>
+        );
     }
 
     return (
@@ -86,6 +117,7 @@ export default function Login() {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 contrast
+                                disabled={isSubmitting}
                             />
                             {formik.touched.email && formik.errors.email && <span className={styles["error"]}>{formik.errors.email}</span>}
                         </div>
@@ -100,11 +132,14 @@ export default function Login() {
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
                                 contrast
+                                disabled={isSubmitting}
                             />
                             {formik.touched.password && formik.errors.password && <span className={styles["error"]}>{formik.errors.password}</span>}
                         </div>
 
-                        <MDBBtn type="submit">Login</MDBBtn>
+                        <MDBBtn type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Logging in...' : 'Login'}
+                        </MDBBtn>
                     </form>
                 </div>
             </main>

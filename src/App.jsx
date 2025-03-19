@@ -12,9 +12,13 @@ import DeleteSong from "./delete-song/DeleteSong"
 import EditSong from "./edit-song/EditSong"
 import ProtectedGuard from "./guards/ProtectedGuard"
 import GuestGuard from "./guards/GuestGuard"
+import NotFound from "./not-found/NotFound"
 
 function App() {
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState({
+        email: null,
+        id: null
+    });
 
     useEffect(() => {
         const getUser = async () => {
@@ -42,21 +46,20 @@ function App() {
     }, []);
 
     return (
-        <>
-            <AuthContext.Provider value={[user, setUser]}>
-                <Routes>
-                    <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
-                    <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
-                    <Route path="/preview-song/:id" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
-                    <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
-                    <Route path="/signup" element={<GuestGuard><SignUp /></GuestGuard>} />
-                    <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
-                    <Route path="/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
-                    <Route path="/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
-                </Routes>
-            </AuthContext.Provider>
-        </>
-    )
+        <AuthContext.Provider value={[user, setUser]}>
+            <Routes>
+                <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
+                <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
+                <Route path="/preview-song/:id" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
+                <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
+                <Route path="/signup" element={<GuestGuard><SignUp /></GuestGuard>} />
+                <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
+                <Route path="/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
+                <Route path="/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </AuthContext.Provider>
+    );
 }
 
 export default App
