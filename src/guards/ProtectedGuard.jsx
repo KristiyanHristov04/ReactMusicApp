@@ -9,40 +9,48 @@ export default function ProtectedGuard({ children }) {
     const [authenticated, setAuthenticated] = useState(false);
     const [user, setUser] = useContext(AuthContext);
 
-    // const location = useLocation();
+    const location = useLocation();
 
     useEffect(() => {
-        console.log('ProtectedGuard');
+        console.log('ProtectedGuard useEffect');
         async function checkAuth() {
-            const { data, error } = await supabase.auth.getUser();
+            try {
+                const { data, error } = await supabase.auth.getUser();
 
-            if (!data.user) {
-                setAuthenticated(false);
-            } else {
-                setAuthenticated(true);
-                setUser({
-                    email: data.user.email,
-                    id: data.user.id
-                });
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                if (!data.user) {
+                    setAuthenticated(false);
+                } else {
+                    setAuthenticated(true);
+                    setUser({
+                        email: data.user.email,
+                        id: data.user.id
+                    });
+                }
+
+
+                setIsLoading(false);
+            } catch (e) {
+                console.error(e.message);
             }
-
-            
-            setIsLoading(false);
         }
 
         checkAuth();
-    }, []);
+    }, [location]);
 
     if (isLoading) {
         return null;
     }
-    
+
     if (!authenticated) {
         console.log('Not authenticated');
         return (
             <Navigate to='/login' />
         );
-    }   
+    }
 
     console.log('Authenticated');
     return children;

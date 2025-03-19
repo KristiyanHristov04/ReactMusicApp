@@ -35,19 +35,28 @@ export default function AddSong() {
             const { data: songData, error: songError } = await supabase.storage
                 .from('song-files')
                 .upload(`song-audios/${songFileName}`, values.song);
-            if (songError) throw songError;
+
+            if (songError) {
+                throw new Error(songError.message);
+            }
 
             // Upload song image
             const { data: songImageData, error: songImageError } = await supabase.storage
                 .from('song-files')
                 .upload(`song-images/${songImageName}`, values.songImage);
-            if (songImageError) throw songImageError;
+
+            if (songImageError) {
+                throw new Error(songImageError.message);
+            }
 
             // Upload artist image
             const { data: artistImageData, error: artistImageError } = await supabase.storage
                 .from('song-files')
                 .upload(`artist-images/${artistImageName}`, values.artistImage);
-            if (artistImageError) throw artistImageError;
+
+            if (artistImageError) {
+                throw new Error(artistImageError.message);
+            }
 
             const songUrl = supabase.storage.from('song-files').getPublicUrl(songData.path).data.publicUrl;
             const songImageUrl = supabase.storage.from('song-files').getPublicUrl(songImageData.path).data.publicUrl;
@@ -67,13 +76,16 @@ export default function AddSong() {
                         user_id: user.id
                     }
                 ]);
-            if (error) throw error;
+
+            if (error) {
+                throw new Error(error.message);
+            }
 
             console.log("Song added successfully!", data);
             actions.resetForm();
             navigate('/');
         } catch (error) {
-            console.error("Error uploading song:", error.message);
+            console.error(error.message);
         } finally {
             actions.setSubmitting(false);
         }

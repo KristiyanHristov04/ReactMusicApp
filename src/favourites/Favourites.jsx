@@ -17,60 +17,69 @@ export default function Favourites() {
     useEffect(() => {
         const getFavouriteSongsIds = async () => {
             console.log(user.id);
-            const { data, error } = await supabase
-                .from('users_favourite_songs')
-                .select('song_id')
-                .eq('user_id', user.id);
+            try {
+                const { data, error } = await supabase
+                    .from('users_favourite_songs')
+                    .select('song_id')
+                    .eq('user_id', user.id);
 
-            if (error) {
-                console.error(error.message);
-                return;
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                const songIds = [];
+                data.forEach(song => songIds.push(song.song_id));
+
+                return songIds;
+            } catch (e) {
+                console.error(e.message);
             }
-
-            const songIds = [];
-            data.forEach(song => songIds.push(song.song_id));
-
-            return songIds;
         };
 
         const getSongs = async () => {
-            const songIds = await getFavouriteSongsIds();
-            setFavouriteSongsIds(songIds);
-            const { data, error } = await supabase
-                .from('songs')
-                .select()
-                .in('id', songIds)
-                .order('id', { ascending: false });
+            try {
+                const songIds = await getFavouriteSongsIds();
+                setFavouriteSongsIds(songIds);
+                const { data, error } = await supabase
+                    .from('songs')
+                    .select()
+                    .in('id', songIds)
+                    .order('id', { ascending: false });
 
-            if (error) {
-                console.error(error.message);
-                return;
-            }
+                if (error) {
+                    throw new Error(error.message);
+                }
 
-            console.log(data);
-            setSongs(data);
-            setIsLoading(false);
-            
+                console.log(data);
+                setSongs(data);
+                setIsLoading(false);
+            } catch (e) {
+                console.error(e.message);
+            }   
         }
 
         getSongs();
 
     }, []);
 
-    // if (isLoading) {
-    //     return (
-    //         <>
-    //             <Navigation showSearchBar={true} setSongs={setSongs} />
-    //             <main className={styles.main}>
-    //                 <Spinner />
-    //             </main>
-    //         </>
-    //     )
-    // }
+    if (isLoading) {
+        return (
+            <>
+                <Navigation showSearchBar={true} setSongs={setSongs} />
+                <main className={styles.main}>
+                    <Spinner />
+                </main>
+            </>
+        )
+    }
 
     return (
         <>
-            <Navigation showSearchBar={true} setSongs={setSongs} favouriteSongsIds={favouriteSongsIds} />
+            <Navigation
+                showSearchBar={true}
+                setSongs={setSongs}
+                favouriteSongsIds={favouriteSongsIds}
+            />
             <main className={styles["main"]}>
                 {songs.map(song => <Song
                     key={song.id}

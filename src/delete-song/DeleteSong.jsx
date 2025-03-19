@@ -13,32 +13,38 @@ export default function DeleteSong() {
     // const [user] = useContext(AuthContext);
     const params = useParams();
     const [song, setSong] = useState();
-    const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function getSongInformation() {
-            const { data, error } = await supabase.from('songs')
-                .select()
-                .eq('id', params.id);
+            try {
+                const { data, error } = await supabase.from('songs')
+                    .select()
+                    .eq('id', params.id);
 
-            if (error) {
-                console.error(error.message);
-                return;
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                if (data.length === 0) {
+                    navigate('/');
+                }
+
+                if (data[0].user_id !== user.id) {
+                    navigate('/');
+                }
+
+                setSong({
+                    name: data[0].name,
+                    artist: data[0].artist,
+                    lyrics: data[0].lyrics
+                });
+                setIsLoading(false);
+            } catch (e) {
+                console.error(e.message);
             }
-
-            if (data[0].user_id !== user.id) {
-                navigate('/');
-            }
-
-            console.log(data);
-            setSong({
-                name: data[0].name,
-                artist: data[0].artist,
-                lyrics: data[0].lyrics
-            });
-            setIsLoading(false);
         }
 
         getSongInformation();
@@ -49,15 +55,20 @@ export default function DeleteSong() {
 
         console.log('Song deleted');
 
-        const { data, error } = await supabase.from('songs')
-            .delete()
-            .eq('id', params.id);
+        try {
+            const { data, error } = await supabase.from('songs')
+                .delete()
+                .eq('id', params.id);
 
-        if (error) {
-            console.error(error.message);
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            navigate('/');
+        } catch (e) {
+            console.error(e.message);   
         }
 
-        navigate('/');
     }
 
     if (isLoading) {

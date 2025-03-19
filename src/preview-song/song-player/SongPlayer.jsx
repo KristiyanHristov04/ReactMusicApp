@@ -13,30 +13,34 @@ export default function SongPlayer(props) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (user.id) {
-            const checkIfSongLiked = async () => {
-                const { data, error } = await supabase
-                    .from('users_favourite_songs')
-                    .select()
-                    .eq('user_id', user.id)
-                    .eq('song_id', props.id);
-
-                if (error) {
-                    console.error(error.message);
-                    return;
+        try {
+            if (user.id) {
+                const checkIfSongLiked = async () => {
+                    const { data, error } = await supabase
+                        .from('users_favourite_songs')
+                        .select()
+                        .eq('user_id', user.id)
+                        .eq('song_id', props.id);
+    
+                    if (error) {
+                        throw new Error(error.message);
+                    }
+    
+                    if (data[0]) {
+                        setIsLiked(true);
+                    }
+    
+                    setIsLoading(false);
                 }
-
-                if (data[0]) {
-                    setIsLiked(true);
-                }
-
+    
+                checkIfSongLiked();
+            } else {
                 setIsLoading(false);
             }
-
-            checkIfSongLiked();
-        } else {
-            setIsLoading(false);
+        } catch (e) {
+            console.error(e.message);
         }
+        
 
     }, []);
 
@@ -45,30 +49,34 @@ export default function SongPlayer(props) {
             navigate('/login');
         }
 
-        if (isLiked) {
-            const response = await supabase
-                .from('users_favourite_songs')
-                .delete()
-                .eq('user_id', user.id)
-                .eq('song_id', props.id);
-
-            console.log(response);
-            setIsLiked(false);
-        } else {
-            const { data, error } = await supabase
-                .from('users_favourite_songs')
-                .insert({
-                    user_id: user.id,
-                    song_id: props.id,
-                });
-
-            if (error) {
-                console.error(error.message);
-                return;
+        try {
+            if (isLiked) {
+                const response = await supabase
+                    .from('users_favourite_songs')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('song_id', props.id);
+    
+                console.log(response);
+                setIsLiked(false);
+            } else {
+                const { data, error } = await supabase
+                    .from('users_favourite_songs')
+                    .insert({
+                        user_id: user.id,
+                        song_id: props.id,
+                    });
+    
+                if (error) {
+                    throw new Error(error.message);
+                }
+    
+                setIsLiked(true);
             }
-
-            setIsLiked(true);
+        } catch (e) {
+            console.error(e.message);
         }
+        
     }
 
     return (

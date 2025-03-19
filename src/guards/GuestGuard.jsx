@@ -16,7 +16,6 @@ export default function GuestGuard({ children }) {
                 const { data: { user: currentUser }, error } = await supabase.auth.getUser();
 
                 if (error) {
-                    console.error('Auth check error:', error);
                     throw new Error(error.message);
                 }
 
@@ -34,7 +33,7 @@ export default function GuestGuard({ children }) {
                     });
                 }
             } catch (error) {
-                console.error('Auth check error:', error.message);
+                console.error(error.message);
                 setAuthenticated(false);
                 setUser({
                     email: null,

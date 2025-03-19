@@ -11,21 +11,25 @@ export default function Explore() {
 
     useEffect(() => {
         const getSongs = async () => {
-            setLoading(true);
-            const { data, error } = await supabase
-                .from('songs')
-                .select()
-                .order('id', { ascending: false });
+            try {
+                setLoading(true);
+                const { data, error } = await supabase
+                    .from('songs')
+                    .select()
+                    .order('id', { ascending: false });
 
-            if (error) {
-                console.error(error.message);
+                if (error) {
+                    setLoading(false);
+                    throw new Error(error.message);
+                }
+
+                console.log(data);
+                setSongs(data);
                 setLoading(false);
-                return;
+            } catch (e) {
+                console.error(e.message);
             }
 
-            console.log(data);
-            setSongs(data);
-            setLoading(false);
         }
 
         getSongs();
@@ -41,7 +45,7 @@ export default function Explore() {
             </>
         )
     }
-    
+
     return (
         <>
             <Navigation showSearchBar={true} setSongs={setSongs} />

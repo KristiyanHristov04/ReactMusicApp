@@ -15,22 +15,26 @@ export default function Song(props) {
     useEffect(() => {
         if (user.id) {
             const checkIfSongLiked = async () => {
-                const { data, error } = await supabase
-                    .from('users_favourite_songs')
-                    .select()
-                    .eq('user_id', user.id)
-                    .eq('song_id', props.id);
+                try {
+                    const { data, error } = await supabase
+                        .from('users_favourite_songs')
+                        .select()
+                        .eq('user_id', user.id)
+                        .eq('song_id', props.id);
 
-                if (error) {
-                    console.error(error.message);
-                    return;
+                    if (error) {
+                        console.error(error.message);
+                        return;
+                    }
+
+                    if (data[0]) {
+                        setIsLiked(true);
+                    }
+
+                    setIsLoading(false);
+                } catch (e) {
+                    console.error(e.message);
                 }
-
-                if (data[0]) {
-                    setIsLiked(true);
-                }
-
-                setIsLoading(false);
             }
 
             checkIfSongLiked();
@@ -42,39 +46,41 @@ export default function Song(props) {
 
     const clickHandlerAddToFavourite = async (e) => {
         e.stopPropagation(); // Prevent triggering the card click
-        
+
         if (!user.id) {
             navigate('/login');
             return;
         }
 
-        if (isLiked) {
-            const { error } = await supabase
-                .from('users_favourite_songs')
-                .delete()
-                .eq('user_id', user.id)
-                .eq('song_id', props.id);
+        try {
+            if (isLiked) {
+                const { error } = await supabase
+                    .from('users_favourite_songs')
+                    .delete()
+                    .eq('user_id', user.id)
+                    .eq('song_id', props.id);
 
-            if (error) {
-                console.error(error.message);
-                return;
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                setIsLiked(false);
+            } else {
+                const { error } = await supabase
+                    .from('users_favourite_songs')
+                    .insert({
+                        user_id: user.id,
+                        song_id: props.id,
+                    });
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                setIsLiked(true);
             }
-
-            setIsLiked(false);
-        } else {
-            const { error } = await supabase
-                .from('users_favourite_songs')
-                .insert({
-                    user_id: user.id,
-                    song_id: props.id,
-                });
-
-            if (error) {
-                console.error(error.message);
-                return;
-            }
-
-            setIsLiked(true);
+        } catch (e) {
+            console.error(e.message);
         }
     }
 
@@ -90,9 +96,9 @@ export default function Song(props) {
     return (
         <article id={props.id} className={styles.card} onClick={clickHandlerPreviewSong}>
             <div className={styles["card-top"]}>
-                <img 
-                    src={props.thumbnailImage} 
-                    alt={`${props.name} by ${props.artist}`} 
+                <img
+                    src={props.thumbnailImage}
+                    alt={`${props.name} by ${props.artist}`}
                     loading="lazy"
                 />
                 <span
@@ -103,9 +109,9 @@ export default function Song(props) {
                     {!isLiked ? <FaRegHeart /> : <FaHeart style={{ color: '#f36d6d' }} />}
                 </span>
                 <div className={styles["card-avatar"]}>
-                    <img 
-                        src={props.artistImage} 
-                        alt={props.artist} 
+                    <img
+                        src={props.artistImage}
+                        alt={props.artist}
                         loading="lazy"
                     />
                 </div>

@@ -2,7 +2,7 @@ import styles from './Navigation.module.css'
 import { CiSearch } from "react-icons/ci";
 import { NavLink } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoIosMusicalNotes } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa";
@@ -14,7 +14,6 @@ import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import AuthContext from '../context/AuthContext';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
 
 
 export default function Navigation({
@@ -33,48 +32,56 @@ export default function Navigation({
         console.log(value);
         setSearch(value);
 
-        if (favouriteSongsIds) {
-            console.log('favouriteSongsIds songs');
-            console.log(favouriteSongsIds);
-            const { data, error } = await supabase.from('songs')
-                .select()
-                .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
-                .in('id', favouriteSongsIds)
-                .order('id', { ascending: false });
+        try {
+            if (favouriteSongsIds) {
+                console.log('favouriteSongsIds songs');
+                console.log(favouriteSongsIds);
+                const { data, error } = await supabase.from('songs')
+                    .select()
+                    .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
+                    .in('id', favouriteSongsIds)
+                    .order('id', { ascending: false });
 
-            if (error) {
-                console.error(error.message);
-                return;
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                setSongs(data);
+            } else {
+                const { data, error } = await supabase.from('songs')
+                    .select()
+                    .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
+                    .order('id', { ascending: false });
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                setSongs(data);
             }
-
-            setSongs(data);
-        } else {
-            const { data, error } = await supabase.from('songs')
-                .select()
-                .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
-                .order('id', { ascending: false });
-
-            if (error) {
-                console.error(error.message);
-                return;
-            }
-
-            setSongs(data);
+        } catch (e) {
+            console.error(e.message);
         }
+
     }
 
     const logout = async () => {
-        const { error } = await supabase.auth.signOut();
+        try {
+            const { error } = await supabase.auth.signOut();
 
-        if (error) {
-            console.error(error.message);
-            return;
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            setUser({});
+            setMobileMenuOpen(false);
+            navigate('/');
+        } catch (e) {
+            console.error(e.message);
+            setUser({});
+            setMobileMenuOpen(false);
+            navigate('/');
         }
-
-        setUser({});
-        setMobileMenuOpen(false);
-        navigate('/');
-        console.log('Logged out');
     }
 
     const toggleMobileMenu = () => {

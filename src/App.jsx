@@ -18,19 +18,25 @@ function App() {
 
     useEffect(() => {
         const getUser = async () => {
-            const { data, error } = await supabase.auth.getUser();
+            try {
+                const { data, error } = await supabase.auth.getUser();
 
-            if (error || !data.user) {
-                console.log('User is not logged in.')
-                return;
+                console.log(data);
+                console.log(error);
+                if (error || !data.user) {
+                    throw new Error('User is not logged in.');
+                }
+
+                console.log(data.user.id);
+                console.log(data.user.email);
+                setUser({
+                    email: data.user.email,
+                    id: data.user.id
+                });
+            } catch (e) {
+                console.error(e.message);
             }
 
-            console.log(data.user.id);
-            console.log(data.user.email);
-            setUser({
-                email: data.user.email,
-                id: data.user.id
-            });
         }
 
         getUser();
@@ -38,9 +44,9 @@ function App() {
 
     return (
         <>
-            <AuthContext.Provider value={[ user, setUser ]}>
+            <AuthContext.Provider value={[user, setUser]}>
                 <Routes>
-                    <Route path="/" element={<Explore />} />
+                    <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
                     <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
                     <Route path="/preview-song/:id" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
                     <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
