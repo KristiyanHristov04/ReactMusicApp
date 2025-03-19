@@ -2,7 +2,7 @@ import Navigation from "../navigation/Navigation";
 import styles from './SignUp.module.css'
 import { supabase } from "../supabase";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import { MDBInput, MDBBtn, MDBContainer } from 'mdb-react-ui-kit';
 import { useFormik } from "formik";
@@ -12,6 +12,7 @@ export default function SignUp() {
 
     const [user, setUser] = useContext(AuthContext);
     const navigate = useNavigate();
+    const [error, setError] = useState(null);
 
     const SignupSchema = Yup.object().shape({
         email: Yup.string()
@@ -44,6 +45,7 @@ export default function SignUp() {
             navigate('/');
         } catch (e) {
             console.error(e.message);
+            setError(e.message);
         }
     }
 
@@ -64,6 +66,7 @@ export default function SignUp() {
                 <main className={styles["main"]}>
                     <div className={styles["form-container"]}>
                         <h1 className={styles["title"]}>Create Your <span>Account</span></h1>
+                        {error && <div className={styles["top-level-error"]}>{error}</div>}
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
                             <div className={styles["input-group"]}>
                                 <MDBInput

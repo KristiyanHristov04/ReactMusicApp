@@ -9,6 +9,7 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
 
+
 export default function Login() {
     const [user, setUser] = useContext(AuthContext);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,21 +67,13 @@ export default function Login() {
         onSubmit: submitHandler
     });
 
-    // if (isLoading) {
-    //     return (
-    //         <div className={styles.loadingContainer}>
-    //             <Spinner />
-    //         </div>
-    //     );
-    // }
-
     return (
         <>
             <Navigation showSearchBar={false} />
             <main className={styles["main"]}>
                 <div className={styles["form-container"]}>
                     <h1 className={styles["title"]}>Welcome <span>Back</span></h1>
-                    {error && <div className={styles["error"]}>{error}</div>}
+                    {error && <div className={styles["top-level-error"]}>{error}</div>}
                     <form onSubmit={formik.handleSubmit} className={styles["form"]}>
                         <div className={styles["input-group"]}>
                             <MDBInput

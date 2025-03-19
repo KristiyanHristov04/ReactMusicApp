@@ -7,25 +7,25 @@ import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../spinner/Spinner";
 export default function Explore() {
     const [songs, setSongs] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const getSongs = async () => {
             try {
-                setLoading(true);
+                setIsLoading(true);
                 const { data, error } = await supabase
                     .from('songs')
                     .select()
                     .order('id', { ascending: false });
 
                 if (error) {
-                    setLoading(false);
+                    setIsLoading(false);
                     throw new Error(error.message);
                 }
 
                 console.log(data);
                 setSongs(data);
-                setLoading(false);
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
             }
@@ -35,7 +35,7 @@ export default function Explore() {
         getSongs();
     }, []);
 
-    if (loading) {
+    if (isLoading) {
         return (
             <>
                 <Navigation showSearchBar={true} setSongs={setSongs} />

@@ -67,6 +67,13 @@
     transition: all 0.2s ease;
 }
 
+.top-level-error {
+    color: #ff4444;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    text-align: center;
+}
+
 .error {
     color: #ff4444;
     font-size: 0.8rem;

@@ -35,10 +35,7 @@ export default function GuestGuard({ children }) {
             } catch (error) {
                 console.error(error.message);
                 setAuthenticated(false);
-                setUser({
-                    email: null,
-                    id: null
-                });
+                setUser({});
             } finally {
                 setIsLoading(false);
             }
