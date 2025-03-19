@@ -48,10 +48,9 @@ export default function DeleteSong() {
                     lyrics: data[0].lyrics
                 });
 
-                if (data[0].file_name) {
-                    deleteFileNameRef.current = data[0].file_name;
-                    console.log(deleteFileNameRef.current);
-                }
+
+                deleteFileNameRef.current = data[0].file_name;
+                console.log(deleteFileNameRef.current);
 
                 setIsLoading(false);
             } catch (e) {
@@ -76,19 +75,16 @@ export default function DeleteSong() {
                 throw new Error(error.message);
             }
 
-            console.log('About to delete');
-            if (deleteFileNameRef.current) {
-                console.log('Deleting files');
-                const { error } = await supabase.storage
-                    .from('song-files')
-                    .remove([`song-audios/${deleteFileNameRef.current}`,
-                    `song-images/${deleteFileNameRef.current}`,
-                    `artist-images/${deleteFileNameRef.current}`
-                    ]);
 
-                if (error) {
-                    throw new Error(error.message);
-                }
+            const { error: filesDeleteError } = await supabase.storage
+                .from('song-files')
+                .remove([`song-audios/${deleteFileNameRef.current}`,
+                `song-images/${deleteFileNameRef.current}`,
+                `artist-images/${deleteFileNameRef.current}`
+                ]);
+
+            if (filesDeleteError) {
+                throw new Error(filesDeleteError.message);
             }
 
             navigate('/');

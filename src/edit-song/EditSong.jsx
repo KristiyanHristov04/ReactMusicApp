@@ -31,7 +31,7 @@ export default function EditSong() {
 
         try {
             const fileName = Date.now();
-            const songFileName = fileName;  
+            const songFileName = fileName;
             const songImageName = fileName;
             const artistImageName = fileName;
 
@@ -89,17 +89,15 @@ export default function EditSong() {
                 throw new Error(error.message);
             }
 
-            if (deleteFileNameRef.current) {
-                const { error } = await supabase.storage
-                    .from('song-files')
-                    .remove([`song-audios/${deleteFileNameRef.current}`,
-                    `song-images/${deleteFileNameRef.current}`,
-                    `artist-images/${deleteFileNameRef.current}`
-                    ]);
+            const { error: filesDeleteError } = await supabase.storage
+                .from('song-files')
+                .remove([`song-audios/${deleteFileNameRef.current}`,
+                `song-images/${deleteFileNameRef.current}`,
+                `artist-images/${deleteFileNameRef.current}`
+                ]);
 
-                if (error) {
-                    throw new Error(error.message);
-                }
+            if (filesDeleteError) {
+                throw new Error(error.message);
             }
 
             console.log("Song edited successfully!", data);
@@ -153,9 +151,7 @@ export default function EditSong() {
                     lyrics: data[0].lyrics
                 }));
 
-                if (data[0].file_name) {
-                    deleteFileNameRef.current = data[0].file_name;
-                }
+                deleteFileNameRef.current = data[0].file_name;
 
                 setIsLoading(false);
             } catch (e) {
