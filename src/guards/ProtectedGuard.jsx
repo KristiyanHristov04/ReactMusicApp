@@ -32,7 +32,7 @@ export default function ProtectedGuard({ children }) {
                 }
             } catch (e) {
                 console.error(e.message);
-                setIsAuthenticated(false);
+                setAuthenticated(false);
             } finally {
                 setIsLoading(false);
             }

@@ -29,10 +29,7 @@ export default function GuestGuard({ children }) {
                     });
                 } else {
                     setAuthenticated(false);
-                    setUser({
-                        email: null,
-                        id: null
-                    });
+                    setUser({});
                 }
             } catch (error) {
                 console.error(error.message);
