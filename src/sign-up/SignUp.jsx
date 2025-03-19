@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Navigation from "../navigation/Navigation";
 import styles from './SignUp.module.css'
 import { supabase } from "../supabase";
@@ -13,14 +12,6 @@ export default function SignUp() {
 
     const [user, setUser] = useContext(AuthContext);
     const navigate = useNavigate();
-
-    //Extract logic in Route Guard
-    // useEffect(() => {
-    //     console.log(user);
-    //     if (user.id) {
-    //         navigate('/');
-    //     }
-    // }, []);
 
     const SignupSchema = Yup.object().shape({
         email: Yup.string()

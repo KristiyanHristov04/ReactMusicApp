@@ -14,6 +14,7 @@ export default function GuestGuard({ children }) {
 
     useEffect(() => {
         async function checkAuth() {
+            console.log('GuestGuard useEffect');
             try {
                 const { data: { user: currentUser }, error } = await supabase.auth.getUser();
 
@@ -44,14 +45,10 @@ export default function GuestGuard({ children }) {
         }
 
         checkAuth();
-    }, []);
+    }, [location]);
 
     if (isLoading) {
-        return (
-            <div className={styles.loadingContainer}>
-                <Spinner />
-            </div>
-        );
+        return <main className={styles.loadingContainer}></main>
     }
     
     if (authenticated) {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Navigation from "../navigation/Navigation";
 import styles from './Login.module.css'
 import { supabase } from "../supabase";
@@ -7,38 +7,13 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import { MDBContainer, MDBInput, MDBBtn } from "mdb-react-ui-kit";
-import Spinner from "../spinner/Spinner";
+import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
 
 export default function Login() {
     const [user, setUser] = useContext(AuthContext);
-    const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        console.log('Login component mounted');
-        console.log('Current user:', user);
-        
-        const checkInitialAuth = async () => {
-            try {
-                const { data } = await supabase.auth.getUser();
-                console.log('Initial auth check:', data);
-                
-                if (data?.user) {
-                    console.log('User already logged in, redirecting...');
-                    navigate("/");
-                }
-            } catch (err) {
-                console.error('Initial auth check error:', err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        checkInitialAuth();
-    }, []);
 
     const SignupSchema = Yup.object().shape({
         email: Yup.string()
@@ -91,13 +66,13 @@ export default function Login() {
         onSubmit: submitHandler
     });
 
-    if (isLoading) {
-        return (
-            <div className={styles.loadingContainer}>
-                <Spinner />
-            </div>
-        );
-    }
+    // if (isLoading) {
+    //     return (
+    //         <div className={styles.loadingContainer}>
+    //             <Spinner />
+    //         </div>
+    //     );
+    // }
 
     return (
         <>

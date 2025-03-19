@@ -3,6 +3,7 @@ import AuthContext from "../context/AuthContext";
 import { useNavigate, Navigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
+import styles from './ProtectedGuard.module.css';
 
 export default function ProtectedGuard({ children }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -42,7 +43,7 @@ export default function ProtectedGuard({ children }) {
     }, [location]);
 
     if (isLoading) {
-        return null;
+        return <main className={styles.loadingContainer}></main>
     }
 
     if (!authenticated) {
