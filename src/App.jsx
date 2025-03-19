@@ -36,7 +36,6 @@ function App() {
             } catch (e) {
                 console.error(e.message);
             }
-
         }
 
         getUser();

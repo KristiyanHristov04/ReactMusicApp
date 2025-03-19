@@ -30,11 +30,11 @@ export default function ProtectedGuard({ children }) {
                         id: data.user.id
                     });
                 }
-
-
-                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
             }
         }
 
