@@ -22,7 +22,7 @@
 }
 
 .title span {
-    color: #1DB954;
+    color: #b91d4c;
 }
 
 .form {
@@ -52,7 +52,7 @@
 }
 
 .form button {
-    background-color: #1DB954;
+    background-color: #b91d4c;
     border: none;
     padding: 12px 24px;
     font-weight: bold;
@@ -63,7 +63,7 @@
 }
 
 .form button:hover {
-    background-color: #1ed760;
+    background-color: #b91d4c;
     transform: scale(1.02);
     transition: all 0.2s ease;
 }

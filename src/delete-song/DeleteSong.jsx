@@ -87,7 +87,7 @@ export default function DeleteSong() {
             <Navigation showSearchBar={false} />
             <main className={styles["main"]}>
                 <div className={styles["form-container"]}>
-                    <h1 className={styles["title"]}>Are you sure you want to <span>Delete</span>  this song?</h1>
+                    <h1 className={styles["title"]}><span>Delete</span> song</h1>
                     <form onSubmit={handleSubmit} className={styles["form"]}>
                         <div className={styles["input-group"]}>
                             <MDBInput
