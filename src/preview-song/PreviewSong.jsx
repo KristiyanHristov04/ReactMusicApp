@@ -73,8 +73,8 @@ export default function PreviewSong() {
                     </article>
                     {user?.id === song.user_id && (
                         <>
-                            <Link to={`/${song.id}/edit`}>Edit</Link>
-                            <Link to={`/${song.id}/delete`}>Delete</Link>
+                            <Link to={`/song/${song.id}/edit`}>Edit</Link>
+                            <Link to={`/song/${song.id}/delete`}>Delete</Link>
                         </>
                     )}
                 </section>

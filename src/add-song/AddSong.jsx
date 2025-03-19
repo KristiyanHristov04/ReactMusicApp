@@ -159,6 +159,7 @@ export default function AddSong() {
 
                             <div className={styles["input-group"]}>
                                 <MDBFile
+                                    accept="audio/*"
                                     label="Song"
                                     id="song"
                                     name="song"
@@ -173,6 +174,7 @@ export default function AddSong() {
 
                             <div className={styles["input-group"]}>
                                 <MDBFile
+                                    accept="image/*"
                                     label="Song Image"
                                     id="song-image"
                                     name="songImage"
@@ -187,6 +189,7 @@ export default function AddSong() {
 
                             <div className={styles["input-group"]}>
                                 <MDBFile
+                                    accept="image/*"
                                     label="Artist Image"
                                     id="artist-image"
                                     name="artistImage"

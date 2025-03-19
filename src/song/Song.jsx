@@ -86,7 +86,7 @@ export default function Song(props) {
 
     const clickHandlerPreviewSong = () => {
         const id = props.id;
-        navigate(`/preview-song/${id}`);
+        navigate(`/song/${id}/preview`);
     };
 
     if (isLoading) {
