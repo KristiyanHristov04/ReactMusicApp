@@ -24,16 +24,20 @@ export default function DeleteSong() {
                     .select()
                     .eq('id', params.id);
 
+                    console.log(data);
+
                 if (error) {
                     throw new Error(error.message);
                 }
 
                 if (data.length === 0) {
                     navigate('/');
+                    return;
                 }
 
                 if (data[0].user_id !== user.id) {
                     navigate('/');
+                    return;
                 }
 
                 setSong({
