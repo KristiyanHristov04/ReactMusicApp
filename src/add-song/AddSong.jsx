@@ -25,9 +25,10 @@ export default function AddSong() {
         console.log(values);
 
         try {
-            const songFileName = `${Date.now()}-${values.song.name}`;
-            const songImageName = `${Date.now()}-${values.songImage.name}`;
-            const artistImageName = `${Date.now()}-${values.artistImage.name}`;
+            const fileName = Date.now();
+            const songFileName = fileName;
+            const songImageName = fileName;
+            const artistImageName = fileName;
 
             console.log(songFileName, songImageName, artistImageName);
 
@@ -35,6 +36,8 @@ export default function AddSong() {
             const { data: songData, error: songError } = await supabase.storage
                 .from('song-files')
                 .upload(`song-audios/${songFileName}`, values.song);
+
+                console.log(songData);
 
             if (songError) {
                 throw new Error(songError.message);
@@ -45,6 +48,8 @@ export default function AddSong() {
                 .from('song-files')
                 .upload(`song-images/${songImageName}`, values.songImage);
 
+                console.log(songImageData);
+
             if (songImageError) {
                 throw new Error(songImageError.message);
             }
@@ -53,6 +58,8 @@ export default function AddSong() {
             const { data: artistImageData, error: artistImageError } = await supabase.storage
                 .from('song-files')
                 .upload(`artist-images/${artistImageName}`, values.artistImage);
+
+            console.log(artistImageData);
 
             if (artistImageError) {
                 throw new Error(artistImageError.message);
@@ -73,7 +80,8 @@ export default function AddSong() {
                         song_url: songUrl,
                         song_image_url: songImageUrl,
                         artist_image_url: artistImageUrl,
-                        user_id: user.id
+                        user_id: user.id,
+                        file_name: fileName
                     }
                 ]);
 

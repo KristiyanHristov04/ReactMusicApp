@@ -1,7 +1,7 @@
 import Navigation from "../navigation/Navigation";
 import styles from './EditSong.module.css';
 import { supabase } from "../supabase";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import AuthContext from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
@@ -14,6 +14,8 @@ export default function EditSong() {
     const navigate = useNavigate();
     const params = useParams();
     const [isLoading, setIsLoading] = useState(true);
+
+    const deleteFileNameRef = useRef('')
 
     const SignupSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),
@@ -28,9 +30,10 @@ export default function EditSong() {
         console.log(values);
 
         try {
-            const songFileName = `${Date.now()}-${values.song.name}`;
-            const songImageName = `${Date.now()}-${values.songImage.name}`;
-            const artistImageName = `${Date.now()}-${values.artistImage.name}`;
+            const fileName = Date.now();
+            const songFileName = fileName;  
+            const songImageName = fileName;
+            const artistImageName = fileName;
 
             console.log(songFileName, songImageName, artistImageName);
 
@@ -76,13 +79,27 @@ export default function EditSong() {
                         song_url: songUrl,
                         song_image_url: songImageUrl,
                         artist_image_url: artistImageUrl,
-                        user_id: user.id
+                        user_id: user.id,
+                        file_name: fileName
                     }
                 )
                 .eq('id', params.id);
 
             if (error) {
                 throw new Error(error.message);
+            }
+
+            if (deleteFileNameRef.current) {
+                const { error } = await supabase.storage
+                    .from('song-files')
+                    .remove([`song-audios/${deleteFileNameRef.current}`,
+                    `song-images/${deleteFileNameRef.current}`,
+                    `artist-images/${deleteFileNameRef.current}`
+                    ]);
+
+                if (error) {
+                    throw new Error(error.message);
+                }
             }
 
             console.log("Song edited successfully!", data);
@@ -135,6 +152,10 @@ export default function EditSong() {
                     artist: data[0].artist,
                     lyrics: data[0].lyrics
                 }));
+
+                if (data[0].file_name) {
+                    deleteFileNameRef.current = data[0].file_name;
+                }
 
                 setIsLoading(false);
             } catch (e) {

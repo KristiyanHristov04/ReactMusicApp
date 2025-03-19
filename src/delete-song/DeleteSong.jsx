@@ -1,7 +1,7 @@
 import Navigation from '../navigation/Navigation';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { MDBInput, MDBBtn, MDBTextArea } from "mdb-react-ui-kit";
 import AuthContext from '../context/AuthContext';
 import Spinner from '../spinner/Spinner';
@@ -17,6 +17,8 @@ export default function DeleteSong() {
     const [user, setUser] = useContext(AuthContext);
     const navigate = useNavigate();
 
+    const deleteFileNameRef = useRef('')
+
     useEffect(() => {
         async function getSongInformation() {
             try {
@@ -24,7 +26,7 @@ export default function DeleteSong() {
                     .select()
                     .eq('id', params.id);
 
-                    console.log(data);
+                console.log(data);
 
                 if (error) {
                     throw new Error(error.message);
@@ -45,6 +47,12 @@ export default function DeleteSong() {
                     artist: data[0].artist,
                     lyrics: data[0].lyrics
                 });
+
+                if (data[0].file_name) {
+                    deleteFileNameRef.current = data[0].file_name;
+                    console.log(deleteFileNameRef.current);
+                }
+
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
@@ -60,7 +68,7 @@ export default function DeleteSong() {
         console.log('Song deleted');
 
         try {
-            const { data, error } = await supabase.from('songs')
+            const { error } = await supabase.from('songs')
                 .delete()
                 .eq('id', params.id);
 
@@ -68,9 +76,24 @@ export default function DeleteSong() {
                 throw new Error(error.message);
             }
 
+            console.log('About to delete');
+            if (deleteFileNameRef.current) {
+                console.log('Deleting files');
+                const { error } = await supabase.storage
+                    .from('song-files')
+                    .remove([`song-audios/${deleteFileNameRef.current}`,
+                    `song-images/${deleteFileNameRef.current}`,
+                    `artist-images/${deleteFileNameRef.current}`
+                    ]);
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+            }
+
             navigate('/');
         } catch (e) {
-            console.error(e.message);   
+            console.error(e.message);
         }
 
     }

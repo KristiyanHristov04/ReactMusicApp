@@ -6,6 +6,7 @@ import Song from "../song/Song";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner/Spinner";
+import { MdOutlineLibraryMusic } from "react-icons/md";
 
 export default function Favourites() {
     const [songs, setSongs] = useState([]);
@@ -55,7 +56,7 @@ export default function Favourites() {
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            }   
+            }
         }
 
         getSongs();
@@ -80,15 +81,27 @@ export default function Favourites() {
                 setSongs={setSongs}
                 favouriteSongsIds={favouriteSongsIds}
             />
-            <main className={styles["main"]}>
-                {songs.map(song => <Song
-                    key={song.id}
-                    id={song.id}
-                    name={song.name}
-                    artist={song.artist}
-                    thumbnailImage={song.song_image_url}
-                    artistImage={song.artist_image_url}
-                />)}
+            <main className={styles.main}>
+                {songs.length > 0 ? songs.map(song => (
+                    <Song
+                        key={song.id}
+                        id={song.id}
+                        name={song.name}
+                        artist={song.artist}
+                        thumbnailImage={song.song_image_url}
+                        artistImage={song.artist_image_url}
+                    />
+                )) :
+                    (<div className={styles["no-songs-container"]}>
+                        <MdOutlineLibraryMusic />
+                        <h2>No songs found</h2>
+                        <p>
+                            {songs.length === 0
+                                ? "Start by adding your favorite songs or try a different search term."
+                                : "No songs match your search. Try a different search term."}
+                        </p>
+                    </div>
+                    )}
             </main>
         </>
 
