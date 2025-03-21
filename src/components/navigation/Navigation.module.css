@@ -38,13 +38,16 @@
     position: relative;
     width: 100%;
     max-width: 400px;
+    display: flex;
+    align-items: center;
 }
 
 .searchIcon {
     position: absolute;
-    top: 50%;
     left: 12px;
-    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    height: 100%;
     color: #777;
     font-size: 1.2rem;
 }
@@ -153,7 +156,7 @@
 }
 
 /* Mobile Styles */
-@media (max-width: 768px) {
+@media (max-width: 1150px) {
     .nav {
         position: fixed;
         top: 80px;
