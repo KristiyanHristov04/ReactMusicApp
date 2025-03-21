@@ -24,8 +24,8 @@
 .player-section {
     flex: 1;
     position: sticky;
-    top: 2rem;
-    background: rgba(40, 40, 40, 0.3);
+    top: 6rem;
+    background-color: #2828284d;
     border-radius: 12px;
     padding: 1.75rem;
     backdrop-filter: blur(10px);
@@ -34,7 +34,7 @@
 }
 
 .lyrics-section {
-    background: rgba(40, 40, 40, 0.3);
+    background-color: #2828284d;
     border-radius: 12px;
     padding: 1.75rem;
     backdrop-filter: blur(10px);
@@ -54,7 +54,7 @@
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     padding-top: 1.75rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid #ffffff1a;
 }
 
 .action-button {
@@ -77,16 +77,16 @@
 }
 
 .action-button:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background-color: #ffffff33;
     transform: translateY(-1px);
 }
 
 .action-button.delete {
-    background: rgba(244, 67, 54, 0.1);
+    background-color: #f4433633;
 }
 
 .action-button.delete:hover {
-    background: rgba(244, 67, 54, 0.2);
+    background-color: #f4433633;
 }
 
 .action-icon {

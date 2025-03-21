@@ -7,7 +7,6 @@ import SongPlayer from "./song-player/SongPlayer";
 import SongLyrics from "./song-lyrics/SongLyrics";
 import AuthContext from "../context/AuthContext";
 import Spinner from "../spinner/Spinner";
-import { RiDeleteBin7Line } from "react-icons/ri";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
 
