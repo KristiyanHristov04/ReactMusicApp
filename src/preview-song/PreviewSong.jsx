@@ -9,8 +9,7 @@ import AuthContext from "../context/AuthContext";
 import Spinner from "../spinner/Spinner";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
-import { IoIosArrowUp } from "react-icons/io";
-
+import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 
 
 
@@ -18,28 +17,8 @@ export default function PreviewSong() {
     const params = useParams();
     const [song, setSong] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [showScrollButton, setShowScrollButton] = useState(false);
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
-
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
-
-    useEffect(() => {
-        const handleScroll = () => {
-            setShowScrollButton(window.scrollY > 100);
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
 
     useEffect(() => {
         const getSong = async () => {
@@ -113,9 +92,7 @@ export default function PreviewSong() {
                     </section>
                 </div>
             </main>
-            {showScrollButton && (
-                <IoIosArrowUp onClick={scrollToTop} className={styles["scroll-to-top-icon"]} />
-            )}
+            <ScrollToTopButton />
         </>
     );
 }

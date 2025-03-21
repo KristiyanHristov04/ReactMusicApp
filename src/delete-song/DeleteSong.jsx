@@ -5,6 +5,7 @@ import { useContext, useEffect, useState, useRef } from "react";
 import { MDBInput, MDBBtn, MDBTextArea } from "mdb-react-ui-kit";
 import AuthContext from '../context/AuthContext';
 import Spinner from '../spinner/Spinner';
+import ScrollToTopButton from '../scroll-to-top-button/ScrollToTopButton';
 
 import styles from './DeleteSong.module.css';
 
@@ -149,6 +150,7 @@ export default function DeleteSong() {
                         <MDBBtn type="submit">Delete Song</MDBBtn>
                     </form>
                 </div>
+                <ScrollToTopButton />
             </main>
         </>
     );

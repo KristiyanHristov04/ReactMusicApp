@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
+import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 
 export default function AddSong() {
     const [user] = useContext(AuthContext);
@@ -215,6 +216,7 @@ export default function AddSong() {
                             </MDBBtn>
                         </form>
                     </div>
+                    <ScrollToTopButton />
                 </main>
             )}
         </>

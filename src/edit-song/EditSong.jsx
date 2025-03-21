@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 import Spinner from "../spinner/Spinner";
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
+import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 
 export default function EditSong() {
     const [user] = useContext(AuthContext);
@@ -276,6 +277,7 @@ export default function EditSong() {
                             </MDBBtn>
                         </form>
                     </div>
+                    <ScrollToTopButton />
                 </main>
             )}
         </>
