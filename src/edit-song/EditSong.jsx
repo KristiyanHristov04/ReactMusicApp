@@ -22,7 +22,7 @@ export default function EditSong() {
 
     useResetScroll();
 
-    const SignupSchema = Yup.object().shape({
+    const EditSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),
         artist: Yup.string().required('Please enter artist name.'),
         lyrics: Yup.string().required('Please enter song lyrics.'),
@@ -124,7 +124,7 @@ export default function EditSong() {
             songImage: null,
             artistImage: null
         },
-        validationSchema: SignupSchema,
+        validationSchema: EditSchema,
         onSubmit: submitHandler
     });
 

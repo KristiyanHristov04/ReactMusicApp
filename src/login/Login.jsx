@@ -16,7 +16,7 @@ export default function Login() {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    const SignupSchema = Yup.object().shape({
+    const LoginSchema = Yup.object().shape({
         email: Yup.string()
             .required('Please enter your email address.')
             .email('Please enter a valid email address.'),
@@ -63,7 +63,7 @@ export default function Login() {
             email: '',
             password: '',
         },
-        validationSchema: SignupSchema,
+        validationSchema: LoginSchema,
         onSubmit: submitHandler
     });
 

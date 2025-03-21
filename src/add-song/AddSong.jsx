@@ -16,7 +16,7 @@ export default function AddSong() {
 
     useResetScroll();
 
-    const SignupSchema = Yup.object().shape({
+    const CreateSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),
         artist: Yup.string().required('Please enter artist name.'),
         lyrics: Yup.string().required('Please enter song lyrics.'),
@@ -112,7 +112,7 @@ export default function AddSong() {
             songImage: null,
             artistImage: null
         },
-        validationSchema: SignupSchema,
+        validationSchema: CreateSchema,
         onSubmit: submitHandler
     });
 
