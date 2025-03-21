@@ -1,9 +1,9 @@
 import Navigation from "../navigation/Navigation";
 import styles from './Favourites.module.css';
 import { useState, useEffect, useContext } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import Song from "../song/Song";
-import AuthContext from "../context/AuthContext";
+import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner/Spinner";
 import { MdOutlineLibraryMusic } from "react-icons/md";

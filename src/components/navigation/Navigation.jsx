@@ -1,7 +1,7 @@
 import styles from './Navigation.module.css'
 import { CiSearch } from "react-icons/ci";
 import { NavLink } from 'react-router-dom';
-import { supabase } from '../supabase';
+import { supabase } from '../../supabase';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoIosMusicalNotes } from "react-icons/io";
@@ -12,7 +12,7 @@ import { RiLoginBoxLine } from "react-icons/ri";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../../context/AuthContext';
 import { useContext } from 'react';
 
 

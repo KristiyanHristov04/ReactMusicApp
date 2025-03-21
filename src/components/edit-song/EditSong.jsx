@@ -1,15 +1,15 @@
 import Navigation from "../navigation/Navigation";
 import styles from './EditSong.module.css';
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import { useContext, useEffect, useState, useRef } from "react";
-import AuthContext from "../context/AuthContext";
+import AuthContext from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
-import Spinner from "../spinner/Spinner";
+import Spinner from "../../components/spinner/Spinner";
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
-import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
-import { useResetScroll } from "../hooks/useResetScroll";
+import ScrollToTopButton from "../../components/scroll-to-top-button/ScrollToTopButton";
+import { useResetScroll } from "../../hooks/useResetScroll";
 
 export default function EditSong() {
     const [user] = useContext(AuthContext);

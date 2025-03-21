@@ -1,10 +1,10 @@
 import Navigation from "../navigation/Navigation";
-import Song from "../song/Song";
+import Song from "../../components/song/Song";
 import styles from './Explore.module.css'
 import { useEffect, useState } from "react";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
-import Spinner from "../spinner/Spinner";
+import Spinner from "../../components/spinner/Spinner";
 export default function Explore() {
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);

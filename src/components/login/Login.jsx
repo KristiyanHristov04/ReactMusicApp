@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Navigation from "../navigation/Navigation";
 import styles from './Login.module.css'
-import { supabase } from "../supabase";
-import AuthContext from "../context/AuthContext";
+import { supabase } from "../../supabase";
+import AuthContext from "../../context/AuthContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";

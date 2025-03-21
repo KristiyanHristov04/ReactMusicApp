@@ -1,9 +1,8 @@
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
-import { useNavigate, Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
-import Spinner from "../spinner/Spinner";
 import styles from './GuestGuard.module.css';
 
 export default function GuestGuard({ children }) {

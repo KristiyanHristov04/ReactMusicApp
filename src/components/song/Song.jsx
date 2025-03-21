@@ -3,8 +3,8 @@ import styles from './Song.module.css';
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import AuthContext from '../context/AuthContext';
-import { supabase } from '../supabase';
+import AuthContext from '../../context/AuthContext';
+import { supabase } from '../../supabase';
 
 export default function Song(props) {
     const [isLiked, setIsLiked] = useState(false);

@@ -2,8 +2,8 @@ import styles from './SongPlayer.module.css';
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useState, useEffect, useContext } from 'react';
-import AuthContext from '../../context/AuthContext';
-import { supabase } from '../../supabase';
+import AuthContext from '../../../context/AuthContext';
+import { supabase } from '../../../supabase';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
 export default function SongPlayer(props) {

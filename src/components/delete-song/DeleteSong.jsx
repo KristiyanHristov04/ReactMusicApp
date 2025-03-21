@@ -1,18 +1,16 @@
 import Navigation from '../navigation/Navigation';
 import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '../supabase';
+import { supabase } from '../../supabase';
 import { useContext, useEffect, useState, useRef } from "react";
 import { MDBInput, MDBBtn, MDBTextArea } from "mdb-react-ui-kit";
-import AuthContext from '../context/AuthContext';
-import Spinner from '../spinner/Spinner';
-import ScrollToTopButton from '../scroll-to-top-button/ScrollToTopButton';
-import { useResetScroll } from '../hooks/useResetScroll';
+import AuthContext from '../../context/AuthContext';
+import Spinner from '../../components/spinner/Spinner';
+import ScrollToTopButton from '../../components/scroll-to-top-button/ScrollToTopButton';
+import { useResetScroll } from '../../hooks/useResetScroll';
 
 import styles from './DeleteSong.module.css';
 
 export default function DeleteSong() {
-
-    // const [user] = useContext(AuthContext);
     const params = useParams();
     const [song, setSong] = useState();
     const [isLoading, setIsLoading] = useState(true);

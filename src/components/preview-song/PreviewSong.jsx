@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import Navigation from "../navigation/Navigation";
 import { Link, NavLink, useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import styles from './PreviewSong.module.css'
 import SongPlayer from "./song-player/SongPlayer";
 import SongLyrics from "./song-lyrics/SongLyrics";
-import AuthContext from "../context/AuthContext";
+import AuthContext from "../../context/AuthContext";
 import Spinner from "../spinner/Spinner";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";

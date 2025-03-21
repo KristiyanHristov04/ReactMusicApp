@@ -1,9 +1,9 @@
 import Navigation from "../navigation/Navigation";
 import styles from './SignUp.module.css'
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
-import AuthContext from "../context/AuthContext";
+import AuthContext from "../../context/AuthContext";
 import { MDBInput, MDBBtn, MDBContainer } from 'mdb-react-ui-kit';
 import { useFormik } from "formik";
 import * as Yup from 'yup';
