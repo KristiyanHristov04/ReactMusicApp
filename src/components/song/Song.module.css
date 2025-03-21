@@ -53,6 +53,29 @@
     transform: scale(1.05);
 }
 
+@keyframes borderWave {
+    0% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 3px solid #1DB954;
+    }
+    25% {
+        box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+        border: 3px solid #4ae68d;
+    }
+    50% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 3px solid #1DB954;
+    }
+    75% {
+        box-shadow: 0 0 15px rgba(29, 185, 84, 0.4);
+        border: 3px solid #4ae68d;
+    }
+    100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        border: 3px solid #1DB954;
+    }
+}
+
 .card-top .card-avatar {
     width: 120px;
     height: 120px;
@@ -65,11 +88,10 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     border: 3px solid #1DB954;
     overflow: hidden;
-    transition: all 0.3s;
 }
 
 .card:hover .card-avatar {
-    transform: translate(-50%, -50%) scale(1.1);
+    animation: borderWave 2s infinite ease-in-out;
 }
 
 .card-top .card-avatar img {
