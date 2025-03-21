@@ -64,12 +64,8 @@
     background: #1DB954;
     border-radius: 50%;
     cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s;
-}
-
-.progressBar:hover::-webkit-slider-thumb {
     opacity: 1;
+    transition: all 0.2s;
 }
 
 .timeDisplay {
@@ -125,12 +121,8 @@
     background: #fff;
     border-radius: 50%;
     cursor: pointer;
-    opacity: 0;
-    transition: all 0.2s;
-}
-
-.volumeSlider:hover::-webkit-slider-thumb {
     opacity: 1;
+    transition: all 0.2s;
 }
 
 @media (max-width: 768px) {
@@ -139,15 +131,7 @@
     }
 }
 
-@media (max-width: 480px) {
-    .player {
-        width: 100%;
-    }
-    
-    .volumeContainer {
-        display: none;
-    }
-    
+@media (max-width: 480px) {    
     .mainControls {
         gap: 8px;
     }

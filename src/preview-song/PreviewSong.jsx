@@ -7,6 +7,11 @@ import SongPlayer from "./song-player/SongPlayer";
 import SongLyrics from "./song-lyrics/SongLyrics";
 import AuthContext from "../context/AuthContext";
 import Spinner from "../spinner/Spinner";
+import { RiDeleteBin7Line } from "react-icons/ri";
+import { MdDeleteOutline } from "react-icons/md";
+import { TbEdit } from "react-icons/tb";
+
+
 
 export default function PreviewSong() {
     const params = useParams();
@@ -57,27 +62,35 @@ export default function PreviewSong() {
         <>
             <Navigation />
             <main className={styles["main"]}>
-                <section className={styles["section"]}>
-                    <article>
-                        <SongPlayer
-                            id={song.id}
-                            name={song.name}
-                            artist={song.artist}
-                            thumbnailImage={song.song_image_url}
-                            artistImage={song.artist_image_url}
-                            songUrl={song.song_url}
-                        />
-                    </article>
-                    <article>
-                        <SongLyrics lyrics={song.lyrics} />
-                    </article>
-                    {user?.id === song.user_id && (
-                        <>
-                            <Link to={`/song/${song.id}/edit`}>Edit</Link>
-                            <Link to={`/song/${song.id}/delete`}>Delete</Link>
-                        </>
-                    )}
-                </section>
+                <div className={styles["content-wrapper"]}>
+                    <section className={styles["song-section"]}>
+                        <div className={styles["player-section"]}>
+                            <SongPlayer
+                                id={song.id}
+                                name={song.name}
+                                artist={song.artist}
+                                thumbnailImage={song.song_image_url}
+                                artistImage={song.artist_image_url}
+                                songUrl={song.song_url}
+                            />
+                            {user?.id === song.user_id && (
+                                <div className={styles["song-actions"]}>
+                                    <Link to={`/song/${song.id}/edit`} className={styles["action-button"]}>
+                                        <TbEdit className={styles["action-icon"]} />
+                                        <span>Edit</span>
+                                    </Link>
+                                    <Link to={`/song/${song.id}/delete`} className={`${styles["action-button"]} ${styles["delete"]}`}>
+                                        <MdDeleteOutline className={styles["action-icon"]} />
+                                        <span>Delete</span>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                        <div className={styles["lyrics-section"]}>
+                            <SongLyrics lyrics={song.lyrics} />
+                        </div>
+                    </section>
+                </div>
             </main>
         </>
     );

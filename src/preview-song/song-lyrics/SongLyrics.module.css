@@ -1,9 +1,9 @@
 .lyrics-container {
-    width: 600px;
-    height: 500px;
+    width: 100%;
+    height: 100%;
     background-color: rgb(89, 89, 89);
     border-radius: 10px;
-    overflow-y: scroll;
+    overflow-y: hidden;
 }
 
 .lyrics-container pre {
