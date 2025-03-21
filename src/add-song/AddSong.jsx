@@ -1,17 +1,20 @@
 import Navigation from "../navigation/Navigation";
 import styles from './AddSong.module.css';
 import { supabase } from "../supabase";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
+import { useResetScroll } from "../hooks/useResetScroll";
 
 export default function AddSong() {
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
+
+    useResetScroll();
 
     const SignupSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),

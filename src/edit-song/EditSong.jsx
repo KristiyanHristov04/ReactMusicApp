@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import Spinner from "../spinner/Spinner";
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
+import { useResetScroll } from "../hooks/useResetScroll";
 
 export default function EditSong() {
     const [user] = useContext(AuthContext);
@@ -16,7 +17,10 @@ export default function EditSong() {
     const params = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
-    const deleteFileNameRef = useRef('')
+    
+    const deleteFileNameRef = useRef('');
+
+    useResetScroll();
 
     const SignupSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),

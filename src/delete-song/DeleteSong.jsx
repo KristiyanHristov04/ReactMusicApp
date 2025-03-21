@@ -6,6 +6,7 @@ import { MDBInput, MDBBtn, MDBTextArea } from "mdb-react-ui-kit";
 import AuthContext from '../context/AuthContext';
 import Spinner from '../spinner/Spinner';
 import ScrollToTopButton from '../scroll-to-top-button/ScrollToTopButton';
+import { useResetScroll } from '../hooks/useResetScroll';
 
 import styles from './DeleteSong.module.css';
 
@@ -18,7 +19,10 @@ export default function DeleteSong() {
     const [user, setUser] = useContext(AuthContext);
     const navigate = useNavigate();
 
-    const deleteFileNameRef = useRef('')
+    
+    const deleteFileNameRef = useRef('');
+    
+    useResetScroll();
 
     useEffect(() => {
         async function getSongInformation() {
