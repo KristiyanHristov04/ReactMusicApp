@@ -69,11 +69,11 @@ export default function PreviewSong() {
                     <section className={styles["song-section"]}>
                         <div className={styles["player-section"]}>
                             <SongPlayer
-                                id={song.id}
-                                name={song.name}
-                                artist={song.artist}
-                                thumbnailImage={song.song_image_url}
-                                artistImage={song.artist_image_url}
+                                songId={song.id}
+                                songName={song.name}
+                                songArtist={song.artist}
+                                songThumbnailImage={song.song_image_url}
+                                songArtistImage={song.artist_image_url}
                                 songUrl={song.song_url}
                             />
                             {user?.id === song.user_id && (

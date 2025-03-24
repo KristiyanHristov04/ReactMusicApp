@@ -2,13 +2,18 @@ import { useState, useRef, useEffect } from 'react';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { IoMdVolumeHigh, IoMdVolumeLow, IoMdVolumeOff } from 'react-icons/io';
 import styles from './CustomAudioPlayer.module.css';
+import { supabase } from '../../../supabase';
 
-export default function CustomAudioPlayer({ songUrl }) {
+export default function CustomAudioPlayer({ 
+    songId,
+    songUrl 
+}) {
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const audioRef = useRef(null);
+    const [isFirstListening, setIsFirstListening] = useState(true);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -30,10 +35,41 @@ export default function CustomAudioPlayer({ songUrl }) {
         if (isPlaying) {
             audioRef.current.pause();
         } else {
+            if (isFirstListening) {
+                setIsFirstListening(false);
+                updateTotalListenings();
+            }
             audioRef.current.play();
         }
         setIsPlaying(!isPlaying);
     };
+
+    const updateTotalListenings = async () => {
+
+        try {   
+            const { data, error: songError } = await supabase
+            .from('songs')
+            .select('total_listenings')
+            .eq('id', songId)
+            .single();
+
+            if (songError) {
+                throw new Error(songError.message);
+            }
+
+            const { error: updateError } = await supabase
+            .from('songs')
+            .update({total_listenings: data.total_listenings + 1})
+            .eq('id', songId);
+
+            if (updateError) {
+                throw new Error(updateError.message);
+            }
+
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
 
     const handleProgressChange = (e) => {
         const time = e.target.value;

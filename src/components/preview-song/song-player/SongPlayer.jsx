@@ -6,7 +6,14 @@ import AuthContext from '../../../context/AuthContext';
 import { supabase } from '../../../supabase';
 import CustomAudioPlayer from './CustomAudioPlayer';
 
-export default function SongPlayer(props) {
+export default function SongPlayer({
+    songId,
+    songName,
+    songArtist,
+    songThumbnailImage,
+    songArtistImage,
+    songUrl
+}) {
 
     const [user] = useContext(AuthContext);
     const [isLiked, setIsLiked] = useState(false);
@@ -20,7 +27,7 @@ export default function SongPlayer(props) {
                         .from('users_favourite_songs')
                         .select()
                         .eq('user_id', user.id)
-                        .eq('song_id', props.id);
+                        .eq('song_id', songId);
     
                     if (error) {
                         throw new Error(error.message);
@@ -55,7 +62,7 @@ export default function SongPlayer(props) {
                     .from('users_favourite_songs')
                     .delete()
                     .eq('user_id', user.id)
-                    .eq('song_id', props.id);
+                    .eq('song_id', songId);
     
                 console.log(response);
                 setIsLiked(false);
@@ -64,7 +71,7 @@ export default function SongPlayer(props) {
                     .from('users_favourite_songs')
                     .insert({
                         user_id: user.id,
-                        song_id: props.id,
+                        song_id: songId,
                     });
     
                 if (error) {
@@ -85,22 +92,22 @@ export default function SongPlayer(props) {
                 <>
                     <div className={styles["card"]}>
                         <div className={styles["card-top"]}>
-                            <img src={props.thumbnailImage} alt='thumbnail' />
+                            <img src={songThumbnailImage} alt='thumbnail' />
                             <span
                                 onClick={clickHandlerAddToFavourite}
                                 className={styles["favourite-icon"]}>
                                 {!isLiked ? <FaRegHeart /> : <FaHeart style={{ color: '#f36d6d' }} />}
                             </span>
                             <div className={styles["card-avatar"]}>
-                                <img src={props.artistImage} alt='artist' />
+                                <img src={songArtistImage} alt='artist' />
                             </div>
                         </div>
                         <div className={styles["card-bottom"]}>
                             <div className={styles["song-information"]}>
-                                <p>{props.name}</p>
-                                <span>{props.artist}</span>
+                                <p>{songName}</p>
+                                <span>{songArtist}</span>
                             </div>
-                            <CustomAudioPlayer songUrl={props.songUrl} />
+                            <CustomAudioPlayer songId={songId} songUrl={songUrl} />
                         </div>
                     </div>
                 </>
