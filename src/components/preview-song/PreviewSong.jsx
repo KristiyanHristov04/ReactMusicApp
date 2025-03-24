@@ -10,6 +10,7 @@ import Spinner from "../spinner/Spinner";
 import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
+import { useResetScroll } from "../../hooks/useResetScroll";
 
 
 
@@ -19,6 +20,8 @@ export default function PreviewSong() {
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
+
+    useResetScroll();
 
     useEffect(() => {
         const getSong = async () => {

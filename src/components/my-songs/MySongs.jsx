@@ -68,9 +68,7 @@ export default function MySongs() {
                         <MdOutlineLibraryMusic />
                         <h2>No songs found</h2>
                         <p>
-                            {songs.length === 0
-                                ? "You haven't created any songs yet. Start by adding your own songs!"
-                                : "No songs match your search. Try a different search term."}
+                            Create a song or try a different search term.
                         </p>
                     </div>
                     )}

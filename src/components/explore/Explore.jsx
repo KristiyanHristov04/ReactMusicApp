@@ -64,9 +64,7 @@ export default function Explore() {
                         <MdOutlineLibraryMusic />
                         <h2>No songs found</h2>
                         <p>
-                            {songs.length === 0
-                                ? "Start by adding your favorite songs or try a different search term."
-                                : "No songs match your search. Try a different search term."}
+                            Create a song or try a different search term.
                         </p>
                     </div>
                     )}
