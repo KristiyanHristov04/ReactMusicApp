@@ -19,7 +19,8 @@ import { useContext } from 'react';
 export default function Navigation({
     showSearchBar,
     setSongs,
-    favouriteSongsIds
+    favouriteSongsIds,
+    isMine
 }) {
 
     const [search, setSearch] = useState('');
@@ -40,6 +41,19 @@ export default function Navigation({
                     .select()
                     .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
                     .in('id', favouriteSongsIds)
+                    .order('id', { ascending: false });
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                setSongs(data);
+            } else if (isMine) {
+                console.log('isMine songs');
+                const { data, error } = await supabase.from('songs')
+                    .select()
+                    .eq('user_id', user.id)
+                    .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
                     .order('id', { ascending: false });
 
                 if (error) {
@@ -139,6 +153,15 @@ export default function Navigation({
                     >
                         <FaRegHeart />
                         <span>Favourites</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/my-songs"
+                        className={({ isActive }) => isActive ? styles.activeLink : ''}
+                        onClick={handleNavLinkClick}
+                    >
+                        <IoIosMusicalNotes />
+                        <span>My Songs</span>
                     </NavLink>
 
                     {!user.id ? (

@@ -13,6 +13,7 @@ import EditSong from "./components/edit-song/EditSong"
 import ProtectedGuard from "./guards/ProtectedGuard"
 import GuestGuard from "./guards/GuestGuard"
 import NotFound from "./components/not-found/NotFound"
+import MySongs from "./components/my-songs/MySongs"
 
 function App() {
     const [user, setUser] = useState({
@@ -52,6 +53,7 @@ function App() {
                 <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
                 <Route path="/song/:id/preview" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
                 <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
+                <Route path="/my-songs" element={<ProtectedGuard><MySongs /></ProtectedGuard>} />
                 <Route path="/signup" element={<GuestGuard><SignUp /></GuestGuard>} />
                 <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
                 <Route path="/song/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
