@@ -36,7 +36,7 @@ export default function PreviewSong() {
                 }
 
                 if (data.length === 0) {
-                    navigate('/');
+                    navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                 }
 
                 setSong(data[0]);

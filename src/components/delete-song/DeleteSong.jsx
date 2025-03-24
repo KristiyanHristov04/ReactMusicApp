@@ -36,12 +36,12 @@ export default function DeleteSong() {
                 }
 
                 if (data.length === 0) {
-                    navigate('/');
+                    navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
                 if (data[0].user_id !== user.id) {
-                    navigate('/');
+                    navigate('/', { state: { message: "You do not have permission to this song!", variant: "warning" } });
                     return;
                 }
 
@@ -90,7 +90,7 @@ export default function DeleteSong() {
                 throw new Error(filesDeleteError.message);
             }
 
-            navigate('/');
+            navigate('/', { state: { message: "Song deleted successfully!", variant: "success" } });
         } catch (e) {
             console.error(e.message);
         }

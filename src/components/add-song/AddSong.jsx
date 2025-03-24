@@ -95,7 +95,7 @@ export default function AddSong() {
 
             console.log("Song added successfully!", data);
             actions.resetForm();
-            navigate('/');
+            navigate('/', { state: { message: "Song added successfully!", variant: "success" } });
         } catch (error) {
             console.error(error.message);
         } finally {

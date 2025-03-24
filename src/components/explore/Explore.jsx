@@ -5,9 +5,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../../components/spinner/Spinner";
+import Alert from "../alert/Alert";
+import { useLocation } from "react-router-dom";
+
 export default function Explore() {
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
 
     useEffect(() => {
         const getSongs = async () => {
@@ -48,6 +52,13 @@ export default function Explore() {
 
     return (
         <>
+            {
+                location.state?.message && <Alert
+                    variant={location.state?.variant}
+                    message={location.state?.message}
+                />
+            }
+
             <Navigation showSearchBar={true} setSongs={setSongs} />
             <main className={styles.main}>
                 {songs.length > 0 ? songs.map(song => (

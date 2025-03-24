@@ -8,13 +8,15 @@ import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import { MDBInput, MDBBtn } from "mdb-react-ui-kit";
-
+import Alert from "../alert/Alert";
+import { useLocation } from "react-router-dom";
 
 export default function Login() {
     const [user, setUser] = useContext(AuthContext);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation(); 
 
     const LoginSchema = Yup.object().shape({
         email: Yup.string()
@@ -29,7 +31,7 @@ export default function Login() {
         console.log('Attempting login...');
         setIsSubmitting(true);
         setError(null);
-        
+
         try {
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: values.email,
@@ -48,7 +50,7 @@ export default function Login() {
                     email: data.user.email,
                     id: data.user.id
                 });
-                navigate('/');
+                navigate('/', { state: { message: "You logged in successfully!", variant: "success" } });
             }
         } catch (e) {
             console.error('Login error:', e);
@@ -69,6 +71,12 @@ export default function Login() {
 
     return (
         <>
+            {
+                location.state?.message && <Alert
+                    variant={location.state?.variant}
+                    message={location.state?.message}
+                />
+            }
             <Navigation showSearchBar={false} />
             <main className={styles["main"]}>
                 <div className={styles["form-container"]}>

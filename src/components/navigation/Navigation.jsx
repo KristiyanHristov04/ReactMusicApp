@@ -90,12 +90,12 @@ export default function Navigation({
 
             setUser({});
             setMobileMenuOpen(false);
-            navigate('/');
+            navigate('/login', { state: { message: "You logged out successfully!", variant: "success" } });
         } catch (e) {
             console.error(e.message);
             setUser({});
             setMobileMenuOpen(false);
-            navigate('/');
+            navigate('/login', { state: { message: "You logged out successfully!", variant: "success" } });
         }
     }
 

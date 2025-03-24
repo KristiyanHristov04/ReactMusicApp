@@ -42,7 +42,7 @@ export default function SignUp() {
                 email: data.user.email,
                 id: data.user.id
             });
-            navigate('/');
+            navigate('/', { state: { message: "You signed up successfully!", variant: "success" } });
         } catch (e) {
             console.error(e.message);
             setError(e.message);

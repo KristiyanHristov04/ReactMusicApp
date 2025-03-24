@@ -107,7 +107,7 @@ export default function EditSong() {
 
             console.log("Song edited successfully!", data);
             actions.resetForm();
-            navigate('/');
+            navigate('/', { state: { message: "Song edited successfully!", variant: "success" } });
         } catch (error) {
             console.error(error.message);
         } finally {
@@ -140,12 +140,12 @@ export default function EditSong() {
                 }
 
                 if (data.length === 0) {
-                    navigate('/');
+                    navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
                 if (data[0].user_id !== user.id) {
-                    navigate('/');
+                    navigate('/', { state: { message: "You do not have permission to this song!", variant: "warning" } });
                     return;
                 }
 
