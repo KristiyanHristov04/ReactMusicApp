@@ -11,6 +11,9 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
+import { FaPlay } from "react-icons/fa";
+import { FaHeadphones } from "react-icons/fa6";
+
 
 
 
@@ -19,6 +22,7 @@ export default function PreviewSong() {
     const [song, setSong] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
+    const [totalListenings, setTotalListenings] = useState(0);
     const navigate = useNavigate();
 
     useResetScroll();
@@ -39,6 +43,7 @@ export default function PreviewSong() {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                 }
 
+                setTotalListenings(data[0].total_listenings);
                 setSong(data[0]);
                 setIsLoading(false);
             } catch (e) {
@@ -76,6 +81,10 @@ export default function PreviewSong() {
                                 songArtistImage={song.artist_image_url}
                                 songUrl={song.song_url}
                             />
+                            <div className={`${styles["total-listenings"]}`}>
+                                <FaHeadphones />
+                                <p>Total Listenings: {totalListenings}</p>
+                            </div>
                             {user?.id === song.user_id && (
                                 <div className={styles["song-actions"]}>
                                     <Link to={`/song/${song.id}/edit`} className={styles["action-button"]}>

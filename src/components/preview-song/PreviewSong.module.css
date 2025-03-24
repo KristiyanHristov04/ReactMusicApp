@@ -33,6 +33,25 @@
     height: fit-content;
 }
 
+.total-listenings {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 1rem 0;
+    color: #b3b3b3;
+}
+
+.total-listenings svg {
+    color: #1DB954;
+}
+
+.total-listenings p {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
 .lyrics-section {
     background-color: #2828284d;
     border-radius: 12px;
@@ -49,7 +68,7 @@
 }
 
 .song-actions {
-    margin-top: 1.75rem;
+    /* margin-top: 1.75rem; */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
