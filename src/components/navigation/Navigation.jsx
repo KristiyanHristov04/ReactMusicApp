@@ -10,6 +10,8 @@ import { MdOutlineLibraryMusic } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { HiOutlineUserAdd } from "react-icons/hi";
+import { IoAlbumsOutline } from "react-icons/io5";
+
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import AuthContext from '../../context/AuthContext';
@@ -49,7 +51,6 @@ export default function Navigation({
 
                 setSongs(data);
             } else if (isMine) {
-                console.log('isMine songs');
                 const { data, error } = await supabase.from('songs')
                     .select()
                     .eq('user_id', user.id)
@@ -160,7 +161,7 @@ export default function Navigation({
                         className={({ isActive }) => isActive ? styles.activeLink : ''}
                         onClick={handleNavLinkClick}
                     >
-                        <IoIosMusicalNotes />
+                        <IoAlbumsOutline />
                         <span>My Songs</span>
                     </NavLink>
 
