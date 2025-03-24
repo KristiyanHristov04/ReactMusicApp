@@ -81,9 +81,9 @@ export default function PreviewSong() {
                                 songArtistImage={song.artist_image_url}
                                 songUrl={song.song_url}
                             />
-                            <div className={`${styles["total-listenings"]}`}>
-                                <FaHeadphones />
-                                <p>Total Listenings: {totalListenings}</p>
+                            <div className={`${styles["total-listenings"]} ${user?.id === song.user_id ? styles["with-actions"] : styles["without-actions"]}`}>
+                                <FaHeadphones size={20} />
+                                <p>Total Listenings: {totalListenings.toLocaleString()}</p>
                             </div>
                             {user?.id === song.user_id && (
                                 <div className={styles["song-actions"]}>
