@@ -13,9 +13,7 @@ import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
 import { FaPlay } from "react-icons/fa";
 import { FaHeadphones } from "react-icons/fa6";
-
-
-
+import { FaTrophy } from "react-icons/fa6";
 
 export default function PreviewSong() {
     const params = useParams();
@@ -23,6 +21,8 @@ export default function PreviewSong() {
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
     const [totalListenings, setTotalListenings] = useState(0);
+    const [isTop3, setIsTop3] = useState(false);
+    const [rank, setRank] = useState(null);
     const navigate = useNavigate();
 
     useResetScroll();
@@ -30,26 +30,41 @@ export default function PreviewSong() {
     useEffect(() => {
         const getSong = async () => {
             try {
-                const { data, error } = await supabase
+                const { data: songData, error: songError } = await supabase
                     .from('songs')
                     .select()
                     .eq('id', params.id);
 
-                if (error) {
-                    throw new Error(error.message);
+                if (songError) {
+                    throw new Error(songError.message);
                 }
 
-                if (data.length === 0) {
+                if (songData.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                 }
 
-                setTotalListenings(data[0].total_listenings);
-                setSong(data[0]);
+                const { data: topSongs, error: topError } = await supabase
+                    .from('songs')
+                    .select('id, total_listenings')
+                    .order('total_listenings', { ascending: false })
+                    .limit(3);
+
+                if (topError) {
+                    throw new Error(topError.message);
+                }
+
+                const songRank = topSongs.findIndex(s => s.id === songData[0].id) + 1;
+                if (songRank > 0) {
+                    setIsTop3(true);
+                    setRank(songRank);
+                }
+
+                setTotalListenings(songData[0].total_listenings);
+                setSong(songData[0]);
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
             }
-
         }
 
         getSong();
@@ -81,7 +96,16 @@ export default function PreviewSong() {
                                 songArtistImage={song.artist_image_url}
                                 songUrl={song.song_url}
                             />
-                            <div className={`${styles["total-listenings"]} ${user?.id === song.user_id ? styles["with-actions"] : styles["without-actions"]}`}>
+                            <div className={`${styles["total-listenings"]} ${user?.id === song.user_id ? styles["with-actions"] : styles["without-actions"]} ${isTop3 ? styles["top-3"] : ""}`}>
+                                {isTop3 && (
+                                    <div className={styles["trophy-container"]}>
+                                        <FaTrophy className={styles["trophy-icon"]} />
+                                        <span className={styles["rank"]}>#{rank}</span>
+                                        <div className={styles["tooltip"]}>
+                                            #{rank} Most Listened Song!
+                                        </div>
+                                    </div>
+                                )}
                                 <FaHeadphones size={20} />
                                 <p>Total Listenings: {totalListenings.toLocaleString()}</p>
                             </div>
