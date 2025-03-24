@@ -15,17 +15,18 @@ export default function GuestGuard({ children }) {
         async function checkAuth() {
             console.log('GuestGuard useEffect');
             try {
-                const { data: { user: currentUser }, error } = await supabase.auth.getUser();
+                //const { data: { user: currentUser }, error } = await supabase.auth.getUser();
+                const { data, error } = await supabase.auth.getSession();
 
                 if (error) {
                     throw new Error(error.message);
                 }
 
-                if (currentUser) {
+                if (data.session?.user) {
                     setAuthenticated(true);
                     setUser({
-                        email: currentUser.email,
-                        id: currentUser.id
+                        email: data.session.user.email,
+                        id: data.session.user.id
                     });
                 } else {
                     setAuthenticated(false);

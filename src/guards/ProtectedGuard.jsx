@@ -16,19 +16,21 @@ export default function ProtectedGuard({ children }) {
         console.log('ProtectedGuard useEffect');
         async function checkAuth() {
             try {
-                const { data, error } = await supabase.auth.getUser();
-
+                const { data, error } = await supabase.auth.getSession();
+                //const { data, error } = await supabase.auth.getUser();
+                console.log(data);
+                console.log(error);
                 if (error) {
                     throw new Error(error.message);
                 }
 
-                if (!data.user) {
+                if (!data.session?.user) {
                     setAuthenticated(false);
                 } else {
                     setAuthenticated(true);
                     setUser({
-                        email: data.user.email,
-                        id: data.user.id
+                        email: data.session.user.email,
+                        id: data.session.user.id
                     });
                 }
             } catch (e) {
