@@ -152,7 +152,7 @@
     gap: 0.5rem;
     padding: 0.875rem;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background-color: #ffffff1a;
     color: #fff;
     text-decoration: none;
     font-size: 0.9rem;
@@ -174,7 +174,7 @@
 }
 
 .action-button.delete:hover {
-    background-color: #f4433633;
+    background-color: #f9584c33;
 }
 
 .action-icon {
@@ -220,14 +220,12 @@
     transform: translateX(-50%) translateY(0);
 }
 
-/* Desktop Small */
 @media screen and (max-width: 1200px) {
     .lyrics-section {
         flex: 1;
     }
 }
 
-/* Tablet */
 @media screen and (max-width: 900px) {
     .song-section {
         flex-direction: column;
@@ -247,7 +245,6 @@
     }
 }
 
-/* Mobile */
 @media screen and (max-width: 600px) {
     .main {
         padding: 1rem;
@@ -274,7 +271,6 @@
     }
 }
 
-/* Mobile Small */
 @media screen and (max-width: 400px) {
     .song-section {
         max-width: 100%;
