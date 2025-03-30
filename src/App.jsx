@@ -14,6 +14,7 @@ import ProtectedGuard from "./guards/ProtectedGuard"
 import GuestGuard from "./guards/GuestGuard"
 import NotFound from "./components/not-found/NotFound"
 import MySongs from "./components/my-songs/MySongs"
+import AddArtist from "./components/add-artist/AddArtist"
 
 function App() {
     const [user, setUser] = useState({
@@ -51,6 +52,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
                 <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
+                <Route path="/add-artist" element={<ProtectedGuard><AddArtist /></ProtectedGuard>} />
                 <Route path="/song/:id/preview" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
                 <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
                 <Route path="/my-songs" element={<ProtectedGuard><MySongs /></ProtectedGuard>} />

@@ -25,39 +25,39 @@ export default function DeleteSong() {
     useEffect(() => {
         async function getSongInformation() {
             try {
-                const { data, error } = await supabase.from('songs')
+                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
                     .select()
                     .eq('id', params.id);
 
-                console.log(data);
+                console.log(songsInformation);
 
-                if (error) {
-                    throw new Error(error.message);
+                if (errorSongsInformation) {
+                    throw new Error(errorSongsInformation.message);
                 }
 
-                if (data.length === 0) {
+                if (songsInformation.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
-                if (data[0].user_id !== user.id) {
+                if (songsInformation[0].user_id !== user.id) {
                     navigate('/', { state: { message: "You do not have permission to this song!", variant: "warning" } });
                     return;
                 }
 
                 setSong({
-                    name: data[0].name,
-                    artist: data[0].artist,
-                    lyrics: data[0].lyrics
+                    name: songsInformation[0].name,
+                    // artist: songsInformation[0].artist,
+                    lyrics: songsInformation[0].lyrics
                 });
 
 
-                deleteFileNameRef.current = data[0].file_name;
+                deleteFileNameRef.current = songsInformation[0].file_name;
                 console.log(deleteFileNameRef.current);
-
-                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -70,21 +70,19 @@ export default function DeleteSong() {
         console.log('Song deleted');
 
         try {
-            const { error } = await supabase.from('songs')
+            const { error: errorSongsDelete } = await supabase.from('songs')
                 .delete()
                 .eq('id', params.id);
 
-            if (error) {
-                throw new Error(error.message);
+            if (errorSongsDelete) {
+                throw new Error(errorSongsDelete.message);
             }
 
 
             const { error: filesDeleteError } = await supabase.storage
                 .from('song-files')
                 .remove([`song-audios/${deleteFileNameRef.current}`,
-                `song-images/${deleteFileNameRef.current}`,
-                `artist-images/${deleteFileNameRef.current}`
-                ]);
+                `song-images/${deleteFileNameRef.current}`]);
 
             if (filesDeleteError) {
                 throw new Error(filesDeleteError.message);
@@ -117,7 +115,7 @@ export default function DeleteSong() {
                     <form onSubmit={handleSubmit} className={styles["form"]}>
                         <div className={styles["input-group"]}>
                             <MDBInput
-                                label="Song Name"
+                                label="Name"
                                 id="name"
                                 name="name"
                                 type="text"
@@ -127,7 +125,7 @@ export default function DeleteSong() {
 
                         </div>
 
-                        <div className={styles["input-group"]}>
+                        {/* <div className={styles["input-group"]}>
                             <MDBInput
                                 label="Artist Name"
                                 id="artist"
@@ -136,12 +134,12 @@ export default function DeleteSong() {
                                 defaultValue={song.artist}
                                 disabled
                             />
-                        </div>
+                        </div> */}
 
                         <div className={styles["input-group"]}>
                             <MDBTextArea
                                 rows={6}
-                                label="Song Lyrics"
+                                label="Lyrics"
                                 id="lyrics"
                                 name="lyrics"
                                 defaultValue={song.lyrics}

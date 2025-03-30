@@ -43,6 +43,18 @@ export default function PreviewSong() {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                 }
 
+                const song = {
+                    id: songData[0].id,
+                    name: songData[0].name,
+                    song_image_url: songData[0].song_image_url,
+                    song_url: songData[0].song_url,
+                    artists: [],
+                    artist_image_url: '',
+                    total_listenings: songData[0].total_listenings,
+                    user_id: songData[0].user_id,
+                    lyrics: songData[0].lyrics
+                };
+
                 const { data: topSongs, error: topError } = await supabase
                     .from('songs')
                     .select('id, total_listenings')
@@ -59,11 +71,36 @@ export default function PreviewSong() {
                     setRank(songRank);
                 }
 
-                setTotalListenings(songData[0].total_listenings);
-                setSong(songData[0]);
-                setIsLoading(false);
+                const { data: artistsInformation, error: errorArtistsInformation } = await supabase
+                    .from('songs_artists')
+                    .select()
+                    .eq('song_id', song.id);
+
+                if (errorArtistsInformation) {
+                    throw new Error(errorArtistsInformation.message);
+                }
+
+                const { data: artistsData, error: errorArtistsData } = await supabase
+                    .from('artists')
+                    .select()
+                    .in('id', artistsInformation.map(artist => artist.artist_id));
+
+                if (errorArtistsData) {
+                    throw new Error(errorArtistsData.message);
+                }
+
+                song.artist_image_url = artistsData[0].artist_image_url;
+                song.artists = artistsData.map(artist => ({
+                    id: artist.id,
+                    name: artist.name
+                }));
+
+                setTotalListenings(song.total_listenings);
+                setSong(song);
             } catch (e) {
                 console.error(e.message);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -91,7 +128,7 @@ export default function PreviewSong() {
                             <SongPlayer
                                 songId={song.id}
                                 songName={song.name}
-                                songArtist={song.artist}
+                                songArtists={song.artists}
                                 songThumbnailImage={song.song_image_url}
                                 songArtistImage={song.artist_image_url}
                                 songUrl={song.song_url}

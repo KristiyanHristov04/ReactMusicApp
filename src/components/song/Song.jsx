@@ -2,11 +2,17 @@ import { useContext, useEffect, useState } from 'react';
 import styles from './Song.module.css';
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import { supabase } from '../../supabase';
 
-export default function Song(props) {
+export default function Song({
+    id,
+    name,
+    artists,
+    thumbnailImage,
+    artistImage
+}) {
     const [isLiked, setIsLiked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
@@ -20,7 +26,7 @@ export default function Song(props) {
                         .from('users_favourite_songs')
                         .select()
                         .eq('user_id', user.id)
-                        .eq('song_id', props.id);
+                        .eq('song_id', id);
 
                     if (error) {
                         console.error(error.message);
@@ -30,10 +36,10 @@ export default function Song(props) {
                     if (data[0]) {
                         setIsLiked(true);
                     }
-
-                    setIsLoading(false);
                 } catch (e) {
                     console.error(e.message);
+                } finally {
+                    setIsLoading(false);
                 }
             }
 
@@ -42,7 +48,7 @@ export default function Song(props) {
             setIsLoading(false);
         }
 
-    }, [user.id, props.id]);
+    }, [user.id, id]);
 
     const clickHandlerAddToFavourite = async (e) => {
         e.stopPropagation(); // Prevent triggering the card click
@@ -58,7 +64,7 @@ export default function Song(props) {
                     .from('users_favourite_songs')
                     .delete()
                     .eq('user_id', user.id)
-                    .eq('song_id', props.id);
+                    .eq('song_id', id);
 
                 if (error) {
                     throw new Error(error.message);
@@ -70,7 +76,7 @@ export default function Song(props) {
                     .from('users_favourite_songs')
                     .insert({
                         user_id: user.id,
-                        song_id: props.id,
+                        song_id: id,
                     });
 
                 if (error) {
@@ -85,7 +91,6 @@ export default function Song(props) {
     }
 
     const clickHandlerPreviewSong = () => {
-        const id = props.id;
         navigate(`/song/${id}/preview`);
     };
 
@@ -94,12 +99,11 @@ export default function Song(props) {
     }
 
     return (
-        <article id={props.id} className={styles.card} onClick={clickHandlerPreviewSong}>
+        <article id={id} className={styles.card} onClick={clickHandlerPreviewSong}>
             <div className={styles["card-top"]}>
                 <img
-                    src={props.thumbnailImage}
-                    alt={`${props.name} by ${props.artist}`}
-                    loading="lazy"
+                    src={thumbnailImage}
+                    alt={name}
                 />
                 <span
                     onClick={clickHandlerAddToFavourite}
@@ -110,15 +114,27 @@ export default function Song(props) {
                 </span>
                 <div className={styles["card-avatar"]}>
                     <img
-                        src={props.artistImage}
-                        alt={props.artist}
-                        loading="lazy"
+                        src={artistImage}
+                        alt={artists[0].name}
                     />
                 </div>
             </div>
             <div className={styles["card-bottom"]}>
-                <p>{props.name}</p>
-                <span>{props.artist}</span>
+                <p>{name}</p>
+                <div className={styles["artist-names"]}>
+                    {artists.map((artist, index) => (
+                        <span key={artist.id}>
+                            <Link 
+                                to={`/artist/${artist.id}`} 
+                                className={styles["artist-link"]}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {artist.name}
+                            </Link>
+                            {index < artists.length - 1 && ", "}
+                        </span>
+                    ))}
+                </div>
             </div>
         </article>
     );

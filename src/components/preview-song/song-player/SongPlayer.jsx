@@ -5,11 +5,12 @@ import { useState, useEffect, useContext } from 'react';
 import AuthContext from '../../../context/AuthContext';
 import { supabase } from '../../../supabase';
 import CustomAudioPlayer from './CustomAudioPlayer';
+import { Link } from 'react-router-dom';
 
 export default function SongPlayer({
     songId,
     songName,
-    songArtist,
+    songArtists,
     songThumbnailImage,
     songArtistImage,
     songUrl
@@ -28,18 +29,18 @@ export default function SongPlayer({
                         .select()
                         .eq('user_id', user.id)
                         .eq('song_id', songId);
-    
+
                     if (error) {
                         throw new Error(error.message);
                     }
-    
+
                     if (data[0]) {
                         setIsLiked(true);
                     }
-    
+
                     setIsLoading(false);
                 }
-    
+
                 checkIfSongLiked();
             } else {
                 setIsLoading(false);
@@ -47,7 +48,7 @@ export default function SongPlayer({
         } catch (e) {
             console.error(e.message);
         }
-        
+
 
     }, []);
 
@@ -63,7 +64,7 @@ export default function SongPlayer({
                     .delete()
                     .eq('user_id', user.id)
                     .eq('song_id', songId);
-    
+
                 console.log(response);
                 setIsLiked(false);
             } else {
@@ -73,17 +74,17 @@ export default function SongPlayer({
                         user_id: user.id,
                         song_id: songId,
                     });
-    
+
                 if (error) {
                     throw new Error(error.message);
                 }
-    
+
                 setIsLiked(true);
             }
         } catch (e) {
             console.error(e.message);
         }
-        
+
     }
 
     return (
@@ -105,7 +106,19 @@ export default function SongPlayer({
                         <div className={styles["card-bottom"]}>
                             <div className={styles["song-information"]}>
                                 <p>{songName}</p>
-                                <span>{songArtist}</span>
+                                <div className={styles["artist-names"]}>
+                                    {songArtists.map((artist, index) => (
+                                        <span key={artist.id}>
+                                            <Link 
+                                                to={`/artist/${artist.id}`} 
+                                                className={styles["artist-link"]}
+                                            >
+                                                {artist.name}
+                                            </Link>
+                                            {index < songArtists.length - 1 && ", "}
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
                             <CustomAudioPlayer songId={songId} songUrl={songUrl} />
                         </div>

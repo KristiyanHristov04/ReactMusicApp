@@ -43,8 +43,8 @@
     width: 100%;
 }
 
-.form input,
-.form textarea {
+.form .input,
+.form .textarea {
     background-color: #3E3E3E !important;
     border: none !important;
     color: white !important;

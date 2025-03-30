@@ -1,7 +1,7 @@
 import Navigation from "../navigation/Navigation";
 import styles from './AddSong.module.css';
 import { supabase } from "../../supabase";
-import { useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
@@ -9,21 +9,119 @@ import * as Yup from 'yup';
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
+import Select from 'react-select'
+import Spinner from "../spinner/Spinner";
+
 
 export default function AddSong() {
     const [user] = useContext(AuthContext);
+    const [artists, setArtists] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
     useResetScroll();
 
+    useEffect(() => {
+        async function getArtists() {
+            try {
+                const { data, error } = await supabase
+                    .from('artists')
+                    .select('id, name');
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                console.log(data);
+                setArtists(data.map(artist => ({
+                    value: artist.id,
+                    label: artist.name
+                })));
+            } catch (error) {
+                console.error(error.message);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        getArtists();
+    }, []);
+
     const CreateSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),
-        artist: Yup.string().required('Please enter artist name.'),
         lyrics: Yup.string().required('Please enter song lyrics.'),
         song: Yup.mixed().required('Please upload audio of the song.'),
         songImage: Yup.mixed().required('Please upload image of the song.'),
-        artistImage: Yup.mixed().required('Please upload image of the artist.'),
+        selectedArtists: Yup.array().min(1, 'Please select at least one artist.').required('Please select at least one artist.'),
     });
+
+    const customStyles = {
+        control: (base, state) => ({
+            ...base,
+            background: '#3E3E3E',
+            cursor: 'pointer',
+            height: '49px',
+        }),
+        menu: (base) => ({
+            ...base,
+            background: '#282828',
+            border: '1px solid #3E3E3E',
+            borderRadius: '4px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }),
+        option: (base, state) => ({
+            ...base,
+            backgroundColor: state.isFocused ? '#3E3E3E' : '#282828',
+            color: '#fff',
+            cursor: 'pointer',
+            '&:hover': {
+                backgroundColor: '#3E3E3E'
+            }
+        }),
+        multiValue: (base) => ({
+            ...base,
+            backgroundColor: '#1DB954',
+            color: '#fff',
+            borderRadius: '4px',
+            padding: '2px 8px',
+            margin: '2px',
+            '& > div': {
+                color: '#fff'
+            }
+        }),
+        multiValueRemove: (base) => ({
+            ...base,
+            color: '#fff',
+            ':hover': {
+                backgroundColor: '#dd4e4e',
+                color: '#fff'
+            }
+        }),
+        singleValue: (base) => ({
+            ...base,
+            color: '#fff'
+        }),
+        placeholder: (base) => ({
+            ...base,
+            color: '#B3B3B3'
+        }),
+        input: (base) => ({
+            ...base,
+            color: '#fff'
+        }),
+        dropdownIndicator: (base, state) => ({
+            ...base,
+            color: '#fff',
+            '& svg': {
+                transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'rotate(0)',
+                transition: 'transform 0.2s ease',
+                fill: '#fff'
+            },
+            '& svg path': {
+                fill: '#fff'
+            }
+        })
+    };
 
     async function submitHandler(values, actions) {
         console.log(values);
@@ -32,16 +130,15 @@ export default function AddSong() {
             const fileName = Date.now();
             const songFileName = fileName;
             const songImageName = fileName;
-            const artistImageName = fileName;
 
-            console.log(songFileName, songImageName, artistImageName);
+            console.log(songFileName, songImageName);
 
             // Upload audio file
             const { data: songData, error: songError } = await supabase.storage
                 .from('song-files')
                 .upload(`song-audios/${songFileName}`, values.song);
 
-                console.log(songData);
+            console.log(songData);
 
             if (songError) {
                 throw new Error(songError.message);
@@ -52,48 +149,55 @@ export default function AddSong() {
                 .from('song-files')
                 .upload(`song-images/${songImageName}`, values.songImage);
 
-                console.log(songImageData);
+            console.log(songImageData);
 
             if (songImageError) {
                 throw new Error(songImageError.message);
             }
 
-            // Upload artist image
-            const { data: artistImageData, error: artistImageError } = await supabase.storage
-                .from('song-files')
-                .upload(`artist-images/${artistImageName}`, values.artistImage);
-
-            console.log(artistImageData);
-
-            if (artistImageError) {
-                throw new Error(artistImageError.message);
-            }
-
             const songUrl = supabase.storage.from('song-files').getPublicUrl(songData.path).data.publicUrl;
             const songImageUrl = supabase.storage.from('song-files').getPublicUrl(songImageData.path).data.publicUrl;
-            const artistImageUrl = supabase.storage.from('song-files').getPublicUrl(artistImageData.path).data.publicUrl;
 
             // Insert song data into the database
-            const { data, error } = await supabase
+            const { data: createdSongData, error: createdSongError } = await supabase
                 .from('songs')
                 .insert([
                     {
                         name: values.name,
-                        artist: values.artist,
+                        artist: 'test artist',
                         lyrics: values.lyrics,
                         song_url: songUrl,
                         song_image_url: songImageUrl,
-                        artist_image_url: artistImageUrl,
+                        artist_image_url: 'test image url',
                         user_id: user.id,
-                        file_name: fileName
+                        file_name: fileName,
                     }
-                ]);
+                ])
+                .select();
 
-            if (error) {
-                throw new Error(error.message);
+            if (createdSongError) {
+                throw new Error(createdSongError.message);
             }
 
-            console.log("Song added successfully!", data);
+            for (const artist of values.selectedArtists) {
+
+                const { error: artistError } = await supabase
+                    .from('songs_artists')
+                    .insert([
+                        {
+                            song_id: createdSongData[0].id,
+                            artist_id: artist.value
+                        }
+                    ]);
+
+                if (artistError) {
+                    throw new Error(artistError.message);
+                }
+
+            }
+
+            console.log("Song added successfully!", createdSongData);
+            console.log(values.selectedArtists);
             actions.resetForm();
             navigate('/', { state: { message: "Song added successfully!", variant: "success" } });
         } catch (error) {
@@ -106,15 +210,25 @@ export default function AddSong() {
     const formik = useFormik({
         initialValues: {
             name: '',
-            artist: '',
             lyrics: '',
             song: null,
             songImage: null,
-            artistImage: null
+            selectedArtists: []
         },
         validationSchema: CreateSchema,
         onSubmit: submitHandler
     });
+
+    if (isLoading) {
+        return (
+            <>
+                <Navigation showSearchBar={false} />
+                <main className={styles.main}>
+                    <Spinner />
+                </main>
+            </>
+        )
+    }
 
     return (
         <>
@@ -126,6 +240,7 @@ export default function AddSong() {
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
                             <div className={styles["input-group"]}>
                                 <MDBInput
+                                    className={styles["input"]}
                                     label="Name"
                                     id="name"
                                     name="name"
@@ -140,22 +255,24 @@ export default function AddSong() {
                             </div>
 
                             <div className={styles["input-group"]}>
-                                <MDBInput
-                                    label="Artist"
-                                    id="artist"
-                                    name="artist"
-                                    type="text"
-                                    value={formik.values.artist}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
+                                <Select
+                                    options={artists}
+                                    isMulti
+                                    styles={customStyles}
+                                    placeholder="Select artist(s)..."
+                                    className={styles["select"]}
+                                    value={formik.values.selectedArtists}
+                                    onChange={(selectedOptions) => formik.setFieldValue('selectedArtists', selectedOptions)}
+                                    onBlur={() => formik.setFieldTouched('selectedArtists', true)}
                                 />
-                                {formik.touched.artist && formik.errors.artist && (
-                                    <span className={styles["error"]}>{formik.errors.artist}</span>
+                                {formik.touched.selectedArtists && formik.errors.selectedArtists && (
+                                    <span className={styles["error"]}>{formik.errors.selectedArtists}</span>
                                 )}
                             </div>
 
                             <div className={styles["input-group"]}>
                                 <MDBTextArea
+                                    className={styles["textarea"]}
                                     rows={10}
                                     label="Lyrics"
                                     id="lyrics"
@@ -171,6 +288,7 @@ export default function AddSong() {
 
                             <div className={styles["input-group"]}>
                                 <MDBFile
+                                    className={styles["input"]}
                                     accept="audio/*"
                                     label="Song"
                                     id="song"
@@ -186,6 +304,7 @@ export default function AddSong() {
 
                             <div className={styles["input-group"]}>
                                 <MDBFile
+                                    className={styles["input"]}
                                     accept="image/*"
                                     label="Song Image"
                                     id="song-image"
@@ -199,22 +318,7 @@ export default function AddSong() {
                                 )}
                             </div>
 
-                            <div className={styles["input-group"]}>
-                                <MDBFile
-                                    accept="image/*"
-                                    label="Artist Image"
-                                    id="artist-image"
-                                    name="artistImage"
-                                    type="file"
-                                    onChange={(e) => formik.setFieldValue('artistImage', e.target.files[0])}
-                                    onBlur={formik.handleBlur}
-                                />
-                                {formik.touched.artistImage && formik.errors.artistImage && (
-                                    <span className={styles["error"]}>{formik.errors.artistImage}</span>
-                                )}
-                            </div>
-
-                            <MDBBtn type="submit" disabled={formik.isSubmitting}>
+                            <MDBBtn type="submit" disabled={formik.isSubmitting} className={styles["button"]}>
                                 Add Song
                             </MDBBtn>
                         </form>

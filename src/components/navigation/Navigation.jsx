@@ -11,6 +11,7 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { IoAlbumsOutline } from "react-icons/io5";
+import { GiMicrophone } from "react-icons/gi";
 
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
@@ -39,40 +40,168 @@ export default function Navigation({
             if (favouriteSongsIds) {
                 console.log('favouriteSongsIds songs');
                 console.log(favouriteSongsIds);
-                const { data, error } = await supabase.from('songs')
+                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
                     .select()
-                    .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
+                    .or(`name.ilike.%${value}%`)
                     .in('id', favouriteSongsIds)
                     .order('id', { ascending: false });
 
-                if (error) {
-                    throw new Error(error.message);
+                if (errorSongsInformation) {
+                    throw new Error(errorSongsInformation.message);
                 }
 
-                setSongs(data);
+                const songs = songsInformation.map(song => {
+                    return {
+                        id: song.id,
+                        name: song.name,
+                        song_image_url: song.song_image_url,
+                        song_url: song.song_url,
+                        artists: [],
+                        artist_image_url: ''
+                    }
+                });
+
+                console.log(songs);
+                // setSongs(data);
+
+                for (const song of songs) {
+                    const { data: artistsInformation, error: errorArtistsInformation } = await supabase
+                        .from('songs_artists')
+                        .select()
+                        .eq('song_id', song.id);
+
+                    if (errorArtistsInformation) {
+                        throw new Error(errorArtistsInformation.message);
+                    }
+
+                    const { data: artistsData, error: errorArtistsData } = await supabase
+                        .from('artists')
+                        .select()
+                        .in('id', artistsInformation.map(artist => artist.artist_id));
+
+                    if (errorArtistsData) {
+                        throw new Error(errorArtistsData.message);
+                    }
+
+                    song.artist_image_url = artistsData[0].artist_image_url;
+
+                    song.artists = artistsData.map(artist => ({
+                        id: artist.id,
+                        name: artist.name
+                    }));
+                }
+
+                console.log(songs);
+                setSongs(songs);
             } else if (isMine) {
-                const { data, error } = await supabase.from('songs')
+                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
                     .select()
                     .eq('user_id', user.id)
-                    .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
+                    .or(`name.ilike.%${value}%`)
                     .order('id', { ascending: false });
 
-                if (error) {
-                    throw new Error(error.message);
+                if (errorSongsInformation) {
+                    throw new Error(errorSongsInformation.message);
                 }
 
-                setSongs(data);
+                const songs = songsInformation.map(song => {
+                    return {
+                        id: song.id,
+                        name: song.name,
+                        song_image_url: song.song_image_url,
+                        song_url: song.song_url,
+                        artists: [],
+                        artist_image_url: ''
+                    }
+                });
+
+                console.log(songs);
+                // setSongs(data);
+
+                for (const song of songs) {
+                    const { data: artistsInformation, error: errorArtistsInformation } = await supabase
+                        .from('songs_artists')
+                        .select()
+                        .eq('song_id', song.id);
+
+                    if (errorArtistsInformation) {
+                        throw new Error(errorArtistsInformation.message);
+                    }
+
+                    const { data: artistsData, error: errorArtistsData } = await supabase
+                        .from('artists')
+                        .select()
+                        .in('id', artistsInformation.map(artist => artist.artist_id));
+
+                    if (errorArtistsData) {
+                        throw new Error(errorArtistsData.message);
+                    }
+
+                    song.artist_image_url = artistsData[0].artist_image_url;
+
+                    song.artists = artistsData.map(artist => ({
+                        id: artist.id,
+                        name: artist.name
+                    }));
+                }
+
+                console.log(songs);
+                setSongs(songs);
             } else {
-                const { data, error } = await supabase.from('songs')
+                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
                     .select()
-                    .or(`name.ilike.%${value}%, artist.ilike.%${value}%`)
+                    .or(`name.ilike.%${value}%`)
                     .order('id', { ascending: false });
 
-                if (error) {
-                    throw new Error(error.message);
+                if (errorSongsInformation) {
+                    throw new Error(errorSongsInformation.message);
                 }
 
-                setSongs(data);
+                const songs = songsInformation.map(song => {
+                    return {
+                        id: song.id,
+                        name: song.name,
+                        song_image_url: song.song_image_url,
+                        song_url: song.song_url,
+                        artists: [],
+                        artist_image_url: ''
+                    }
+                });
+
+                console.log(songs);
+                // setSongs(data);
+
+                for (const song of songs) {
+                    const { data: artistsInformation, error: errorArtistsInformation } = await supabase
+                        .from('songs_artists')
+                        .select()
+                        .eq('song_id', song.id);
+
+                    if (errorArtistsInformation) {
+                        throw new Error(errorArtistsInformation.message);
+                    }
+
+                    const { data: artistsData, error: errorArtistsData } = await supabase
+                        .from('artists')
+                        .select()
+                        .in('id', artistsInformation.map(artist => artist.artist_id));
+
+                    if (errorArtistsData) {
+                        throw new Error(errorArtistsData.message);
+                    }
+
+                    song.artist_image_url = artistsData[0].artist_image_url;
+
+                    song.artists = artistsData.map(artist => ({
+                        id: artist.id,
+                        name: artist.name
+                    }));
+
+                    console.log(song);
+                    
+                }
+
+                setSongs(songs);
             }
         } catch (e) {
             console.error(e.message);
@@ -121,7 +250,7 @@ export default function Navigation({
                         <input
                             onChange={changeHandlerSearch}
                             type="text"
-                            placeholder="Search for songs or artists"
+                            placeholder="Search for songs"
                             value={search}
                             className={styles.searchInput}
                         />
@@ -145,6 +274,15 @@ export default function Navigation({
                     >
                         <IoIosMusicalNotes />
                         <span>Add Song</span>
+                    </NavLink>
+
+                    <NavLink
+                        to="/add-artist"
+                        className={({ isActive }) => isActive ? styles.activeLink : ''}
+                        onClick={handleNavLinkClick}
+                    >
+                        <GiMicrophone />
+                        <span>Add Artist</span>
                     </NavLink>
 
                     <NavLink
