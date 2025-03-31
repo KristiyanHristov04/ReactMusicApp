@@ -19,6 +19,7 @@ import Artist from "./components/artist/Artist"
 import DeleteArtist from "./components/delete-artist/DeleteArtist"
 import EditArtist from "./components/edit-artist/EditArtist"
 import Artists from "./components/artists/Artists"
+import MyArtists from "./components/my-artists/MyArtists"
 
 function App() {
     const [user, setUser] = useState({
@@ -65,6 +66,7 @@ function App() {
                 <Route path="/song/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
                 <Route path="/song/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
                 <Route path="/artists" element={<ProtectedGuard><Artists /></ProtectedGuard>} />
+                <Route path="/my-artists" element={<ProtectedGuard><MyArtists /></ProtectedGuard>} />
                 <Route path="/artist/:id" element={<ProtectedGuard><Artist /></ProtectedGuard>} />
                 <Route path="/artist/:id/edit" element={<ProtectedGuard><EditArtist /></ProtectedGuard>} />
                 <Route path="/artist/:id/delete" element={<ProtectedGuard><DeleteArtist /></ProtectedGuard>} />
