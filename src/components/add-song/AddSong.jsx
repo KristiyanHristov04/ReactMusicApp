@@ -236,7 +236,7 @@ export default function AddSong() {
             {user.id && (
                 <main className={styles["main"]}>
                     <div className={styles["form-container"]}>
-                        <h1 className={styles["title"]}>Add Your <span>Favorite</span> Song</h1>
+                        <h1 className={styles["title"]}>Add Your <span>Favourite</span> Song</h1>
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
                             <div className={styles["input-group"]}>
                                 <MDBInput
