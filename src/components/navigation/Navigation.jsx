@@ -38,64 +38,54 @@ export default function Navigation({
 
         try {
             if (favouriteSongsIds) {
-                console.log('favouriteSongsIds songs');
-                console.log(favouriteSongsIds);
-                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
-                    .select()
-                    .or(`name.ilike.%${value}%`)
+                const { data: songsInformation, error: errorSongsInformation } = await supabase
+                    .from('songs')
+                    .select(`
+                    id,
+                    name,
+                    song_image_url,
+                    song_url,
+                    songs_artists (
+                        artists (
+                            id,
+                            name,
+                            artist_image_url
+                        )
+                    )
+                `)
                     .in('id', favouriteSongsIds)
+                    .or(`name.ilike.%${value}%`)
                     .order('id', { ascending: false });
 
                 if (errorSongsInformation) {
                     throw new Error(errorSongsInformation.message);
                 }
 
-                const songs = songsInformation.map(song => {
-                    return {
-                        id: song.id,
-                        name: song.name,
-                        song_image_url: song.song_image_url,
-                        song_url: song.song_url,
-                        artists: [],
-                        artist_image_url: ''
-                    }
-                });
+                const songs = songsInformation.map(song => ({
+                    id: song.id,
+                    name: song.name,
+                    song_image_url: song.song_image_url,
+                    song_url: song.song_url,
+                    artists: song.songs_artists.map(artist => artist.artists)
+                }));
 
-                console.log(songs);
-                // setSongs(data);
-
-                for (const song of songs) {
-                    const { data: artistsInformation, error: errorArtistsInformation } = await supabase
-                        .from('songs_artists')
-                        .select()
-                        .eq('song_id', song.id);
-
-                    if (errorArtistsInformation) {
-                        throw new Error(errorArtistsInformation.message);
-                    }
-
-                    const { data: artistsData, error: errorArtistsData } = await supabase
-                        .from('artists')
-                        .select()
-                        .in('id', artistsInformation.map(artist => artist.artist_id));
-
-                    if (errorArtistsData) {
-                        throw new Error(errorArtistsData.message);
-                    }
-
-                    song.artist_image_url = artistsData[0].artist_image_url;
-
-                    song.artists = artistsData.map(artist => ({
-                        id: artist.id,
-                        name: artist.name
-                    }));
-                }
-
-                console.log(songs);
                 setSongs(songs);
             } else if (isMine) {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
-                    .select()
+                const { data: songsInformation, error: errorSongsInformation } = await supabase
+                    .from('songs')
+                    .select(`
+                    id,
+                    name,
+                    song_image_url,
+                    song_url,
+                    songs_artists (
+                        artists (
+                            id,
+                            name,
+                            artist_image_url
+                        )
+                    )
+                `)
                     .eq('user_id', user.id)
                     .or(`name.ilike.%${value}%`)
                     .order('id', { ascending: false });
@@ -104,52 +94,31 @@ export default function Navigation({
                     throw new Error(errorSongsInformation.message);
                 }
 
-                const songs = songsInformation.map(song => {
-                    return {
-                        id: song.id,
-                        name: song.name,
-                        song_image_url: song.song_image_url,
-                        song_url: song.song_url,
-                        artists: [],
-                        artist_image_url: ''
-                    }
-                });
+                const songs = songsInformation.map(song => ({
+                    id: song.id,
+                    name: song.name,
+                    song_image_url: song.song_image_url,
+                    song_url: song.song_url,
+                    artists: song.songs_artists.map(artist => artist.artists)
+                }));
 
-                console.log(songs);
-                // setSongs(data);
-
-                for (const song of songs) {
-                    const { data: artistsInformation, error: errorArtistsInformation } = await supabase
-                        .from('songs_artists')
-                        .select()
-                        .eq('song_id', song.id);
-
-                    if (errorArtistsInformation) {
-                        throw new Error(errorArtistsInformation.message);
-                    }
-
-                    const { data: artistsData, error: errorArtistsData } = await supabase
-                        .from('artists')
-                        .select()
-                        .in('id', artistsInformation.map(artist => artist.artist_id));
-
-                    if (errorArtistsData) {
-                        throw new Error(errorArtistsData.message);
-                    }
-
-                    song.artist_image_url = artistsData[0].artist_image_url;
-
-                    song.artists = artistsData.map(artist => ({
-                        id: artist.id,
-                        name: artist.name
-                    }));
-                }
-
-                console.log(songs);
                 setSongs(songs);
             } else {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
-                    .select()
+                const { data: songsInformation, error: errorSongsInformation } = await supabase
+                    .from('songs')
+                    .select(`
+                    id,
+                    name,
+                    song_image_url,
+                    song_url,
+                    songs_artists (
+                        artists (
+                            id,
+                            name,
+                            artist_image_url
+                        )
+                    )
+                `)
                     .or(`name.ilike.%${value}%`)
                     .order('id', { ascending: false });
 
@@ -157,49 +126,20 @@ export default function Navigation({
                     throw new Error(errorSongsInformation.message);
                 }
 
+                console.log(songsInformation);
+
                 const songs = songsInformation.map(song => {
                     return {
                         id: song.id,
                         name: song.name,
                         song_image_url: song.song_image_url,
                         song_url: song.song_url,
-                        artists: [],
-                        artist_image_url: ''
+                        artists: song.songs_artists.map(artist => artist.artists),
+                        // artist_image_url: ''
                     }
                 });
 
                 console.log(songs);
-                // setSongs(data);
-
-                for (const song of songs) {
-                    const { data: artistsInformation, error: errorArtistsInformation } = await supabase
-                        .from('songs_artists')
-                        .select()
-                        .eq('song_id', song.id);
-
-                    if (errorArtistsInformation) {
-                        throw new Error(errorArtistsInformation.message);
-                    }
-
-                    const { data: artistsData, error: errorArtistsData } = await supabase
-                        .from('artists')
-                        .select()
-                        .in('id', artistsInformation.map(artist => artist.artist_id));
-
-                    if (errorArtistsData) {
-                        throw new Error(errorArtistsData.message);
-                    }
-
-                    song.artist_image_url = artistsData[0].artist_image_url;
-
-                    song.artists = artistsData.map(artist => ({
-                        id: artist.id,
-                        name: artist.name
-                    }));
-
-                    console.log(song);
-                    
-                }
 
                 setSongs(songs);
             }

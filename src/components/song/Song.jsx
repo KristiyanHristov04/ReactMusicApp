@@ -11,7 +11,7 @@ export default function Song({
     name,
     artists,
     thumbnailImage,
-    artistImage
+    // artistImage
 }) {
     const [isLiked, setIsLiked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -114,7 +114,7 @@ export default function Song({
                 </span>
                 <div className={styles["card-avatar"]}>
                     <img
-                        src={artistImage}
+                        src={artists[0].artist_image_url}
                         alt={artists[0].name}
                     />
                 </div>

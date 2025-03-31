@@ -80,6 +80,7 @@
     gap: 4px;
     color: #B3B3B3;
     font-size: 0.9rem;
+    justify-content: center;
 }
 
 .artist-link {
