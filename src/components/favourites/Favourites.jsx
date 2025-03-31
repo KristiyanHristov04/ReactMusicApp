@@ -126,7 +126,11 @@ export default function Favourites() {
     if (isLoading) {
         return (
             <>
-                <Navigation showSearchBar={true} setSongs={setSongs} />
+                <Navigation
+                    showSearchBar={true}
+                    setSongs={setSongs}
+                    searchPlaceHolder="Search for your favourite songs"
+                />
                 <main className={styles.main}>
                     <div className={styles["songs-container"]}>
                         <Spinner />
@@ -143,6 +147,7 @@ export default function Favourites() {
                 setSongs={setSongs}
                 setSearchParent={setSearchParent}
                 setPage={setPage}
+                searchPlaceHolder="Search for your favourite songs"
             />
             <main className={styles.main}>
                 <div className={styles["songs-container"]}>

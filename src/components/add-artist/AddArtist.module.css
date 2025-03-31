@@ -80,3 +80,7 @@
     font-size: 0.8rem;
     margin-top: 4px;
 }
+
+.textarea {
+    resize: none;
+}

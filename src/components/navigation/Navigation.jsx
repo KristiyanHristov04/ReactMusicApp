@@ -21,6 +21,7 @@ import { useContext } from 'react';
 
 export default function Navigation({
     showSearchBar,
+    searchPlaceHolder = 'Search for songs',
     //
     setSearchParent,
     setPage
@@ -80,7 +81,7 @@ export default function Navigation({
                         <input
                             onChange={changeHandlerSearch}
                             type="text"
-                            placeholder="Search for songs"
+                            placeholder={searchPlaceHolder}
                             value={search}
                             className={styles.searchInput}
                         />

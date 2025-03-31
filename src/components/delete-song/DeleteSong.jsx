@@ -125,19 +125,9 @@ export default function DeleteSong() {
 
                         </div>
 
-                        {/* <div className={styles["input-group"]}>
-                            <MDBInput
-                                label="Artist Name"
-                                id="artist"
-                                name="artist"
-                                type="text"
-                                defaultValue={song.artist}
-                                disabled
-                            />
-                        </div> */}
-
                         <div className={styles["input-group"]}>
                             <MDBTextArea
+                                className={styles["textarea"]}
                                 rows={6}
                                 label="Lyrics"
                                 id="lyrics"
