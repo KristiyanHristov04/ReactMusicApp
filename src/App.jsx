@@ -15,6 +15,7 @@ import GuestGuard from "./guards/GuestGuard"
 import NotFound from "./components/not-found/NotFound"
 import MySongs from "./components/my-songs/MySongs"
 import AddArtist from "./components/add-artist/AddArtist"
+import Artist from "./components/artist/Artist"
 
 function App() {
     const [user, setUser] = useState({
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
                 <Route path="/song/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
                 <Route path="/song/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
+                <Route path="/artist/:id" element={<ProtectedGuard><Artist /></ProtectedGuard>} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </AuthContext.Provider>
