@@ -1,5 +1,5 @@
 import styles from "./Artist.module.css";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { supabase } from "../../supabase";
 import Navigation from "../navigation/Navigation";
@@ -14,8 +14,7 @@ export default function Artist() {
     const [isLoading, setIsLoading] = useState(true);
     const [artist, setArtist] = useState(null);
     const [user] = useContext(AuthContext);
-    console.log(user);
-    console.log(artist);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getArtist = async () => {
@@ -39,7 +38,20 @@ export default function Artist() {
                         )
                     `)
                     .eq('id', params.id)
-                    .single();
+                    .maybeSingle();
+
+                    
+                if (errorArtist) {
+                    throw new Error(errorArtist.message);
+                }
+
+                if (!artistData) {
+                    navigate('/', { state: { message: "Artist doesn't exist!", variant: "danger" } });
+                    return;
+                }
+
+                console.log(artistData);
+
 
                 artistData.songs_artists.sort((a, b) =>
                     b.songs.total_listenings - a.songs.total_listenings
@@ -47,15 +59,11 @@ export default function Artist() {
 
                 console.log(artistData);
 
-                if (errorArtist) {
-                    throw new Error(errorArtist.message);
-                }
-
                 setArtist(artistData);
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 
@@ -106,8 +114,8 @@ export default function Artist() {
                                         <tr key={songArtist.songs.id}>
                                             <td>{index + 1}</td>
                                             <td>
-                                                <img 
-                                                    src={songArtist.songs.song_image_url} 
+                                                <img
+                                                    src={songArtist.songs.song_image_url}
                                                     alt={songArtist.songs.name}
                                                     className={styles["song-image"]}
                                                 />

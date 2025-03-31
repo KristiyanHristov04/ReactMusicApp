@@ -29,8 +29,6 @@ export default function DeleteSong() {
                     .select()
                     .eq('id', params.id);
 
-                console.log(songsInformation);
-
                 if (errorSongsInformation) {
                     throw new Error(errorSongsInformation.message);
                 }
@@ -54,10 +52,10 @@ export default function DeleteSong() {
 
                 deleteFileNameRef.current = songsInformation[0].file_name;
                 console.log(deleteFileNameRef.current);
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 

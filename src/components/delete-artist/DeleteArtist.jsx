@@ -28,8 +28,6 @@ export default function DeleteArtist() {
                     .select()
                     .eq('id', params.id);
 
-                console.log(artistInformation);
-
                 if (errorArtistInformation) {
                     throw new Error(errorArtistInformation.message);
                 }
@@ -52,10 +50,10 @@ export default function DeleteArtist() {
 
                 deleteFileNameRef.current = artistInformation[0].file_name;
                 console.log(deleteFileNameRef.current);
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 

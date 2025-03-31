@@ -120,10 +120,10 @@ export default function EditArtist() {
                 });
 
                 deleteFileNameRef.current = artistInformation[0].file_name;
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 

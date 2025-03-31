@@ -93,31 +93,25 @@ export default function EditSong() {
         })
     };
 
-    useEffect(() => {
-        async function getArtists() {
-            try {
-                const { data, error } = await supabase
-                    .from('artists')
-                    .select('id, name');
+    async function getArtists() {
+        try {
+            const { data, error } = await supabase
+                .from('artists')
+                .select('id, name');
 
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                console.log(data);
-                setArtists(data.map(artist => ({
-                    value: artist.id,
-                    label: artist.name
-                })));
-            } catch (error) {
-                console.error(error.message);
-            } finally {
-                setIsLoading(false);
+            if (error) {
+                throw new Error(error.message);
             }
-        }
 
-        getArtists();
-    }, []);
+            console.log(data);
+            setArtists(data.map(artist => ({
+                value: artist.id,
+                label: artist.name
+            })));
+        } catch (error) {
+            console.error(error.message);
+        }
+    }
 
     const EditSchema = Yup.object().shape({
         name: Yup.string().required('Please enter song name.'),
@@ -279,13 +273,14 @@ export default function EditSong() {
                 }));
 
                 deleteFileNameRef.current = songsInformation[0].file_name;
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 
+        getArtists();
         getSongInformation();
     }, []);
 

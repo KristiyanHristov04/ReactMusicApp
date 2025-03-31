@@ -39,8 +39,10 @@ export default function PreviewSong() {
                     throw new Error(songError.message);
                 }
 
+                console.log(songData);
                 if (songData.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
+                    return;
                 }
 
                 const song = {
@@ -97,10 +99,10 @@ export default function PreviewSong() {
 
                 setTotalListenings(song.total_listenings);
                 setSong(song);
+                setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 

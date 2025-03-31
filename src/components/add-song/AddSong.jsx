@@ -24,23 +24,24 @@ export default function AddSong() {
     useEffect(() => {
         async function getArtists() {
             try {
-                const { data, error } = await supabase
+                const { data: getArtistsData, error: getArtistsError } = await supabase
                     .from('artists')
                     .select('id, name');
 
-                if (error) {
-                    throw new Error(error.message);
+                if (getArtistsError) {
+                    throw new Error(getArtistsError.message);
                 }
 
-                console.log(data);
-                setArtists(data.map(artist => ({
+                console.log(getArtistsData);
+                setArtists(getArtistsData.map(artist => ({
                     value: artist.id,
                     label: artist.name
                 })));
+
+                setIsLoading(false);
             } catch (error) {
                 console.error(error.message);
-            } finally {
-                setIsLoading(false);
+                navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 
@@ -133,7 +134,6 @@ export default function AddSong() {
 
             console.log(songFileName, songImageName);
 
-            // Upload audio file
             const { data: songData, error: songError } = await supabase.storage
                 .from('song-files')
                 .upload(`song-audios/${songFileName}`, values.song);
@@ -144,7 +144,6 @@ export default function AddSong() {
                 throw new Error(songError.message);
             }
 
-            // Upload song image
             const { data: songImageData, error: songImageError } = await supabase.storage
                 .from('song-files')
                 .upload(`song-images/${songImageName}`, values.songImage);
@@ -158,7 +157,6 @@ export default function AddSong() {
             const songUrl = supabase.storage.from('song-files').getPublicUrl(songData.path).data.publicUrl;
             const songImageUrl = supabase.storage.from('song-files').getPublicUrl(songImageData.path).data.publicUrl;
 
-            // Insert song data into the database
             const { data: createdSongData, error: createdSongError } = await supabase
                 .from('songs')
                 .insert([
@@ -202,6 +200,7 @@ export default function AddSong() {
             navigate('/', { state: { message: "Song added successfully!", variant: "success" } });
         } catch (error) {
             console.error(error.message);
+            navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
         } finally {
             actions.setSubmitting(false);
         }
