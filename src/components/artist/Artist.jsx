@@ -1,25 +1,25 @@
 import styles from "./Artist.module.css";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { supabase } from "../../supabase";
 import Navigation from "../navigation/Navigation";
 import Spinner from "../spinner/Spinner";
 import { Link } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
+import { MdDeleteOutline } from "react-icons/md";
+import { TbEdit } from "react-icons/tb";
 
 export default function Artist() {
     const params = useParams();
     const [isLoading, setIsLoading] = useState(true);
     const [artist, setArtist] = useState(null);
+    const [user] = useContext(AuthContext);
+    console.log(user);
+    console.log(artist);
 
     useEffect(() => {
         const getArtist = async () => {
             try {
-                // const { data: artistData, error: errorArtist } = await supabase
-                //     .from('artists')
-                //     .select('id, name, artist_image_url, biography')
-                //     .eq('id', params.id)
-                //     .single();
-
                 const { data: artistData, error: errorArtist } = await supabase
                     .from('artists')
                     .select(`
@@ -27,6 +27,7 @@ export default function Artist() {
                         name,
                         artist_image_url,
                         biography,
+                        user_id,
                         songs_artists (
                             songs (
                                 id,
@@ -119,6 +120,18 @@ export default function Artist() {
                             </table>
                         </div>
                     </div>
+                    {user?.id === artist.user_id && (
+                        <div className={styles["artist-actions"]}>
+                            <Link to={`/artist/${artist.id}/edit`} className={styles["action-button"]}>
+                                <TbEdit className={styles["action-icon"]} />
+                                <span>Edit</span>
+                            </Link>
+                            <Link to={`/artist/${artist.id}/delete`} className={`${styles["action-button"]} ${styles["delete"]}`}>
+                                <MdDeleteOutline className={styles["action-icon"]} />
+                                <span>Delete</span>
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </main>
         </>

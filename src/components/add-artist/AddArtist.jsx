@@ -10,7 +10,7 @@ import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
 
-export default function AddSong() {
+export default function AddArtist() {
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -52,7 +52,8 @@ export default function AddSong() {
                         name: values.name,
                         artist_image_url: artistImageUrl,
                         biography: values.biography,
-                        file_name: fileName
+                        file_name: fileName,
+                        user_id: user.id
                     }
                 ])
                 .select();
