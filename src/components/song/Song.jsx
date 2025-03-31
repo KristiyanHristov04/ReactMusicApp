@@ -11,7 +11,6 @@ export default function Song({
     name,
     artists,
     thumbnailImage,
-    // artistImage
 }) {
     const [isLiked, setIsLiked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);

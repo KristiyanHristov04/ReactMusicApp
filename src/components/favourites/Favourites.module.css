@@ -8,6 +8,20 @@
     margin: 0 auto;
     min-height: calc(100vh - 80px);
     background-color: #191414;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.songs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 30px;
+    justify-content: center;
+    width: 100%;
+    flex: 1;
 }
 
 .no-songs-container {
@@ -16,7 +30,6 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    min-height: calc(100vh - 160px);
     width: 100%;
     color: #B3B3B3;
     padding: 20px;
@@ -42,7 +55,39 @@
     color: #B3B3B3;
 }
 
-/* Responsive styles */
+.pagination {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.pagination-button {
+    background-color: #282828;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+    background-color: #1DB954;
+    transform: scale(1.02);
+}
+
+.pagination-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-counter {
+    color: #fff;
+    margin: 0;
+}
+
 @media (max-width: 1200px) {
     .main {
         padding: 25px;

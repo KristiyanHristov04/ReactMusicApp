@@ -12,6 +12,17 @@ export default function MySongs() {
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const songsPerPage = 2;
+
+    const from = (page - 1) * songsPerPage;
+    const to = from + songsPerPage - 1;
+
+    //
+    const [searchParent, setSearchParent] = useState('');
+    //
+
     useEffect(() => {
         const getMySongs = async () => {
             try {
@@ -31,7 +42,11 @@ export default function MySongs() {
                     )
                 `)
                     .eq('user_id', user.id)
+                    .or(`name.ilike.%${searchParent}%`)
+                    .range(from, to)
                     .order('id', { ascending: false });
+
+                console.log(songsInformation);
 
                 if (errorSongsInformation) {
                     throw new Error(errorSongsInformation.message);
@@ -53,15 +68,42 @@ export default function MySongs() {
             }
         }
 
+        const getTotalPages = async () => {
+            try {
+                const { data: totalPages, error: errorTotalPages } = await supabase
+                    .from('songs')
+                    .select('id', { count: 'exact' })
+                    .eq('user_id', user.id)
+                    .or(`name.ilike.%${searchParent}%`);
+
+                console.log(totalPages);
+                if (errorTotalPages) {
+                    throw new Error(errorTotalPages.message);
+                }
+
+                const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
+                console.log(totalPagesCount);
+                setTotalPages(totalPagesCount);
+            } catch (e) {
+                console.error(e.message);
+            }
+        }
+
         getMySongs();
-    }, [user.id]);
+        getTotalPages();
+    }, [page, searchParent]);
 
     if (isLoading) {
         return (
             <>
-                <Navigation showSearchBar={true} setSongs={setSongs} isMine={true} />
+                <Navigation
+                    showSearchBar={true}
+                    setSongs={setSongs}
+                />
                 <main className={styles.main}>
-                    <Spinner />
+                    <div className={styles["songs-container"]}>
+                        <Spinner />
+                    </div>
                 </main>
             </>
         )
@@ -69,26 +111,60 @@ export default function MySongs() {
 
     return (
         <>
-            <Navigation showSearchBar={true} setSongs={setSongs} isMine={true} />
+            {
+                location.state?.message && <Alert
+                    variant={location.state?.variant}
+                    message={location.state?.message}
+                />
+            }
+
+            <Navigation
+                showSearchBar={true}
+                setSongs={setSongs}
+                setSearchParent={setSearchParent}
+                setPage={setPage}
+            />
             <main className={styles.main}>
-                {songs.length > 0 ? songs.map(song => (
-                    <Song
-                        key={song.id}
-                        id={song.id}
-                        name={song.name}
-                        artists={song.artists}
-                        thumbnailImage={song.song_image_url}
-                        // artistImage={song.artist_image_url}
-                    />
-                )) :
-                    (<div className={styles["no-songs-container"]}>
-                        <MdOutlineLibraryMusic />
-                        <h2>No songs found</h2>
-                        <p>
-                            Create a song or try a different search term.
-                        </p>
+                <div className={styles["songs-container"]}>
+                    {songs.length > 0 ? songs.map(song => (
+                        <Song
+                            key={song.id}
+                            id={song.id}
+                            name={song.name}
+                            artists={song.artists}
+                            thumbnailImage={song.song_image_url}
+                        />
+                    )) :
+                        (<div className={styles["no-songs-container"]}>
+                            <MdOutlineLibraryMusic />
+                            <h2>No songs found</h2>
+                            <p>
+                                Create a song or try a different search term.
+                            </p>
+                        </div>
+                        )}
+                </div>
+                {songs.length > 0 &&
+                    <div className={styles.pagination}>
+                        <button
+                            className={styles["pagination-button"]}
+                            disabled={page === 1}
+                            onClick={() => setPage(page - 1)}
+                        >
+                            Previous Page
+                        </button>
+                        <span className={styles["page-counter"]}>
+                            Page {page} of {totalPages}
+                        </span>
+                        <button
+                            className={styles["pagination-button"]}
+                            disabled={page === totalPages}
+                            onClick={() => setPage(page + 1)}
+                        >
+                            Next Page
+                        </button>
                     </div>
-                    )}
+                }
             </main>
         </>
     )

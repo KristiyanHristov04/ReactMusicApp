@@ -13,6 +13,17 @@ export default function Explore() {
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const songsPerPage = 2;
+
+    const from = (page - 1) * songsPerPage;
+    const to = from + songsPerPage - 1;
+
+    //
+    const [searchParent, setSearchParent] = useState('');
+    //
+
     useEffect(() => {
         const getSongs = async () => {
             try {
@@ -31,13 +42,13 @@ export default function Explore() {
                         )
                     )
                 `)
+                    .or(`name.ilike.%${searchParent}%`)
+                    .range(from, to)
                     .order('id', { ascending: false });
 
                 if (errorSongsInformation) {
                     throw new Error(errorSongsInformation.message);
                 }
-
-                console.log(songsInformation);
 
                 const songs = songsInformation.map(song => ({
                     id: song.id,
@@ -49,36 +60,6 @@ export default function Explore() {
 
                 console.log(songs);
 
-                // setSongs(data);
-
-                // for (const song of songs) {
-                //     const { data: artistsInformation, error: errorArtistsInformation } = await supabase
-                //         .from('songs_artists')
-                //         .select()
-                //         .eq('song_id', song.id);
-
-                //     if (errorArtistsInformation) {
-                //         throw new Error(errorArtistsInformation.message);
-                //     }
-
-                //     const { data: artistsData, error: errorArtistsData } = await supabase
-                //         .from('artists')
-                //         .select()
-                //         .in('id', artistsInformation.map(artist => artist.artist_id));
-
-                //     if (errorArtistsData) {
-                //         throw new Error(errorArtistsData.message);
-                //     }
-
-                //     song.artist_image_url = artistsData[0].artist_image_url;
-
-                //     song.artists = artistsData.map(artist => ({
-                //         id: artist.id,
-                //         name: artist.name
-                //     }));
-                // }
-
-                //setSongs(songs);
                 setSongs(songs);
 
             } catch (e) {
@@ -90,15 +71,39 @@ export default function Explore() {
 
         }
 
+        const getTotalPages = async () => {
+            try {
+                const { data: totalPages, error: errorTotalPages } = await supabase
+                    .from('songs')
+                    .select('id', { count: 'exact' })
+                    .or(`name.ilike.%${searchParent}%`);
+
+                if (errorTotalPages) {
+                    throw new Error(errorTotalPages.message);
+                }
+
+                const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
+                setTotalPages(totalPagesCount);
+            } catch (e) {
+                console.error(e.message);
+            }
+        }
+
         getSongs();
-    }, []);
+        getTotalPages();
+    }, [page, searchParent]);
 
     if (isLoading) {
         return (
             <>
-                <Navigation showSearchBar={true} setSongs={setSongs} />
+                <Navigation
+                    showSearchBar={true}
+                    setSongs={setSongs}
+                />
                 <main className={styles.main}>
-                    <Spinner />
+                    <div className={styles["songs-container"]}>
+                        <Spinner />
+                    </div>
                 </main>
             </>
         )
@@ -113,26 +118,53 @@ export default function Explore() {
                 />
             }
 
-            <Navigation showSearchBar={true} setSongs={setSongs} />
+            <Navigation
+                showSearchBar={true}
+                setSongs={setSongs}
+                setSearchParent={setSearchParent}
+                setPage={setPage}
+            />
             <main className={styles.main}>
-                {songs.length > 0 ? songs.map(song => (
-                    <Song
-                        key={song.id}
-                        id={song.id}
-                        name={song.name}
-                        artists={song.artists}
-                        thumbnailImage={song.song_image_url}
-                    // artistImage={song.artist_image_url}
-                    />
-                )) :
-                    (<div className={styles["no-songs-container"]}>
-                        <MdOutlineLibraryMusic />
-                        <h2>No songs found</h2>
-                        <p>
-                            Create a song or try a different search term.
-                        </p>
+                <div className={styles["songs-container"]}>
+                    {songs.length > 0 ? songs.map(song => (
+                        <Song
+                            key={song.id}
+                            id={song.id}
+                            name={song.name}
+                            artists={song.artists}
+                            thumbnailImage={song.song_image_url}
+                        />
+                    )) :
+                        (<div className={styles["no-songs-container"]}>
+                            <MdOutlineLibraryMusic />
+                            <h2>No songs found</h2>
+                            <p>
+                                Create a song or try a different search term.
+                            </p>
+                        </div>
+                        )}
+                </div>
+                {songs.length > 0 &&
+                    <div className={styles.pagination}>
+                        <button
+                            className={styles["pagination-button"]}
+                            disabled={page === 1}
+                            onClick={() => setPage(page - 1)}
+                        >
+                            Previous Page
+                        </button>
+                        <span className={styles["page-counter"]}>
+                            Page {page} of {totalPages}
+                        </span>
+                        <button
+                            className={styles["pagination-button"]}
+                            disabled={page === totalPages}
+                            onClick={() => setPage(page + 1)}
+                        >
+                            Next Page
+                        </button>
                     </div>
-                    )}
+                }
             </main>
         </>
     )

@@ -21,9 +21,9 @@ import { useContext } from 'react';
 
 export default function Navigation({
     showSearchBar,
-    setSongs,
-    favouriteSongsIds,
-    isMine
+    //
+    setSearchParent,
+    setPage
 }) {
 
     const [search, setSearch] = useState('');
@@ -35,118 +35,8 @@ export default function Navigation({
         const value = e.currentTarget.value;
         console.log(value);
         setSearch(value);
-
-        try {
-            if (favouriteSongsIds) {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .in('id', favouriteSongsIds)
-                    .or(`name.ilike.%${value}%`)
-                    .order('id', { ascending: false });
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                const songs = songsInformation.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    song_image_url: song.song_image_url,
-                    song_url: song.song_url,
-                    artists: song.songs_artists.map(artist => artist.artists)
-                }));
-
-                setSongs(songs);
-            } else if (isMine) {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .eq('user_id', user.id)
-                    .or(`name.ilike.%${value}%`)
-                    .order('id', { ascending: false });
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                const songs = songsInformation.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    song_image_url: song.song_image_url,
-                    song_url: song.song_url,
-                    artists: song.songs_artists.map(artist => artist.artists)
-                }));
-
-                setSongs(songs);
-            } else {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .or(`name.ilike.%${value}%`)
-                    .order('id', { ascending: false });
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                console.log(songsInformation);
-
-                const songs = songsInformation.map(song => {
-                    return {
-                        id: song.id,
-                        name: song.name,
-                        song_image_url: song.song_image_url,
-                        song_url: song.song_url,
-                        artists: song.songs_artists.map(artist => artist.artists),
-                        // artist_image_url: ''
-                    }
-                });
-
-                console.log(songs);
-
-                setSongs(songs);
-            }
-        } catch (e) {
-            console.error(e.message);
-        }
-
+        setSearchParent(value);
+        setPage(1);
     }
 
     const logout = async () => {
