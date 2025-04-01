@@ -25,7 +25,7 @@ export default function AddSong() {
         async function getArtists() {
             try {
                 const { data: getArtistsData, error: getArtistsError } = await supabase
-                    .from('artistseqeqwweq')
+                    .from('artists')
                     .select('id, name')
                     .order('name', { ascending: true });
 
