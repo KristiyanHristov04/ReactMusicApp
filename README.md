@@ -110,3 +110,5 @@ To disable RLS for each table:
   - `/hooks` - Custom hooks
 
 ## Supabase Database Diagram 
+
+![supabasedatabase](https://github.com/user-attachments/assets/25f82a87-6265-4260-acca-bb4e65bafb45)
