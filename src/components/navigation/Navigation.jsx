@@ -23,7 +23,6 @@ import { useContext } from 'react';
 export default function Navigation({
     showSearchBar,
     searchPlaceHolder = 'Search for songs',
-    //
     setSearchParent,
     setPage
 }) {
@@ -75,7 +74,6 @@ export default function Navigation({
         setDropdownOpen(!dropdownOpen);
     }
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const closeDropdown = (e) => {
             if (!e.target.closest(`.${styles.dropdown}`)) {

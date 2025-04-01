@@ -19,18 +19,18 @@ export default function EditSong() {
     const params = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
-    
+
     const deleteFileNameRef = useRef('');
 
     useResetScroll();
 
-    
+
     const customStyles = {
         control: (base, state) => ({
             ...base,
             background: '#3E3E3E',
             cursor: 'pointer',
-            height: '49px',
+            minHeight: '49px',
         }),
         menu: (base) => ({
             ...base,
@@ -95,21 +95,23 @@ export default function EditSong() {
 
     async function getArtists() {
         try {
-            const { data, error } = await supabase
+            const { data: getArtistsData, error: getArtistsError } = await supabase
                 .from('artists')
-                .select('id, name');
+                .select('id, name')
+                .order('name', { ascending: true });
 
-            if (error) {
-                throw new Error(error.message);
+            if (getArtistsError) {
+                throw new Error(getArtistsError.message);
             }
 
-            console.log(data);
-            setArtists(data.map(artist => ({
+            setArtists(getArtistsData.map(artist => ({
                 value: artist.id,
                 label: artist.name
             })));
         } catch (error) {
             console.error(error.message);
+        } finally {
+            actions.setSubmitting(false);
         }
     }
 
@@ -303,7 +305,7 @@ export default function EditSong() {
                     <div className={styles["form-container"]}>
                         <h1 className={styles["title"]}><span>Edit</span> Song</h1>
                         <form onSubmit={formik.handleSubmit} className={styles["form"]}>
-                        <div className={styles["input-group"]}>
+                            <div className={styles["input-group"]}>
                                 <MDBInput
                                     className={styles["input"]}
                                     label="Name"

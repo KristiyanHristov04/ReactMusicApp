@@ -8,6 +8,7 @@ import { MdOutlineLibraryMusic } from "react-icons/md";
 import AuthContext from "../../context/AuthContext";
 
 export default function MyArtists() {
+    const [searchParent, setSearchParent] = useState('');
     const [user] = useContext(AuthContext);
     const [artists, setArtists] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -18,11 +19,10 @@ export default function MyArtists() {
     const from = (page - 1) * artistsPerPage;
     const to = from + artistsPerPage - 1;
 
-    const [searchParent, setSearchParent] = useState('');
-
     useEffect(() => {
         const getArtists = async () => {
             try {
+                setIsLoading(true);
                 const { data: artistsData, error: errorArtists } = await supabase
                     .from('artists')
                     .select(`

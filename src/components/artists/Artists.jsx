@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 
 export default function Artists() {
+    const [searchParent, setSearchParent] = useState('');
     const [artists, setArtists] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -16,9 +17,8 @@ export default function Artists() {
     const from = (page - 1) * artistsPerPage;
     const to = from + artistsPerPage - 1;
 
-    const [searchParent, setSearchParent] = useState('');
-
     useEffect(() => {
+        setIsLoading(true);
         const getArtists = async () => {
             try {
                 const { data: artistsData, error: errorArtists } = await supabase

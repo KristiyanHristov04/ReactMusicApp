@@ -54,6 +54,8 @@ export default function DeleteArtist() {
             } catch (e) {
                 console.error(e.message);
                 navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
+            } finally {
+                actions.setSubmitting(false);
             }
         }
 

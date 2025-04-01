@@ -13,6 +13,7 @@ export default function Explore() {
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
 
+    const [searchParent, setSearchParent] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const songsPerPage = 2;
@@ -20,11 +21,8 @@ export default function Explore() {
     const from = (page - 1) * songsPerPage;
     const to = from + songsPerPage - 1;
 
-    //
-    const [searchParent, setSearchParent] = useState('');
-    //
-
     useEffect(() => {
+        setIsLoading(true);
         const getSongs = async () => {
             try {
                 const { data: songsInformation, error: errorSongsInformation } = await supabase
@@ -98,7 +96,7 @@ export default function Explore() {
             <>
                 <Navigation
                     showSearchBar={true}
-                    setSongs={setSongs}
+                    searchPlaceHolder="Search for songs"
                 />
                 <main className={styles.main}>
                     <div className={styles["songs-container"]}>
@@ -111,6 +109,13 @@ export default function Explore() {
 
     return (
         <>
+            <Navigation
+                showSearchBar={true}
+                setSearchParent={setSearchParent}
+                setPage={setPage}
+                searchPlaceHolder="Search for songs"
+            />
+
             {
                 location.state?.message && <Alert
                     variant={location.state?.variant}
@@ -118,12 +123,6 @@ export default function Explore() {
                 />
             }
 
-            <Navigation
-                showSearchBar={true}
-                setSongs={setSongs}
-                setSearchParent={setSearchParent}
-                setPage={setPage}
-            />
             <main className={styles.main}>
                 <div className={styles["songs-container"]}>
                     {songs.length > 0 ? songs.map(song => (

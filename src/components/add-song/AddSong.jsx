@@ -25,8 +25,9 @@ export default function AddSong() {
         async function getArtists() {
             try {
                 const { data: getArtistsData, error: getArtistsError } = await supabase
-                    .from('artists')
-                    .select('id, name');
+                    .from('artistseqeqwweq')
+                    .select('id, name')
+                    .order('name', { ascending: true });
 
                 if (getArtistsError) {
                     throw new Error(getArtistsError.message);
@@ -42,6 +43,8 @@ export default function AddSong() {
             } catch (error) {
                 console.error(error.message);
                 navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
+            } finally {
+                actions.setSubmitting(false);
             }
         }
 
@@ -61,7 +64,7 @@ export default function AddSong() {
             ...base,
             background: '#3E3E3E',
             cursor: 'pointer',
-            height: '49px',
+            minHeight: '49px',
         }),
         menu: (base) => ({
             ...base,

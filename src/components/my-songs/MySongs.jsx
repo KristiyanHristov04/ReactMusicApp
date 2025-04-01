@@ -12,6 +12,7 @@ export default function MySongs() {
     const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
 
+    const [searchParent, setSearchParent] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const songsPerPage = 2;
@@ -19,11 +20,8 @@ export default function MySongs() {
     const from = (page - 1) * songsPerPage;
     const to = from + songsPerPage - 1;
 
-    //
-    const [searchParent, setSearchParent] = useState('');
-    //
-
     useEffect(() => {
+        setIsLoading(true);
         const getMySongs = async () => {
             try {
                 const { data: songsInformation, error: errorSongsInformation } = await supabase
@@ -112,13 +110,6 @@ export default function MySongs() {
 
     return (
         <>
-            {
-                location.state?.message && <Alert
-                    variant={location.state?.variant}
-                    message={location.state?.message}
-                />
-            }
-
             <Navigation
                 showSearchBar={true}
                 setSongs={setSongs}
@@ -126,6 +117,15 @@ export default function MySongs() {
                 setPage={setPage}
                 searchPlaceHolder="Search for your songs"
             />
+
+            {
+                location.state?.message && <Alert
+                    variant={location.state?.variant}
+                    message={location.state?.message}
+                />
+            }
+
+
             <main className={styles.main}>
                 <div className={styles["songs-container"]}>
                     {songs.length > 0 ? songs.map(song => (

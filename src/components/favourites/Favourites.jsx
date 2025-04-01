@@ -15,6 +15,7 @@ export default function Favourites() {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    const [searchParent, setSearchParent] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const songsPerPage = 2;
@@ -22,11 +23,8 @@ export default function Favourites() {
     const from = (page - 1) * songsPerPage;
     const to = from + songsPerPage - 1;
 
-    //
-    const [searchParent, setSearchParent] = useState('');
-    //
-
     useEffect(() => {
+        setIsLoading(true);
         const getFavouriteSongsIds = async () => {
             console.log(user.id);
             try {
@@ -128,7 +126,6 @@ export default function Favourites() {
             <>
                 <Navigation
                     showSearchBar={true}
-                    setSongs={setSongs}
                     searchPlaceHolder="Search for your favourite songs"
                 />
                 <main className={styles.main}>
@@ -144,7 +141,6 @@ export default function Favourites() {
         <>
             <Navigation
                 showSearchBar={true}
-                setSongs={setSongs}
                 setSearchParent={setSearchParent}
                 setPage={setPage}
                 searchPlaceHolder="Search for your favourite songs"

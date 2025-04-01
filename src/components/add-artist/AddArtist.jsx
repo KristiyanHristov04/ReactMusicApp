@@ -31,7 +31,6 @@ export default function AddArtist() {
 
             console.log(artistImageName);
 
-            // Upload artist image
             const { data: artistImageData, error: artistImageError } = await supabase.storage
                 .from('song-files')
                 .upload(`artist-images/${artistImageName}`, values.artistImage);
@@ -44,7 +43,6 @@ export default function AddArtist() {
 
             const artistImageUrl = supabase.storage.from('song-files').getPublicUrl(artistImageData.path).data.publicUrl;
 
-            // Insert artist data into the database
             const { data, error } = await supabase
                 .from('artists')
                 .insert([
