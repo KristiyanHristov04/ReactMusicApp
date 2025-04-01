@@ -41,7 +41,7 @@ A modern web application for managing and exploring music, built with React and 
 
 1. Clone the repository:
 ```bash
-git clone [repository-url]
+git clone https://github.com/KristiyanHristov04/ReactMusicApp.git
 cd ReactMusicApp
 ```
 
