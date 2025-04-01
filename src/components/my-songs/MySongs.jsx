@@ -96,8 +96,9 @@ export default function MySongs() {
             <>
                 <Navigation
                     showSearchBar={true}
-                    setSongs={setSongs}
                     searchPlaceHolder="Search for your songs"
+                    setSearchParent={setSearchParent}
+                    setPage={setPage}
                 />
                 <main className={styles.main}>
                     <div className={styles["songs-container"]}>
@@ -112,7 +113,6 @@ export default function MySongs() {
         <>
             <Navigation
                 showSearchBar={true}
-                setSongs={setSongs}
                 setSearchParent={setSearchParent}
                 setPage={setPage}
                 searchPlaceHolder="Search for your songs"

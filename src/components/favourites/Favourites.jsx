@@ -127,6 +127,8 @@ export default function Favourites() {
                 <Navigation
                     showSearchBar={true}
                     searchPlaceHolder="Search for your favourite songs"
+                    setSearchParent={setSearchParent}
+                    setPage={setPage}
                 />
                 <main className={styles.main}>
                     <div className={styles["songs-container"]}>

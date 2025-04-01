@@ -97,6 +97,8 @@ export default function Explore() {
                 <Navigation
                     showSearchBar={true}
                     searchPlaceHolder="Search for songs"
+                    setSearchParent={setSearchParent}
+                    setPage={setPage}
                 />
                 <main className={styles.main}>
                     <div className={styles["songs-container"]}>

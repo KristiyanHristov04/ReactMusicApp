@@ -14,11 +14,14 @@ import { IoAlbumsOutline } from "react-icons/io5";
 import { GiMicrophone } from "react-icons/gi";
 import { FaUser } from "react-icons/fa";
 import { IoChevronDownOutline } from "react-icons/io5";
+import { useMemo } from 'react';
 
 import { HiMenu } from "react-icons/hi";
 import { IoClose } from "react-icons/io5";
 import AuthContext from '../../context/AuthContext';
 import { useContext } from 'react';
+
+import debounce from 'lodash.debounce';
 
 export default function Navigation({
     showSearchBar,
@@ -32,14 +35,24 @@ export default function Navigation({
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const navigate = useNavigate();
-
+ 
     const changeHandlerSearch = async (e) => {
-        const value = e.currentTarget.value;
+        const value = e.target.value;
         console.log(value);
         setSearch(value);
         setSearchParent(value);
         setPage(1);
     }
+
+    const debouncedResults = useMemo(() => {
+        return debounce(changeHandlerSearch, 300);
+    }, []);
+
+    useEffect(() => {
+        return () => {
+          debouncedResults.cancel();
+        };
+    }, []);
 
     const logout = async () => {
         try {
@@ -97,10 +110,10 @@ export default function Navigation({
                     <div className={styles.searchContainer}>
                         <span className={styles.searchIcon}><CiSearch /></span>
                         <input
-                            onChange={changeHandlerSearch}
+                            onChange={debouncedResults}
                             type="text"
                             placeholder={searchPlaceHolder}
-                            value={search}
+                            // value={search}
                             className={styles.searchInput}
                         />
                     </div>
