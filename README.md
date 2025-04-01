@@ -15,7 +15,6 @@ A modern web application for managing and exploring music, built with React and 
   - View artist profiles and their songs
 - **Explore**: Browse and search through the music library
 - **Responsive Design**: Beautiful, modern UI that works on all devices
-- **Real-time Updates**: Instant updates using Supabase's real-time features
 
 ## Technologies Used 💻
 
@@ -26,7 +25,7 @@ A modern web application for managing and exploring music, built with React and 
   - Formik & Yup for form validation
   - React Icons for beautiful icons
   - CSS Modules for styling
-  - Search debounce functionality
+  - Search debounce request optimization
 
 - **Backend**:
   - Supabase for backend services
