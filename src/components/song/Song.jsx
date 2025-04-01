@@ -5,6 +5,7 @@ import { FaHeart } from "react-icons/fa";
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 import { supabase } from '../../supabase';
+import Spinner from '../spinner/Spinner';
 
 export default function Song({
     id,
@@ -50,7 +51,7 @@ export default function Song({
     }, [user.id, id]);
 
     const clickHandlerAddToFavourite = async (e) => {
-        e.stopPropagation(); // Prevent triggering the card click
+        e.stopPropagation();
 
         if (!user.id) {
             navigate('/login');
