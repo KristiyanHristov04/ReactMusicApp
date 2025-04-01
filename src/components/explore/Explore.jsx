@@ -6,7 +6,8 @@ import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../../components/spinner/Spinner";
 import Alert from "../alert/Alert";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 export default function Explore() {
     const [songs, setSongs] = useState([]);
@@ -20,6 +21,8 @@ export default function Explore() {
 
     const from = (page - 1) * songsPerPage;
     const to = from + songsPerPage - 1;
+
+    const [isInitialRender, setIsInitialRender] = useState(true);
 
     useEffect(() => {
         setIsLoading(true);
@@ -91,6 +94,16 @@ export default function Explore() {
         getTotalPages();
     }, [page, searchParent]);
 
+    function nextPage() {
+        setPage(page + 1);
+        setIsInitialRender(false);
+    }
+
+    function previousPage() {
+        setPage(page - 1);
+        setIsInitialRender(false);
+    }
+
     if (isLoading) {
         return (
             <>
@@ -119,9 +132,10 @@ export default function Explore() {
             />
 
             {
-                location.state?.message && <Alert
-                    variant={location.state?.variant}
-                    message={location.state?.message}
+                location.state?.message && isInitialRender && <Alert
+                    variant={location.state.variant}
+                    message={location.state.message}
+                    setIsInitialRender={setIsInitialRender}
                 />
             }
 
@@ -150,7 +164,7 @@ export default function Explore() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === 1}
-                            onClick={() => setPage(page - 1)}
+                            onClick={previousPage}
                         >
                             Previous Page
                         </button>
@@ -160,7 +174,7 @@ export default function Explore() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === totalPages}
-                            onClick={() => setPage(page + 1)}
+                            onClick={nextPage}
                         >
                             Next Page
                         </button>

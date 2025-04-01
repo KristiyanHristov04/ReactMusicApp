@@ -9,7 +9,8 @@ import { SiTicktick } from "react-icons/si";
 
 export default function Alert({
   message,
-  variant = 'success'
+  variant = 'success',
+  setIsInitialRender
 }) {
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
@@ -20,11 +21,12 @@ export default function Alert({
 
       const exitTimer = setTimeout(() => {
         setIsVisible(false);
+        setIsInitialRender(false);
       }, 300);
 
       return () => clearTimeout(exitTimer);
     }, 5000);
-
+    
     return () => clearTimeout(timer);
   }, []);
 
