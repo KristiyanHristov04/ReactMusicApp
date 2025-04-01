@@ -165,11 +165,9 @@ export default function AddSong() {
                 .insert([
                     {
                         name: values.name,
-                        artist: 'test artist',
                         lyrics: values.lyrics,
                         song_url: songUrl,
                         song_image_url: songImageUrl,
-                        artist_image_url: 'test image url',
                         user_id: user.id,
                         file_name: fileName,
                     }
