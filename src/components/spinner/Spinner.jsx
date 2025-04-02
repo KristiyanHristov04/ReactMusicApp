@@ -4,7 +4,7 @@ export default function Spinner() {
     return (
         <div className={styles["spinner-container"]}>
             <div className={styles.loader}></div>
-            <p>Loading songs...</p>
+            <p>Loading...</p>
         </div>
     )
 }
