@@ -43,8 +43,6 @@ export default function AddSong() {
             } catch (error) {
                 console.error(error.message);
                 navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
-            } finally {
-                actions.setSubmitting(false);
             }
         }
 
