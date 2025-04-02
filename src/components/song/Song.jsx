@@ -1,11 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import styles from './Song.module.css';
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
-import { supabase } from '../../supabase';
-import Spinner from '../spinner/Spinner';
 import FavouriteSongsContext from '../../context/FavouriteSongsContext';
 
 export default function Song({
@@ -43,6 +41,7 @@ export default function Song({
                     alt={name}
                 />
                 <span
+                    data-testid="fav-button"
                     onClick={clickHandlerToggleFavouriteSong}
                     className={styles["favourite-icon"]}
                     aria-label={isSongLiked ? "Remove from favorites" : "Add to favorites"}
