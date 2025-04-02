@@ -12,6 +12,7 @@ import ScrollToTopButton from "../../components/scroll-to-top-button/ScrollToTop
 import { useResetScroll } from "../../hooks/useResetScroll";
 import Select from 'react-select'
 import { customStyles } from "../../common/editSongSelectStyles";
+import { EditSchema } from "../../schemas/editSongSchema";
 
 export default function EditSong() {
     const [user] = useContext(AuthContext);
@@ -45,14 +46,6 @@ export default function EditSong() {
             actions.setSubmitting(false);
         }
     }
-
-    const EditSchema = Yup.object().shape({
-        name: Yup.string().required('Please enter song name.'),
-        lyrics: Yup.string().required('Please enter song lyrics.'),
-        song: Yup.mixed().required('Please upload audio of the song.'),
-        songImage: Yup.mixed().required('Please upload image of the song.'),
-        selectedArtists: Yup.array().min(1, 'Please select at least one artist.').required('Please select at least one artist.'),
-    });
 
     async function submitHandler(values, actions) {
         try {

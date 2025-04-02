@@ -10,6 +10,7 @@ import Spinner from "../../components/spinner/Spinner";
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../../components/scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
+import { EditSchema } from "../../schemas/editArtistSchema";
 
 export default function EditArtist() {
     const [user] = useContext(AuthContext);
@@ -20,12 +21,6 @@ export default function EditArtist() {
     const deleteFileNameRef = useRef('');
 
     useResetScroll();
-
-    const EditSchema = Yup.object().shape({
-        name: Yup.string().required('Please enter song name.'),
-        biography: Yup.string().required('Please enter song lyrics.'),
-        artistImage: Yup.mixed().required('Please upload image of the song.'),
-    });
 
     async function submitHandler(values, actions) {
         try {

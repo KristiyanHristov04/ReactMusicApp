@@ -9,18 +9,13 @@ import * as Yup from 'yup';
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
+import { CreateSchema } from "../../schemas/addArtistSchema";
 
 export default function AddArtist() {
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
 
     useResetScroll();
-
-    const CreateSchema = Yup.object().shape({
-        name: Yup.string().required('Please enter artist name.'),
-        artistImage: Yup.mixed().required('Please upload image of the artist.'),
-        biography: Yup.string().required('Please enter artist biography.'),
-    });
 
     async function submitHandler(values, actions) {
         try {
