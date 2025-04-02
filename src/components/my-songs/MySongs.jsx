@@ -6,6 +6,7 @@ import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../spinner/Spinner";
 import AuthContext from "../../context/AuthContext";
+import usePagination from "../../hooks/usePagination";
 
 export default function MySongs() {
     const [songs, setSongs] = useState([]);
@@ -13,12 +14,9 @@ export default function MySongs() {
     const [user] = useContext(AuthContext);
 
     const [searchParent, setSearchParent] = useState('');
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
     const songsPerPage = 2;
+    const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
-    const from = (page - 1) * songsPerPage;
-    const to = from + songsPerPage - 1;
 
     useEffect(() => {
         setIsLoading(true);

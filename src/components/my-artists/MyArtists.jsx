@@ -6,18 +6,16 @@ import Spinner from "../spinner/Spinner";
 import { Link } from "react-router-dom";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import AuthContext from "../../context/AuthContext";
+import usePagination from "../../hooks/usePagination";
 
 export default function MyArtists() {
     const [searchParent, setSearchParent] = useState('');
     const [user] = useContext(AuthContext);
     const [artists, setArtists] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
     const artistsPerPage = 2;
+    const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(artistsPerPage);
 
-    const from = (page - 1) * artistsPerPage;
-    const to = from + artistsPerPage - 1;
 
     useEffect(() => {
         const getArtists = async () => {

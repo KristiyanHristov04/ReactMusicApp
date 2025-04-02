@@ -8,21 +8,18 @@ import Spinner from "../../components/spinner/Spinner";
 import Alert from "../alert/Alert";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRef } from "react";
+import usePagination from "../../hooks/usePagination";
 
 export default function Explore() {
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
-
-    const [searchParent, setSearchParent] = useState('');
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
-    const songsPerPage = 2;
-
-    const from = (page - 1) * songsPerPage;
-    const to = from + songsPerPage - 1;
-
     const [isInitialRender, setIsInitialRender] = useState(true);
+    const [searchParent, setSearchParent] = useState('');
+
+    const songsPerPage = 2;
+    const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
+
 
     useEffect(() => {
         setIsLoading(true);

@@ -7,6 +7,7 @@ import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner/Spinner";
 import { MdOutlineLibraryMusic } from "react-icons/md";
+import usePagination from "../../hooks/usePagination";
 
 export default function Favourites() {
     const [songs, setSongs] = useState([]);
@@ -16,12 +17,9 @@ export default function Favourites() {
     const navigate = useNavigate();
 
     const [searchParent, setSearchParent] = useState('');
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
     const songsPerPage = 2;
+    const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
-    const from = (page - 1) * songsPerPage;
-    const to = from + songsPerPage - 1;
 
     useEffect(() => {
         setIsLoading(true);
