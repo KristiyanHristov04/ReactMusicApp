@@ -1,9 +1,11 @@
 import styles from './SongLyrics.module.css';
 
-export default function SongLyrics(props) {
+export default function SongLyrics({
+    lyrics
+}) {
     return (
         <div className={styles["lyrics-container"]}>
-            <pre>{props.lyrics}</pre>
+            <pre data-testid="lyrics">{lyrics}</pre>
         </div>
     );
 }
