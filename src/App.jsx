@@ -6,6 +6,7 @@ import SignUp from "./components/sign-up/SignUp"
 import Login from "./components/login/Login"
 import AuthContext from "./context/AuthContext"
 import { FavouriteSongsProvider } from "./context/FavouriteSongsContext"
+import { AuthProvider } from "./context/AuthContext"
 import { useState, useEffect } from "react"
 import { supabase } from "./supabase"
 import Favourites from "./components/favourites/Favourites"
@@ -23,39 +24,8 @@ import Artists from "./components/artists/Artists"
 import MyArtists from "./components/my-artists/MyArtists"
 
 function App() {
-    const [user, setUser] = useState({
-        email: null,
-        id: null
-    });
-
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const { data, error } = await supabase.auth.getUser();
-
-                console.log(data);
-                console.log(error);
-                if (error || !data.user) {
-                    throw new Error('User is not logged in.');
-                }
-
-                console.log(data.user.id);
-                console.log(data.user.email);
-                setUser({
-                    email: data.user.email,
-                    id: data.user.id
-                });
-
-            } catch (e) {
-                console.error(e.message);
-            }
-        }
-
-        getUser();
-    }, []);
-
     return (
-        <AuthContext.Provider value={[user, setUser]}>
+        <AuthProvider>
             <FavouriteSongsProvider>
                 <Routes>
                     <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
@@ -76,7 +46,7 @@ function App() {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </FavouriteSongsProvider>
-        </AuthContext.Provider>
+        </AuthProvider>
     );
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabase";
 import { createContext } from "react";
 import AuthContext from "./AuthContext";
@@ -9,6 +9,12 @@ const FavouriteSongsContext = createContext();
 export const FavouriteSongsProvider = ({ children }) => {
     const [favouriteSongs, setFavouriteSongs] = useState([]);
     const [user] = useContext(AuthContext);
+
+    useEffect(() => {
+        if (user?.id) {
+            getFavouriteSongs(user.id);
+        }
+    }, [user?.id]);
 
     async function getFavouriteSongs(userId) {
         try {

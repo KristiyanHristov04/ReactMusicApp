@@ -159,22 +159,6 @@ export default function EditArtist() {
                             </div>
 
                             <div className={styles["input-group"]}>
-                                <MDBTextArea
-                                    className={styles["textarea"]}
-                                    rows={10}
-                                    label="Biography"
-                                    id="biography"
-                                    name="biography"
-                                    value={formik.values.biography}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                />
-                                {formik.touched.biography && formik.errors.biography && (
-                                    <span className={styles["error"]}>{formik.errors.biography}</span>
-                                )}
-                            </div>
-
-                            <div className={styles["input-group"]}>
                                 <MDBFile
                                     className={styles["input"]}
                                     accept="image/*"
@@ -187,6 +171,22 @@ export default function EditArtist() {
                                 />
                                 {formik.touched.artistImage && formik.errors.artistImage && (
                                     <span className={styles["error"]}>{formik.errors.artistImage}</span>
+                                )}
+                            </div>
+
+                            <div className={styles["input-group"]}>
+                                <MDBTextArea
+                                    className={styles["textarea"]}
+                                    rows={10}
+                                    label="Biography"
+                                    id="biography"
+                                    name="biography"
+                                    value={formik.values.biography}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.biography && formik.errors.biography && (
+                                    <span className={styles["error"]}>{formik.errors.biography}</span>
                                 )}
                             </div>
 
