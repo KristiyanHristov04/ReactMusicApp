@@ -20,6 +20,11 @@ export default function Explore() {
     const songsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
+    const handlePageChange = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+        setIsInitialRender(false);
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -91,16 +96,6 @@ export default function Explore() {
         getTotalPages();
     }, [page, searchParent]);
 
-    function nextPage() {
-        setPage(page + 1);
-        setIsInitialRender(false);
-    }
-
-    function previousPage() {
-        setPage(page - 1);
-        setIsInitialRender(false);
-    }
-
     if (isLoading) {
         return (
             <>
@@ -161,7 +156,7 @@ export default function Explore() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === 1}
-                            onClick={previousPage}
+                            onClick={() => handlePageChange(page - 1)}
                         >
                             Previous Page
                         </button>
@@ -171,7 +166,7 @@ export default function Explore() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === totalPages}
-                            onClick={nextPage}
+                            onClick={() => handlePageChange(page + 1)}
                         >
                             Next Page
                         </button>

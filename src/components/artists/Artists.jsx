@@ -14,7 +14,12 @@ export default function Artists() {
     const artistsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(artistsPerPage);
 
+    const handlePageChange = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+    };
 
+    console.log(artists);
     useEffect(() => {
         setIsLoading(true);
         const getArtists = async () => {
@@ -116,7 +121,7 @@ export default function Artists() {
                                 </thead>
                                 <tbody>
                                     {artists.map((artist, index) => (
-                                        <tr key={artist.id}>
+                                        <tr key={`${artist.id}`}>
                                             <td>{from + index + 1}</td>
                                             <td>
                                                 <img
@@ -142,8 +147,8 @@ export default function Artists() {
                         <div className={styles.pagination}>
                             <button
                                 className={styles["pagination-button"]}
-                                disabled={page === 1}
-                                onClick={() => setPage(page - 1)}
+                                disabled={page === 1 || isLoading}
+                                onClick={() => handlePageChange(page - 1)}
                             >
                                 Previous Page
                             </button>
@@ -152,8 +157,8 @@ export default function Artists() {
                             </span>
                             <button
                                 className={styles["pagination-button"]}
-                                disabled={page === totalPages}
-                                onClick={() => setPage(page + 1)}
+                                disabled={page === totalPages || isLoading}
+                                onClick={() => handlePageChange(page + 1)}
                             >
                                 Next Page
                             </button>

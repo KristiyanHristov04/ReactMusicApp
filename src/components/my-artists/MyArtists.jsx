@@ -16,6 +16,10 @@ export default function MyArtists() {
     const artistsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(artistsPerPage);
 
+    const handlePageChange = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+    };
 
     useEffect(() => {
         const getArtists = async () => {
@@ -147,7 +151,7 @@ export default function MyArtists() {
                             <button
                                 className={styles["pagination-button"]}
                                 disabled={page === 1}
-                                onClick={() => setPage(page - 1)}
+                                onClick={() => handlePageChange(page - 1)}
                             >
                                 Previous Page
                             </button>
@@ -157,7 +161,7 @@ export default function MyArtists() {
                             <button
                                 className={styles["pagination-button"]}
                                 disabled={page === totalPages}
-                                onClick={() => setPage(page + 1)}
+                                onClick={() => handlePageChange(page + 1)}
                             >
                                 Next Page
                             </button>

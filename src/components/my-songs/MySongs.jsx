@@ -17,6 +17,10 @@ export default function MySongs() {
     const songsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
+    const handlePageChange = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+    };
 
     useEffect(() => {
         setIsLoading(true);
@@ -147,7 +151,7 @@ export default function MySongs() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === 1}
-                            onClick={() => setPage(page - 1)}
+                            onClick={() => handlePageChange(page - 1)}
                         >
                             Previous Page
                         </button>
@@ -157,7 +161,7 @@ export default function MySongs() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === totalPages}
-                            onClick={() => setPage(page + 1)}
+                            onClick={() => handlePageChange(page + 1)}
                         >
                             Next Page
                         </button>
