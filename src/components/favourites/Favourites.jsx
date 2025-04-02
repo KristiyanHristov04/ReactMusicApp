@@ -3,8 +3,6 @@ import styles from './Favourites.module.css';
 import { useState, useEffect, useContext } from "react";
 import { supabase } from "../../supabase";
 import Song from "../song/Song";
-import AuthContext from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner/Spinner";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import usePagination from "../../hooks/usePagination";
@@ -14,13 +12,11 @@ export default function Favourites() {
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { favouriteSongs } = useContext(FavouriteSongsContext);
-    console.log(favouriteSongs);
-    console.log(songs);
 
     const [searchParent, setSearchParent] = useState('');
     const songsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
-    console.log(page);
+    
     const handlePageChange = (newPage) => {
         setIsLoading(true);
         setPage(newPage);
