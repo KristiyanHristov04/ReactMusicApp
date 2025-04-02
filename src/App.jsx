@@ -5,6 +5,7 @@ import PreviewSong from "./components/preview-song/PreviewSong"
 import SignUp from "./components/sign-up/SignUp"
 import Login from "./components/login/Login"
 import AuthContext from "./context/AuthContext"
+import { FavouriteSongsProvider } from "./context/FavouriteSongsContext"
 import { useState, useEffect } from "react"
 import { supabase } from "./supabase"
 import Favourites from "./components/favourites/Favourites"
@@ -44,6 +45,7 @@ function App() {
                     email: data.user.email,
                     id: data.user.id
                 });
+
             } catch (e) {
                 console.error(e.message);
             }
@@ -54,24 +56,26 @@ function App() {
 
     return (
         <AuthContext.Provider value={[user, setUser]}>
-            <Routes>
-                <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
-                <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
-                <Route path="/add-artist" element={<ProtectedGuard><AddArtist /></ProtectedGuard>} />
-                <Route path="/song/:id/preview" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
-                <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
-                <Route path="/my-songs" element={<ProtectedGuard><MySongs /></ProtectedGuard>} />
-                <Route path="/signup" element={<GuestGuard><SignUp /></GuestGuard>} />
-                <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
-                <Route path="/song/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
-                <Route path="/song/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
-                <Route path="/artists" element={<ProtectedGuard><Artists /></ProtectedGuard>} />
-                <Route path="/my-artists" element={<ProtectedGuard><MyArtists /></ProtectedGuard>} />
-                <Route path="/artist/:id" element={<ProtectedGuard><Artist /></ProtectedGuard>} />
-                <Route path="/artist/:id/edit" element={<ProtectedGuard><EditArtist /></ProtectedGuard>} />
-                <Route path="/artist/:id/delete" element={<ProtectedGuard><DeleteArtist /></ProtectedGuard>} />
-                <Route path="*" element={<NotFound />} />
-            </Routes>
+            <FavouriteSongsProvider>
+                <Routes>
+                    <Route path="/" element={<ProtectedGuard><Explore /></ProtectedGuard>} />
+                    <Route path="/add-song" element={<ProtectedGuard><AddSong /></ProtectedGuard>} />
+                    <Route path="/add-artist" element={<ProtectedGuard><AddArtist /></ProtectedGuard>} />
+                    <Route path="/song/:id/preview" element={<ProtectedGuard><PreviewSong /></ProtectedGuard>} />
+                    <Route path="/favourite-songs" element={<ProtectedGuard><Favourites /></ProtectedGuard>} />
+                    <Route path="/my-songs" element={<ProtectedGuard><MySongs /></ProtectedGuard>} />
+                    <Route path="/signup" element={<GuestGuard><SignUp /></GuestGuard>} />
+                    <Route path="/login" element={<GuestGuard><Login /></GuestGuard>} />
+                    <Route path="/song/:id/edit" element={<ProtectedGuard><EditSong /></ProtectedGuard>} />
+                    <Route path="/song/:id/delete" element={<ProtectedGuard><DeleteSong /></ProtectedGuard>} />
+                    <Route path="/artists" element={<ProtectedGuard><Artists /></ProtectedGuard>} />
+                    <Route path="/my-artists" element={<ProtectedGuard><MyArtists /></ProtectedGuard>} />
+                    <Route path="/artist/:id" element={<ProtectedGuard><Artist /></ProtectedGuard>} />
+                    <Route path="/artist/:id/edit" element={<ProtectedGuard><EditArtist /></ProtectedGuard>} />
+                    <Route path="/artist/:id/delete" element={<ProtectedGuard><DeleteArtist /></ProtectedGuard>} />
+                    <Route path="*" element={<NotFound />} />
+                </Routes>
+            </FavouriteSongsProvider>
         </AuthContext.Provider>
     );
 }

@@ -8,18 +8,19 @@ import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner/Spinner";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import usePagination from "../../hooks/usePagination";
+import FavouriteSongsContext from "../../context/FavouriteSongsContext";
 
 export default function Favourites() {
     const [songs, setSongs] = useState([]);
-    const [favouriteSongsIds, setFavouriteSongsIds] = useState(null);
-    const [user] = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
-    const navigate = useNavigate();
+    const { favouriteSongs } = useContext(FavouriteSongsContext);
+    console.log(favouriteSongs);
+    console.log(songs);
 
     const [searchParent, setSearchParent] = useState('');
     const songsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
-
+    console.log(page);
     const handlePageChange = (newPage) => {
         setIsLoading(true);
         setPage(newPage);
@@ -27,32 +28,8 @@ export default function Favourites() {
 
     useEffect(() => {
         setIsLoading(true);
-        const getFavouriteSongsIds = async () => {
-            console.log(user.id);
-            try {
-                const { data: favouriteSongsIds, error: errorFavouriteSongsIds } = await supabase
-                    .from('users_favourite_songs')
-                    .select('song_id')
-                    .eq('user_id', user.id);
-
-                if (errorFavouriteSongsIds) {
-                    throw new Error(errorFavouriteSongsIds.message);
-                }
-
-                const songIds = [];
-                favouriteSongsIds.forEach(song => songIds.push(song.song_id));
-
-                return songIds;
-            } catch (e) {
-                console.error(e.message);
-            }
-        };
-
         const getSongs = async () => {
             try {
-                const songIds = await getFavouriteSongsIds();
-                setFavouriteSongsIds(songIds);
-
                 const { data: songsInformation, error: errorSongsInformation } = await supabase
                     .from('songs')
                     .select(`
@@ -69,7 +46,7 @@ export default function Favourites() {
                     )
                 `)
                     .or(`name.ilike.%${searchParent}%`)
-                    .in('id', songIds)
+                    .in('id', favouriteSongs)
                     .range(from, to)
                     .order('id', { ascending: false });
 
@@ -96,13 +73,11 @@ export default function Favourites() {
         }
 
         const getTotalPages = async () => {
-            const songIds = await getFavouriteSongsIds();
-            setFavouriteSongsIds(songIds);
             try {
                 const { data: totalPages, error: errorTotalPages } = await supabase
                     .from('songs')
                     .select('id', { count: 'exact' })
-                    .in('id', songIds)
+                    .in('id', favouriteSongs)
                     .or(`name.ilike.%${searchParent}%`);
 
                 console.log(totalPages);
@@ -121,7 +96,7 @@ export default function Favourites() {
 
         getSongs();
         getTotalPages();
-    }, [page, searchParent]);
+    }, [page, searchParent, favouriteSongs]);
 
     if (isLoading) {
         return (
@@ -159,7 +134,7 @@ export default function Favourites() {
                             artists={song.artists}
                             thumbnailImage={song.song_image_url}
                         />
-                    )) :
+                    )) : page === 1 ?
                         (<div className={styles["no-songs-container"]}>
                             <MdOutlineLibraryMusic />
                             <h2>No songs found</h2>
@@ -167,7 +142,7 @@ export default function Favourites() {
                                 Start by adding your favorite songs or try a different search term.
                             </p>
                         </div>
-                        )}
+                        ) : setPage(1)}
                 </div>
                 {songs.length > 0 &&
                     <div className={styles.pagination}>

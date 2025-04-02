@@ -4,9 +4,6 @@ import { RxCross2 } from "react-icons/rx";
 import { IoWarningOutline } from "react-icons/io5";
 import { SiTicktick } from "react-icons/si";
 
-
-
-
 export default function Alert({
   message,
   variant = 'success',
@@ -21,7 +18,9 @@ export default function Alert({
 
       const exitTimer = setTimeout(() => {
         setIsVisible(false);
-        setIsInitialRender(false);
+        if (setIsInitialRender) {
+          setIsInitialRender(false);
+        }
       }, 300);
 
       return () => clearTimeout(exitTimer);
