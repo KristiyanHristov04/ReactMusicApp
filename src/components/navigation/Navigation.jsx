@@ -11,9 +11,10 @@ import { RiLogoutBoxLine } from "react-icons/ri";
 import { RiLoginBoxLine } from "react-icons/ri";
 import { HiOutlineUserAdd } from "react-icons/hi";
 import { IoAlbumsOutline } from "react-icons/io5";
-import { GiMicrophone } from "react-icons/gi";
+import { FaUserFriends } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 import { IoChevronDownOutline } from "react-icons/io5";
+import { GiMicrophone } from "react-icons/gi";
 import { useMemo } from 'react';
 
 import { HiMenu } from "react-icons/hi";
@@ -113,7 +114,6 @@ export default function Navigation({
                             onChange={debouncedResults}
                             type="text"
                             placeholder={searchPlaceHolder}
-                            // value={search}
                             className={styles.searchInput}
                         />
                     </div>
@@ -134,7 +134,7 @@ export default function Navigation({
                         className={({ isActive }) => isActive ? styles.activeLink : ''}
                         onClick={handleNavLinkClick}
                     >
-                        <GiMicrophone />
+                        <FaUserFriends />
                         <span>Artists</span>
                     </NavLink>
 
@@ -192,7 +192,7 @@ export default function Navigation({
                                 className={({ isActive }) => isActive ? styles.activeLink : ''}
                             >
                                 <div className={styles["dropdown-items"]}>
-                                    <GiMicrophone />
+                                    <FaUserFriends />
                                     <span>My Artists</span>
                                 </div>
                             </NavLink>
