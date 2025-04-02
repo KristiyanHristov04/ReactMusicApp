@@ -49,7 +49,6 @@ export default function DeleteArtist() {
 
 
                 deleteFileNameRef.current = artistInformation[0].file_name;
-                console.log(deleteFileNameRef.current);
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
@@ -69,8 +68,6 @@ export default function DeleteArtist() {
             const { data: artistToDelete, error: errorArtistToDelete } = await supabase.from('artists')
                 .select()
                 .eq('id', params.id);
-
-            console.log(artistToDelete);
 
             if (errorArtistToDelete) {
                 throw new Error(errorArtistToDelete.message);

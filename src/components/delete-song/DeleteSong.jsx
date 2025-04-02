@@ -45,13 +45,11 @@ export default function DeleteSong() {
 
                 setSong({
                     name: songsInformation[0].name,
-                    // artist: songsInformation[0].artist,
                     lyrics: songsInformation[0].lyrics
                 });
 
 
                 deleteFileNameRef.current = songsInformation[0].file_name;
-                console.log(deleteFileNameRef.current);
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
@@ -67,8 +65,6 @@ export default function DeleteSong() {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        console.log('Song deleted');
-
         try {
             const { error: errorSongsDelete } = await supabase.from('songs')
                 .delete()
@@ -77,7 +73,6 @@ export default function DeleteSong() {
             if (errorSongsDelete) {
                 throw new Error(errorSongsDelete.message);
             }
-
 
             const { error: filesDeleteError } = await supabase.storage
                 .from('song-files')

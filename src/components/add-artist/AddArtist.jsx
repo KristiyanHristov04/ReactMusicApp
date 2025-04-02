@@ -23,19 +23,12 @@ export default function AddArtist() {
     });
 
     async function submitHandler(values, actions) {
-        console.log(values);
-
         try {
             const fileName = Date.now();
-            const artistImageName = fileName;
-
-            console.log(artistImageName);
 
             const { data: artistImageData, error: artistImageError } = await supabase.storage
                 .from('song-files')
-                .upload(`artist-images/${artistImageName}`, values.artistImage);
-
-            console.log(artistImageData);
+                .upload(`artist-images/${fileName}`, values.artistImage);
 
             if (artistImageError) {
                 throw new Error(artistImageError.message);
@@ -43,7 +36,7 @@ export default function AddArtist() {
 
             const artistImageUrl = supabase.storage.from('song-files').getPublicUrl(artistImageData.path).data.publicUrl;
 
-            const { data, error } = await supabase
+            const { data: artistData, error: artistError } = await supabase
                 .from('artists')
                 .insert([
                     {
@@ -56,11 +49,11 @@ export default function AddArtist() {
                 ])
                 .select();
 
-            if (error) {
-                throw new Error(error.message);
+            if (artistError) {
+                throw new Error(artistError.message);
             }
 
-            console.log("Artist added successfully!", data); 
+            console.log("Artist added successfully!", artistData); 
             actions.resetForm();
             navigate('/', { state: { message: "Artist added successfully!", variant: "success" } });
         } catch (error) {

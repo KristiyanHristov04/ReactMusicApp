@@ -20,7 +20,6 @@ export default function EditSong() {
     const params = useParams();
     const [isLoading, setIsLoading] = useState(true);
 
-
     const deleteFileNameRef = useRef('');
 
     useResetScroll();
@@ -56,28 +55,20 @@ export default function EditSong() {
     });
 
     async function submitHandler(values, actions) {
-        console.log(values);
-
         try {
             const fileName = Date.now();
-            const songFileName = fileName;
-            const songImageName = fileName;
 
-            console.log(songFileName, songImageName);
-
-            // Upload audio file
             const { data: songData, error: songError } = await supabase.storage
                 .from('song-files')
-                .upload(`song-audios/${songFileName}`, values.song);
+                .upload(`song-audios/${fileName}`, values.song);
 
             if (songError) {
                 throw new Error(songError.message);
             }
 
-            // Upload song image
             const { data: songImageData, error: songImageError } = await supabase.storage
                 .from('song-files')
-                .upload(`song-images/${songImageName}`, values.songImage);
+                .upload(`song-images/${fileName}`, values.songImage);
 
             if (songImageError) {
                 throw new Error(songImageError.message);
@@ -86,7 +77,6 @@ export default function EditSong() {
             const songUrl = supabase.storage.from('song-files').getPublicUrl(songData.path).data.publicUrl;
             const songImageUrl = supabase.storage.from('song-files').getPublicUrl(songImageData.path).data.publicUrl;
 
-            // Insert song data into the database
             const { data: editedSongData, error: editedSongError } = await supabase
                 .from('songs')
                 .update(
@@ -133,7 +123,6 @@ export default function EditSong() {
             if (errorSongsArtistsInsert) {
                 throw new Error(errorSongsArtistsInsert.message);
             }
-
 
             console.log("Song edited successfully!", editedSongData);
             actions.resetForm();

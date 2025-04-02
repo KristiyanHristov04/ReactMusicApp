@@ -34,7 +34,6 @@ export default function AddSong() {
                     throw new Error(getArtistsError.message);
                 }
 
-                console.log(getArtistsData);
                 setArtists(getArtistsData.map(artist => ({
                     value: artist.id,
                     label: artist.name
@@ -65,16 +64,10 @@ export default function AddSong() {
 
         try {
             const fileName = Date.now();
-            const songFileName = fileName;
-            const songImageName = fileName;
-
-            console.log(songFileName, songImageName);
 
             const { data: songData, error: songError } = await supabase.storage
                 .from('song-files')
-                .upload(`song-audios/${songFileName}`, values.song);
-
-            console.log(songData);
+                .upload(`song-audios/${fileName}`, values.song);
 
             if (songError) {
                 throw new Error(songError.message);
@@ -82,9 +75,7 @@ export default function AddSong() {
 
             const { data: songImageData, error: songImageError } = await supabase.storage
                 .from('song-files')
-                .upload(`song-images/${songImageName}`, values.songImage);
-
-            console.log(songImageData);
+                .upload(`song-images/${fileName}`, values.songImage);
 
             if (songImageError) {
                 throw new Error(songImageError.message);
@@ -129,7 +120,6 @@ export default function AddSong() {
             }
 
             console.log("Song added successfully!", createdSongData);
-            console.log(values.selectedArtists);
             actions.resetForm();
             navigate('/', { state: { message: "Song added successfully!", variant: "success" } });
         } catch (error) {

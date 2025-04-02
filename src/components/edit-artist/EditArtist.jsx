@@ -28,17 +28,12 @@ export default function EditArtist() {
     });
 
     async function submitHandler(values, actions) {
-        console.log(values);
-
         try {
             const fileName = Date.now();
-            const artistImageName = fileName;
-
-            console.log(artistImageName);
 
             const { data: artistImageData, error: artistImageError } = await supabase.storage
                 .from('song-files')
-                .upload(`artist-images/${artistImageName}`, values.artistImage);
+                .upload(`artist-images/${fileName}`, values.artistImage);
 
             if (artistImageError) {
                 throw new Error(artistImageError.message);

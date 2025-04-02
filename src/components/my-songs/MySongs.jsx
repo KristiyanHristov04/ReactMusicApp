@@ -74,13 +74,11 @@ export default function MySongs() {
                     .eq('user_id', user.id)
                     .or(`name.ilike.%${searchParent}%`);
 
-                console.log(totalPages);
                 if (errorTotalPages) {
                     throw new Error(errorTotalPages.message);
                 }
 
                 const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
-                console.log(totalPagesCount);
                 setTotalPages(totalPagesCount);
             } catch (e) {
                 console.error(e.message);
