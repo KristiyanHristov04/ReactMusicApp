@@ -7,7 +7,7 @@ export default function ScrollToTopButton() {
     return (
         <>
             {showScrollButton && (
-                <IoIosArrowUp onClick={scrollToTop} className={styles["scroll-to-top-icon"]} />
+                <IoIosArrowUp data-testid="scroll-to-top-icon" onClick={scrollToTop} className={styles["scroll-to-top-icon"]} />
             )}
         </>
     );
