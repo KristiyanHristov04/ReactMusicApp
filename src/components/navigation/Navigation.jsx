@@ -15,6 +15,8 @@ import { FaUserFriends } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { GiMicrophone } from "react-icons/gi";
+import { BiCollection } from "react-icons/bi";
+import { BsMusicNoteList } from "react-icons/bs";
 import { useMemo } from 'react';
 
 import { HiMenu } from "react-icons/hi";
@@ -161,7 +163,7 @@ export default function Navigation({
                             className={`${styles.dropdownButton} ${dropdownOpen ? styles.active : ''}`}
                             onClick={toggleDropdown}
                         >
-                            <FaUser />
+                            <BiCollection />
                             <span>My Collections</span>
                             <IoChevronDownOutline className={dropdownOpen ? styles.rotated : ''} />
                         </button>
@@ -182,7 +184,7 @@ export default function Navigation({
                                 className={({ isActive }) => isActive ? styles.activeLink : ''}
                             >
                                 <div className={styles["dropdown-items"]}>
-                                    <IoAlbumsOutline />
+                                    <BsMusicNoteList />
                                     <span>My Songs</span>
                                 </div>
                             </NavLink>
