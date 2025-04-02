@@ -39,7 +39,7 @@ export default function Alert({
         className={`${styles.alert} ${styles["alert-success"]} ${isExiting ? styles.alertExit : ''}`}
       >
         <div className={styles["alert-content"]}>
-          <SiTicktick />
+          <SiTicktick data-testid="success-icon" />
           {message}
         </div>
       </div>
@@ -50,7 +50,7 @@ export default function Alert({
         className={`${styles.alert} ${styles["alert-warning"]} ${isExiting ? styles.alertExit : ''}`}
       >
         <div className={styles["alert-content"]}>
-          <IoWarningOutline />
+          <IoWarningOutline data-testid="warning-icon" />
           {message}
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Alert({
         className={`${styles.alert} ${styles["alert-danger"]} ${isExiting ? styles.alertExit : ''}`}
       >
         <div className={styles["alert-content"]}>
-          <RxCross2 />
+          <RxCross2 data-testid="close-button" />
           {message}
         </div>
       </div>
