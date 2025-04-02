@@ -201,7 +201,7 @@ export default function Navigation({
                         </div>
                     </div>
 
-                    {!user.id ? (
+                    {!user?.id ? (
                         <div className={styles.authLinks}>
                             <NavLink
                                 to="/signup"
