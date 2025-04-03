@@ -26,7 +26,7 @@ export const addSongAudio = async (fileName, song) => {
     if (songError) {
         throw new Error(songError.message);
     }
-
+    console.log(songData);
     return songData;
 }
 
