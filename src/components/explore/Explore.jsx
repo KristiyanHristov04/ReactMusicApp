@@ -16,7 +16,7 @@ export default function Explore() {
     const [isInitialRender, setIsInitialRender] = useState(true);
     const [searchParent, setSearchParent] = useState('');
 
-    const songsPerPage = 2;
+    const songsPerPage = 5;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
     const handlePageChange = (newPage) => {

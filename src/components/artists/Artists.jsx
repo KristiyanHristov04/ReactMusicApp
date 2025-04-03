@@ -12,7 +12,7 @@ export default function Artists() {
     const [searchParent, setSearchParent] = useState('');
     const [artists, setArtists] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const artistsPerPage = 2;
+    const artistsPerPage = 5;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(artistsPerPage);
 
     const handlePageChange = (newPage) => {

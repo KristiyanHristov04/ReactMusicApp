@@ -14,7 +14,7 @@ export default function Favourites() {
     const { favouriteSongs } = useContext(FavouriteSongsContext);
 
     const [searchParent, setSearchParent] = useState('');
-    const songsPerPage = 2;
+    const songsPerPage = 5;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
     console.log(favouriteSongs);
