@@ -16,7 +16,7 @@ export default function Song({
     const navigate = useNavigate();
     const { favouriteSongs, toggleFavouriteSong } = useContext(FavouriteSongsContext);
 
-    const isSongLiked = favouriteSongs.includes(id);
+    const isSongLiked = favouriteSongs.some(song => song.id === id);
 
     const clickHandlerToggleFavouriteSong = async (e) => {
         e.stopPropagation();

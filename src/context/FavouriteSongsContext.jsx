@@ -20,14 +20,15 @@ export const FavouriteSongsProvider = ({ children }) => {
         try {
             const { data: favouriteSongs, error: favouriteSongsError } = await supabase
                 .from('users_favourite_songs')
-                .select('song_id')
-                .eq('user_id', userId);
+                .select('song_id, created_at, songs (name)')
+                .eq('user_id', userId)
+                .order('created_at', { ascending: false });
 
             if (favouriteSongsError) {
                 throw new Error(favouriteSongsError.message);
             }
-
-            setFavouriteSongs(favouriteSongs.map(song => song.song_id));
+            
+            setFavouriteSongs(favouriteSongs.map(song => ({id: song.song_id, created_at: song.created_at, name: song.songs.name})));
 
             console.log(favouriteSongs);
         } catch (e) {
@@ -37,7 +38,7 @@ export const FavouriteSongsProvider = ({ children }) => {
 
     async function toggleFavouriteSong(songId) {
         try {
-            if (favouriteSongs.includes(songId)) {
+            if (favouriteSongs.some(song => song.id === songId)) {
                 const { error } = await supabase
                     .from('users_favourite_songs')
                     .delete()
@@ -48,7 +49,7 @@ export const FavouriteSongsProvider = ({ children }) => {
                     throw new Error(error.message);
                 }
 
-                setFavouriteSongs(favouriteSongs.filter(id => id !== songId));
+                setFavouriteSongs(favouriteSongs.filter(song => song.id !== songId));
             } else {
                 const { error } = await supabase
                     .from('users_favourite_songs')
@@ -61,7 +62,7 @@ export const FavouriteSongsProvider = ({ children }) => {
                     throw new Error(error.message);
                 }
 
-                setFavouriteSongs([...favouriteSongs, songId]);
+                getFavouriteSongs(user.id);
             }
         } catch (e) {
             console.error(e.message);

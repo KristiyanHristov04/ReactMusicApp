@@ -16,7 +16,9 @@ export default function Favourites() {
     const [searchParent, setSearchParent] = useState('');
     const songsPerPage = 2;
     const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
-    
+
+    console.log(favouriteSongs);
+
     const handlePageChange = (newPage) => {
         setIsLoading(true);
         setPage(newPage);
@@ -26,6 +28,24 @@ export default function Favourites() {
         setIsLoading(true);
         const getSongs = async () => {
             try {
+                if (favouriteSongs.length === 0) {
+                    setSongs([]);
+                    setIsLoading(false);
+                    return;
+                }
+
+                const songsThatMatchSearch = favouriteSongs.filter(song => song.name.toLowerCase().includes(searchParent.toLowerCase()));
+                const songIds = songsThatMatchSearch.map(song => song.id);
+                const paginatedIds = songIds.slice(from, to + 1);
+                console.log(songIds);
+                console.log(paginatedIds);
+
+                if (paginatedIds.length === 0) {
+                    setSongs([]);
+                    setIsLoading(false);
+                    return;
+                }
+
                 const { data: songsInformation, error: errorSongsInformation } = await supabase
                     .from('songs')
                     .select(`
@@ -42,17 +62,13 @@ export default function Favourites() {
                     )
                 `)
                     .or(`name.ilike.%${searchParent}%`)
-                    .in('id', favouriteSongs)
-                    .range(from, to)
-                    .order('id', { ascending: false });
-
-                console.log(songsInformation);
+                    .in('id', paginatedIds);
 
                 if (errorSongsInformation) {
                     throw new Error(errorSongsInformation.message);
                 }
 
-                const songs = songsInformation.map(song => ({
+                const songsData = songsInformation.map(song => ({
                     id: song.id,
                     name: song.name,
                     song_image_url: song.song_image_url,
@@ -60,7 +76,11 @@ export default function Favourites() {
                     artists: song.songs_artists.map(artist => artist.artists)
                 }));
 
-                setSongs(songs);
+                songsData.sort((a, b) => {
+                    return paginatedIds.indexOf(a.id) - paginatedIds.indexOf(b.id);
+                });
+
+                setSongs(songsData);
             } catch (e) {
                 console.error(e.message);
             } finally {
@@ -70,21 +90,26 @@ export default function Favourites() {
 
         const getTotalPages = async () => {
             try {
-                const { data: totalPages, error: errorTotalPages } = await supabase
-                    .from('songs')
-                    .select('id', { count: 'exact' })
-                    .in('id', favouriteSongs)
-                    .or(`name.ilike.%${searchParent}%`);
-
-                console.log(totalPages);
-
-                if (errorTotalPages) {
-                    throw new Error(errorTotalPages.message);
+                if (favouriteSongs.length === 0) {
+                    setTotalPages(0);
+                    return;
                 }
 
-                const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
-                console.log(totalPagesCount);
+                const songIds = favouriteSongs.map(song => song.id);
+
+                const { data, error } = await supabase
+                    .from('songs')
+                    .select('id')
+                    .in('id', songIds)
+                    .or(`name.ilike.%${searchParent}%`);
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+
+                const totalPagesCount = Math.ceil(data.length / songsPerPage);
                 setTotalPages(totalPagesCount);
+
             } catch (e) {
                 console.error(e.message);
             }

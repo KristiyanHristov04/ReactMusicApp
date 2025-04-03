@@ -24,14 +24,14 @@ export default function SongPlayer({
     useEffect(() => {
         try {
             if (user.id) {
-                const isLiked = favouriteSongs.includes(songId);
+                const isLiked = favouriteSongs.some(song => song.id === songId);
                 setIsLiked(isLiked);
                 setIsLoading(false);
             }
         } catch (e) {
             console.error(e.message);
         }
-    }, []);
+    }, [user, favouriteSongs, songId]);
 
     const clickHandlerAddToFavourite = async () => {
         if (!user.id) {
