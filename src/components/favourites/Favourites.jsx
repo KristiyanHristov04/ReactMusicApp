@@ -1,12 +1,12 @@
 import Navigation from "../navigation/Navigation";
 import styles from './Favourites.module.css';
 import { useState, useEffect, useContext } from "react";
-import { supabase } from "../../supabase";
 import Song from "../song/Song";
 import Spinner from "../spinner/Spinner";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import usePagination from "../../hooks/usePagination";
 import FavouriteSongsContext from "../../context/FavouriteSongsContext";
+import { getSongs, getTotalPages } from "../../services/addFavouritesService";
 
 export default function Favourites() {
     const [songs, setSongs] = useState([]);
@@ -26,61 +26,24 @@ export default function Favourites() {
 
     useEffect(() => {
         setIsLoading(true);
-        const getSongs = async () => {
+        const fetchData = async () => {
             try {
                 if (favouriteSongs.length === 0) {
                     setSongs([]);
                     setIsLoading(false);
+                    setTotalPages(0);
                     return;
                 }
 
                 const songsThatMatchSearch = favouriteSongs.filter(song => song.name.toLowerCase().includes(searchParent.toLowerCase()));
                 const songIds = songsThatMatchSearch.map(song => song.id);
                 const paginatedIds = songIds.slice(from, to + 1);
-                console.log(songIds);
-                console.log(paginatedIds);
 
-                if (paginatedIds.length === 0) {
-                    setSongs([]);
-                    setIsLoading(false);
-                    return;
-                }
-
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .or(`name.ilike.%${searchParent}%`)
-                    .in('id', paginatedIds);
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                const songsData = songsInformation.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    song_image_url: song.song_image_url,
-                    song_url: song.song_url,
-                    artists: song.songs_artists.map(artist => artist.artists)
-                }));
-
-                songsData.sort((a, b) => {
-                    return paginatedIds.indexOf(a.id) - paginatedIds.indexOf(b.id);
-                });
+                const songsData = await getSongs(searchParent, paginatedIds);
+                const totalPagesCount = await getTotalPages(searchParent, songIds, songsPerPage);
 
                 setSongs(songsData);
+                setTotalPages(totalPagesCount);
             } catch (e) {
                 console.error(e.message);
             } finally {
@@ -88,35 +51,7 @@ export default function Favourites() {
             }
         }
 
-        const getTotalPages = async () => {
-            try {
-                if (favouriteSongs.length === 0) {
-                    setTotalPages(0);
-                    return;
-                }
-
-                const songIds = favouriteSongs.map(song => song.id);
-
-                const { data, error } = await supabase
-                    .from('songs')
-                    .select('id')
-                    .in('id', songIds)
-                    .or(`name.ilike.%${searchParent}%`);
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                const totalPagesCount = Math.ceil(data.length / songsPerPage);
-                setTotalPages(totalPagesCount);
-
-            } catch (e) {
-                console.error(e.message);
-            }
-        }
-
-        getSongs();
-        getTotalPages();
+        fetchData();
     }, [page, searchParent, favouriteSongs]);
 
     if (isLoading) {
