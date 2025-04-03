@@ -6,6 +6,7 @@ import Spinner from "../spinner/Spinner";
 import { Link } from "react-router-dom";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import usePagination from "../../hooks/usePagination";
+import { getArtists, getTotalPages } from "../../services/artistsService";
 
 export default function Artists() {
     const [searchParent, setSearchParent] = useState('');
@@ -21,36 +22,13 @@ export default function Artists() {
 
     console.log(artists);
     useEffect(() => {
-        setIsLoading(true);
-        const getArtists = async () => {
+        const fetchData = async () => {
+            setIsLoading(true);
             try {
-                const { data: artistsData, error: errorArtists } = await supabase
-                    .from('artists')
-                    .select(`
-                        id,
-                        name,
-                        artist_image_url,
-                        songs_artists (
-                            songs (
-                                total_listenings
-                            )
-                        )
-                    `)
-                    .or(`name.ilike.%${searchParent}%`)
-                    .range(from, to)
-                    .order('id', { ascending: false });
-
-                if (errorArtists) {
-                    throw new Error(errorArtists.message);
-                }
-
-                const artistsWithTotalListenings = artistsData.map(artist => ({
-                    ...artist,
-                    total_listenings: artist.songs_artists.reduce((total, song) =>
-                        total + (song.songs?.total_listenings || 0), 0)
-                }));
-
+                const artistsWithTotalListenings = await getArtists(searchParent, from, to);
                 setArtists(artistsWithTotalListenings);
+                const totalPagesCount = await getTotalPages(searchParent, artistsPerPage);
+                setTotalPages(totalPagesCount);
             } catch (e) {
                 console.error(e.message);
             } finally {
@@ -58,26 +36,7 @@ export default function Artists() {
             }
         }
 
-        const getTotalPages = async () => {
-            try {
-                const { data: totalArtists, error: errorTotal } = await supabase
-                    .from('artists')
-                    .select('id', { count: 'exact' })
-                    .or(`name.ilike.%${searchParent}%`);
-
-                if (errorTotal) {
-                    throw new Error(errorTotal.message);
-                }
-
-                const totalPagesCount = Math.ceil(totalArtists.length / artistsPerPage);
-                setTotalPages(totalPagesCount);
-            } catch (e) {
-                console.error(e.message);
-            }
-        }
-
-        getArtists();
-        getTotalPages();
+        fetchData();
     }, [page, searchParent]);
 
     if (isLoading) {
