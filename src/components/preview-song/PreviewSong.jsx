@@ -78,6 +78,8 @@ export default function PreviewSong() {
                     .select()
                     .eq('song_id', song.id);
 
+                console.log(artistsInformation);
+
                 if (errorArtistsInformation) {
                     throw new Error(errorArtistsInformation.message);
                 }
@@ -86,6 +88,8 @@ export default function PreviewSong() {
                     .from('artists')
                     .select()
                     .in('id', artistsInformation.map(artist => artist.artist_id));
+
+                console.log(artistsData);
 
                 if (errorArtistsData) {
                     throw new Error(errorArtistsData.message);

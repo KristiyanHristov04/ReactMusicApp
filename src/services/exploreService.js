@@ -19,11 +19,10 @@ export const getSongs = async (searchTerm, from, to) => {
         .or(`name.ilike.%${searchTerm}%`)
         .range(from, to)
         .order('id', { ascending: false });
-
     if (errorSongsInformation) {
         throw new Error(errorSongsInformation.message);
     }
-
+    
     const songs = songsInformation.map(song => ({
         id: song.id,
         name: song.name,

@@ -2,7 +2,6 @@ import Navigation from "../navigation/Navigation";
 import Song from "../../components/song/Song";
 import styles from './Explore.module.css'
 import { useEffect, useState } from "react";
-import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../../components/spinner/Spinner";
 import Alert from "../alert/Alert";
@@ -32,6 +31,7 @@ export default function Explore() {
         const fetchData = async () => {
             try {
                 const songs = await getSongs(searchParent, from, to);
+                console.log(songs);
                 const totalPages = await getTotalPages(searchParent, songsPerPage);
                 setSongs(songs);
                 setTotalPages(totalPages);

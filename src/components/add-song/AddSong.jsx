@@ -5,7 +5,6 @@ import { useState, useContext, useEffect } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import * as Yup from 'yup';
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
@@ -13,6 +12,7 @@ import Select from 'react-select'
 import Spinner from "../spinner/Spinner";
 import { customStyles } from "../../common/addSongSelectStyles";
 import { CreateSchema } from "../../schemas/addSongSchema";
+import { getArtists, addSongAudio, addSongImage, getSongFileUrl, createSong, addSongArtist } from "../../services/addSongService";
 
 
 export default function AddSong() {
@@ -24,22 +24,10 @@ export default function AddSong() {
     useResetScroll();
 
     useEffect(() => {
-        async function getArtists() {
+        const fetchData = async () => {
             try {
-                const { data: getArtistsData, error: getArtistsError } = await supabase
-                    .from('artists')
-                    .select('id, name')
-                    .order('name', { ascending: true });
-
-                if (getArtistsError) {
-                    throw new Error(getArtistsError.message);
-                }
-
-                setArtists(getArtistsData.map(artist => ({
-                    value: artist.id,
-                    label: artist.name
-                })));
-
+                const artists = await getArtists();
+                setArtists(artists);
                 setIsLoading(false);
             } catch (error) {
                 console.error(error.message);
@@ -47,67 +35,24 @@ export default function AddSong() {
             }
         }
 
-        getArtists();
+        fetchData();
     }, []);
 
     async function submitHandler(values, actions) {
-        console.log(values);
-
         try {
             const fileName = Date.now();
 
-            const { data: songData, error: songError } = await supabase.storage
-                .from('song-files')
-                .upload(`song-audios/${fileName}`, values.song);
+            const songData = await addSongAudio(fileName, values.song);
 
-            if (songError) {
-                throw new Error(songError.message);
-            }
+            const songImageData = await addSongImage(fileName, values.songImage);
 
-            const { data: songImageData, error: songImageError } = await supabase.storage
-                .from('song-files')
-                .upload(`song-images/${fileName}`, values.songImage);
+            const songUrl = getSongFileUrl(songData.path);
+            const songImageUrl = getSongFileUrl(songImageData.path);
 
-            if (songImageError) {
-                throw new Error(songImageError.message);
-            }
-
-            const songUrl = supabase.storage.from('song-files').getPublicUrl(songData.path).data.publicUrl;
-            const songImageUrl = supabase.storage.from('song-files').getPublicUrl(songImageData.path).data.publicUrl;
-
-            const { data: createdSongData, error: createdSongError } = await supabase
-                .from('songs')
-                .insert([
-                    {
-                        name: values.name,
-                        lyrics: values.lyrics,
-                        song_url: songUrl,
-                        song_image_url: songImageUrl,
-                        user_id: user.id,
-                        file_name: fileName,
-                    }
-                ])
-                .select();
-
-            if (createdSongError) {
-                throw new Error(createdSongError.message);
-            }
+            const createdSongData = await createSong(values.name, values.lyrics, songUrl, songImageUrl, user.id, fileName);
 
             for (const artist of values.selectedArtists) {
-
-                const { error: artistError } = await supabase
-                    .from('songs_artists')
-                    .insert([
-                        {
-                            song_id: createdSongData[0].id,
-                            artist_id: artist.value
-                        }
-                    ]);
-
-                if (artistError) {
-                    throw new Error(artistError.message);
-                }
-
+                await addSongArtist(createdSongData[0].id, artist.value);
             }
 
             console.log("Song added successfully!", createdSongData);
