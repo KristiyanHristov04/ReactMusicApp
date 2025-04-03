@@ -26,7 +26,26 @@ export const getSong = async (id) => {
         throw new Error(errorSongInformation.message);
     }
 
-    return songInformation;
+    if (songInformation.length === 0) {
+        return [];
+    }
+
+    const song = {
+        id: songInformation[0].id,
+        name: songInformation[0].name,
+        song_image_url: songInformation[0].song_image_url,
+        song_url: songInformation[0].song_url,
+        artists: songInformation[0].songs_artists.map(artist => ({
+            id: artist.artists.id,
+            name: artist.artists.name
+        })),
+        artist_image_url: songInformation[0].songs_artists[0].artists.artist_image_url,
+        total_listenings: songInformation[0].total_listenings,
+        user_id: songInformation[0].user_id,
+        lyrics: songInformation[0].lyrics
+    };
+
+    return song;
 }
 
 export const getTopSongs = async () => {

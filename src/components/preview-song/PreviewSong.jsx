@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Navigation from "../navigation/Navigation";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabase";
 import styles from './PreviewSong.module.css'
 import SongPlayer from "./song-player/SongPlayer";
 import SongLyrics from "./song-lyrics/SongLyrics";
@@ -30,38 +29,23 @@ export default function PreviewSong() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const songInformation = await getSong(params.id);
+                const song = await getSong(params.id);
 
-                if (songInformation.length === 0) {
+                if (song.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
                 const topSongs = await getTopSongs();
 
-                const song = {
-                    id: songInformation[0].id,
-                    name: songInformation[0].name,
-                    song_image_url: songInformation[0].song_image_url,
-                    song_url: songInformation[0].song_url,
-                    artists: songInformation[0].songs_artists.map(artist => ({
-                        id: artist.artists.id,
-                        name: artist.artists.name
-                    })),
-                    artist_image_url: songInformation[0].songs_artists[0].artists.artist_image_url,
-                    total_listenings: songInformation[0].total_listenings,
-                    user_id: songInformation[0].user_id,
-                    lyrics: songInformation[0].lyrics
-                };
-
-                const songRank = topSongs.findIndex(s => s.id === songInformation[0].id) + 1;
+                const songRank = topSongs.findIndex(s => s.id === song.id) + 1;
 
                 if (songRank > 0) {
                     setIsTop3(true);
                     setRank(songRank);
                 }
 
-                setTotalListenings(songInformation[0].total_listenings);
+                setTotalListenings(song.total_listenings);
                 setSong(song);
                 setIsLoading(false);
             } catch (error) {
