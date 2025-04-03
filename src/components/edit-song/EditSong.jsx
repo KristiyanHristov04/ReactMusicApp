@@ -12,7 +12,7 @@ import { useResetScroll } from "../../hooks/useResetScroll";
 import Select from 'react-select'
 import { customStyles } from "../../common/editSongSelectStyles";
 import { EditSchema } from "../../schemas/editSongSchema";
-import { getArtistsForSelect, getSongInformation } from "../../services/editSongService";
+import { deleteSongAudioAndImage, deleteSongArtists, getArtistsForSelect, getSongInformation, addSongAudio, addSongImage, getSongFileUrl, addSongArtists, editSong } from "../../services/editSongService";
 
 export default function EditSong() {
     const [user] = useContext(AuthContext);
@@ -29,71 +29,19 @@ export default function EditSong() {
         try {
             const fileName = Date.now();
 
-            const { data: songData, error: songError } = await supabase.storage
-                .from('song-files')
-                .upload(`song-audios/${fileName}`, values.song);
+            const songData = await addSongAudio(fileName, values.song);
+            const songImageData = await addSongImage(fileName, values.songImage);
 
-            if (songError) {
-                throw new Error(songError.message);
-            }
+            const songUrl = getSongFileUrl(songData.path);
+            const songImageUrl = getSongFileUrl(songImageData.path);
 
-            const { data: songImageData, error: songImageError } = await supabase.storage
-                .from('song-files')
-                .upload(`song-images/${fileName}`, values.songImage);
+            const editedSongData = await editSong(params.id, values.name, values.lyrics, songUrl, songImageUrl, user.id, fileName);
+               
+            await deleteSongAudioAndImage(deleteFileNameRef.current);
 
-            if (songImageError) {
-                throw new Error(songImageError.message);
-            }
+            await deleteSongArtists(params.id);
 
-            const songUrl = supabase.storage.from('song-files').getPublicUrl(songData.path).data.publicUrl;
-            const songImageUrl = supabase.storage.from('song-files').getPublicUrl(songImageData.path).data.publicUrl;
-
-            const { data: editedSongData, error: editedSongError } = await supabase
-                .from('songs')
-                .update(
-                    {
-                        name: values.name,
-                        lyrics: values.lyrics,
-                        song_url: songUrl,
-                        song_image_url: songImageUrl,
-                        user_id: user.id,
-                        file_name: fileName
-                    }
-                )
-                .eq('id', params.id);
-
-            if (editedSongError) {
-                throw new Error(editedSongError.message);
-            }
-
-            const { error: filesDeleteError } = await supabase.storage
-                .from('song-files')
-                .remove([`song-audios/${deleteFileNameRef.current}`,
-                `song-images/${deleteFileNameRef.current}`]);
-
-            if (filesDeleteError) {
-                throw new Error(error.message);
-            }
-
-            const { error: errorSongsArtistsDelete } = await supabase
-                .from('songs_artists')
-                .delete()
-                .eq('song_id', params.id);
-
-            if (errorSongsArtistsDelete) {
-                throw new Error(errorSongsArtistsDelete.message);
-            }
-
-            const { error: errorSongsArtistsInsert } = await supabase
-                .from('songs_artists')
-                .insert(values.selectedArtists.map(artist => ({
-                    song_id: params.id,
-                    artist_id: artist.value
-                })));
-
-            if (errorSongsArtistsInsert) {
-                throw new Error(errorSongsArtistsInsert.message);
-            }
+            await addSongArtists(params.id, values.selectedArtists);
 
             console.log("Song edited successfully!", editedSongData);
             actions.resetForm();
