@@ -6,9 +6,9 @@ import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../../components/spinner/Spinner";
 import Alert from "../alert/Alert";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useLocation } from "react-router-dom";
 import usePagination from "../../hooks/usePagination";
+import { getSongs, getTotalPages } from "../../services/exploreService";
 
 export default function Explore() {
     const [songs, setSongs] = useState([]);
@@ -28,72 +28,21 @@ export default function Explore() {
 
     useEffect(() => {
         setIsLoading(true);
-        const getSongs = async () => {
+
+        const fetchData = async () => {
             try {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .or(`name.ilike.%${searchParent}%`)
-                    .range(from, to)
-                    .order('id', { ascending: false });
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                const songs = songsInformation.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    song_image_url: song.song_image_url,
-                    song_url: song.song_url,
-                    artists: song.songs_artists.map(artist => artist.artists)
-                }));
-
-                console.log(songs);
-
+                const songs = await getSongs(searchParent, from, to);
+                const totalPages = await getTotalPages(searchParent, songsPerPage);
                 setSongs(songs);
-
+                setTotalPages(totalPages);
             } catch (e) {
                 console.error(e.message);
-            }
-            finally {
+            } finally {
                 setIsLoading(false);
             }
-
         }
 
-        const getTotalPages = async () => {
-            try {
-                const { data: totalPages, error: errorTotalPages } = await supabase
-                    .from('songs')
-                    .select('id', { count: 'exact' })
-                    .or(`name.ilike.%${searchParent}%`);
-
-                if (errorTotalPages) {
-                    throw new Error(errorTotalPages.message);
-                }
-
-                const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
-                setTotalPages(totalPagesCount);
-            } catch (e) {
-                console.error(e.message);
-            }
-        }
-
-        getSongs();
-        getTotalPages();
+        fetchData();    
     }, [page, searchParent]);
 
     if (isLoading) {
