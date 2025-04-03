@@ -7,6 +7,8 @@ import AuthContext from '../../context/AuthContext';
 import Spinner from '../../components/spinner/Spinner';
 import ScrollToTopButton from '../../components/scroll-to-top-button/ScrollToTopButton';
 import { useResetScroll } from '../../hooks/useResetScroll';
+import { getSong, deleteSong, deleteSongFiles } from '../../services/deleteSongService';
+
 
 import styles from './DeleteSong.module.css';
 
@@ -25,37 +27,28 @@ export default function DeleteSong() {
     useEffect(() => {
         async function getSongInformation() {
             try {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
-                    .select()
-                    .eq('id', params.id);
+                const songInformation = await getSong(params.id);
 
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                if (songsInformation.length === 0) {
+                if (songInformation.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
-                if (songsInformation[0].user_id !== user.id) {
+                if (songInformation[0].user_id !== user.id) {
                     navigate('/', { state: { message: "You do not have permission to this song!", variant: "warning" } });
                     return;
                 }
 
                 setSong({
-                    name: songsInformation[0].name,
-                    lyrics: songsInformation[0].lyrics
+                    name: songInformation[0].name,
+                    lyrics: songInformation[0].lyrics
                 });
 
-
-                deleteFileNameRef.current = songsInformation[0].file_name;
+                deleteFileNameRef.current = songInformation[0].file_name;
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
                 navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
-            } finally {
-                actions.setSubmitting(false);
             }
         }
 
@@ -66,22 +59,9 @@ export default function DeleteSong() {
         e.preventDefault();
 
         try {
-            const { error: errorSongsDelete } = await supabase.from('songs')
-                .delete()
-                .eq('id', params.id);
+            await deleteSong(params.id);
 
-            if (errorSongsDelete) {
-                throw new Error(errorSongsDelete.message);
-            }
-
-            const { error: filesDeleteError } = await supabase.storage
-                .from('song-files')
-                .remove([`song-audios/${deleteFileNameRef.current}`,
-                `song-images/${deleteFileNameRef.current}`]);
-
-            if (filesDeleteError) {
-                throw new Error(filesDeleteError.message);
-            }
+            await deleteSongFiles(deleteFileNameRef.current);
 
             navigate('/', { state: { message: "Song deleted successfully!", variant: "success" } });
         } catch (e) {
