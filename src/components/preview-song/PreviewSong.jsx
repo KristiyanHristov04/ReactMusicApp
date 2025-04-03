@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import Navigation from "../navigation/Navigation";
-import { Link, NavLink, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabase";
 import styles from './PreviewSong.module.css'
 import SongPlayer from "./song-player/SongPlayer";
@@ -11,9 +11,9 @@ import { MdDeleteOutline } from "react-icons/md";
 import { TbEdit } from "react-icons/tb";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
-import { FaPlay } from "react-icons/fa";
 import { FaHeadphones } from "react-icons/fa6";
 import { FaTrophy } from "react-icons/fa6";
+import { getSong, getTopSongs } from "../../services/previewSongService";
 
 export default function PreviewSong() {
     const params = useParams();
@@ -28,89 +28,49 @@ export default function PreviewSong() {
     useResetScroll();
 
     useEffect(() => {
-        const getSong = async () => {
+        const fetchData = async () => {
             try {
-                const { data: songData, error: songError } = await supabase
-                    .from('songs')
-                    .select()
-                    .eq('id', params.id);
+                const songInformation = await getSong(params.id);
 
-                if (songError) {
-                    throw new Error(songError.message);
-                }
-
-                console.log(songData);
-                if (songData.length === 0) {
+                if (songInformation.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
+                const topSongs = await getTopSongs();
+
                 const song = {
-                    id: songData[0].id,
-                    name: songData[0].name,
-                    song_image_url: songData[0].song_image_url,
-                    song_url: songData[0].song_url,
-                    artists: [],
-                    artist_image_url: '',
-                    total_listenings: songData[0].total_listenings,
-                    user_id: songData[0].user_id,
-                    lyrics: songData[0].lyrics
+                    id: songInformation[0].id,
+                    name: songInformation[0].name,
+                    song_image_url: songInformation[0].song_image_url,
+                    song_url: songInformation[0].song_url,
+                    artists: songInformation[0].songs_artists.map(artist => ({
+                        id: artist.artists.id,
+                        name: artist.artists.name
+                    })),
+                    artist_image_url: songInformation[0].songs_artists[0].artists.artist_image_url,
+                    total_listenings: songInformation[0].total_listenings,
+                    user_id: songInformation[0].user_id,
+                    lyrics: songInformation[0].lyrics
                 };
 
-                const { data: topSongs, error: topError } = await supabase
-                    .from('songs')
-                    .select('id, total_listenings')
-                    .order('total_listenings', { ascending: false })
-                    .limit(3);
+                const songRank = topSongs.findIndex(s => s.id === songInformation[0].id) + 1;
 
-                if (topError) {
-                    throw new Error(topError.message);
-                }
-
-                const songRank = topSongs.findIndex(s => s.id === songData[0].id) + 1;
                 if (songRank > 0) {
                     setIsTop3(true);
                     setRank(songRank);
                 }
 
-                const { data: artistsInformation, error: errorArtistsInformation } = await supabase
-                    .from('songs_artists')
-                    .select()
-                    .eq('song_id', song.id);
-
-                console.log(artistsInformation);
-
-                if (errorArtistsInformation) {
-                    throw new Error(errorArtistsInformation.message);
-                }
-
-                const { data: artistsData, error: errorArtistsData } = await supabase
-                    .from('artists')
-                    .select()
-                    .in('id', artistsInformation.map(artist => artist.artist_id));
-
-                console.log(artistsData);
-
-                if (errorArtistsData) {
-                    throw new Error(errorArtistsData.message);
-                }
-
-                song.artist_image_url = artistsData[0].artist_image_url;
-                song.artists = artistsData.map(artist => ({
-                    id: artist.id,
-                    name: artist.name
-                }));
-
-                setTotalListenings(song.total_listenings);
+                setTotalListenings(songInformation[0].total_listenings);
                 setSong(song);
                 setIsLoading(false);
-            } catch (e) {
-                console.error(e.message);
+            } catch (error) {
+                console.error(error.message);
                 navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
             }
         }
 
-        getSong();
+        fetchData();
     }, []);
 
     if (isLoading) {

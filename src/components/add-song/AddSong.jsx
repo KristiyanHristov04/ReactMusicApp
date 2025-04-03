@@ -52,6 +52,7 @@ export default function AddSong() {
             const createdSongData = await createSong(values.name, values.lyrics, songUrl, songImageUrl, user.id, fileName);
 
             for (const artist of values.selectedArtists) {
+                console.log(artist);    
                 await addSongArtist(createdSongData[0].id, artist.value);
             }
 
