@@ -5,7 +5,6 @@ import { useContext, useEffect, useState, useRef } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
-import * as Yup from 'yup';
 import Spinner from "../../components/spinner/Spinner";
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../../components/scroll-to-top-button/ScrollToTopButton";
@@ -13,6 +12,7 @@ import { useResetScroll } from "../../hooks/useResetScroll";
 import Select from 'react-select'
 import { customStyles } from "../../common/editSongSelectStyles";
 import { EditSchema } from "../../schemas/editSongSchema";
+import { getArtistsForSelect, getSongInformation } from "../../services/editSongService";
 
 export default function EditSong() {
     const [user] = useContext(AuthContext);
@@ -24,28 +24,6 @@ export default function EditSong() {
     const deleteFileNameRef = useRef('');
 
     useResetScroll();
-
-    async function getArtists() {
-        try {
-            const { data: getArtistsData, error: getArtistsError } = await supabase
-                .from('artists')
-                .select('id, name')
-                .order('name', { ascending: true });
-
-            if (getArtistsError) {
-                throw new Error(getArtistsError.message);
-            }
-
-            setArtists(getArtistsData.map(artist => ({
-                value: artist.id,
-                label: artist.name
-            })));
-        } catch (error) {
-            console.error(error.message);
-        } finally {
-            actions.setSubmitting(false);
-        }
-    }
 
     async function submitHandler(values, actions) {
         try {
@@ -140,55 +118,34 @@ export default function EditSong() {
     });
 
     useEffect(() => {
-        async function getSongInformation() {
+        const fetchData = async () => {
             try {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase.from('songs')
-                    .select()
-                    .eq('id', params.id);
+                const artists = await getArtistsForSelect(params.id);
+                const songInformation = await getSongInformation(params.id);
 
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                if (songsInformation.length === 0) {
+                if (songInformation.length === 0) {
                     navigate('/', { state: { message: "Song doesn't exist!", variant: "danger" } });
                     return;
                 }
 
-                if (songsInformation[0].user_id !== user.id) {
+                if (songInformation[0].user_id !== user.id) {
                     navigate('/', { state: { message: "You do not have permission to this song!", variant: "warning" } });
                     return;
                 }
 
-                const { data: songArtistsInformation, error: errorSongArtistsInformation } = await supabase
-                    .from('songs_artists')
-                    .select('artist_id')
-                    .eq('song_id', params.id);
-
-                if (errorSongArtistsInformation) {
-                    throw new Error(errorSongArtistsInformation.message);
-                }
-
-                const { data: artistsInformation, error: errorArtistsInformation } = await supabase
-                    .from('artists')
-                    .select('id, name')
-                    .in('id', songArtistsInformation.map(artist => artist.artist_id));
-
-                if (errorArtistsInformation) {
-                    throw new Error(errorArtistsInformation.message);
-                }
-
                 formik.setValues(prevValues => ({
                     ...prevValues,
-                    name: songsInformation[0].name,
-                    lyrics: songsInformation[0].lyrics,
-                    selectedArtists: artistsInformation.map(artist => ({
-                        value: artist.id,
-                        label: artist.name
+                    name: songInformation[0].name,
+                    lyrics: songInformation[0].lyrics,
+                    selectedArtists: songInformation[0].songs_artists.map(artist => ({
+                        value: artist.artists.id,
+                        label: artist.artists.name
                     }))
                 }));
 
-                deleteFileNameRef.current = songsInformation[0].file_name;
+                deleteFileNameRef.current = songInformation[0].file_name;
+
+                setArtists(artists);
                 setIsLoading(false);
             } catch (e) {
                 console.error(e.message);
@@ -196,8 +153,7 @@ export default function EditSong() {
             }
         }
 
-        getArtists();
-        getSongInformation();
+        fetchData();
     }, []);
 
     if (isLoading) {
