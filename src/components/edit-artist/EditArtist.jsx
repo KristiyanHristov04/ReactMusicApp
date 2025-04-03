@@ -11,6 +11,7 @@ import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../../components/scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
 import { EditSchema } from "../../schemas/editArtistSchema";
+import { getArtistInformation, addArtistImage, getArtistImageUrl, editArtist, deleteArtistImage } from "../../services/editArtistService";
 
 export default function EditArtist() {
     const [user] = useContext(AuthContext);
@@ -26,40 +27,13 @@ export default function EditArtist() {
         try {
             const fileName = Date.now();
 
-            const { data: artistImageData, error: artistImageError } = await supabase.storage
-                .from('song-files')
-                .upload(`artist-images/${fileName}`, values.artistImage);
+            const artistImageData = await addArtistImage(fileName, values.artistImage);
 
-            if (artistImageError) {
-                throw new Error(artistImageError.message);
-            }
+            const artistImageUrl = getArtistImageUrl(artistImageData.path);
 
-            const artistImageUrl = supabase.storage.from('song-files').getPublicUrl(artistImageData.path).data.publicUrl;
+            const editedArtistData = await editArtist(params.id, values.name, values.biography, artistImageUrl, user.id, fileName);
 
-            const { data: editedArtistData, error: editedArtistError } = await supabase
-                .from('artists')
-                .update(
-                    {
-                        name: values.name,
-                        biography: values.biography,
-                        artist_image_url: artistImageUrl,
-                        user_id: user.id,
-                        file_name: fileName
-                    }
-                )
-                .eq('id', params.id);
-
-            if (editedArtistError) {
-                throw new Error(editedArtistError.message);
-            }
-
-            const { error: filesDeleteError } = await supabase.storage
-                .from('song-files')
-                .remove([`artist-images/${deleteFileNameRef.current}`])
-
-            if (filesDeleteError) {
-                throw new Error(error.message);
-            }
+            await deleteArtistImage(deleteFileNameRef.current);
 
             console.log("Artist edited successfully!", editedArtistData);
             actions.resetForm();
@@ -82,15 +56,9 @@ export default function EditArtist() {
     });
 
     useEffect(() => {
-        async function getArtistInformation() {
+        const fetchData = async () => {
             try {
-                const { data: artistInformation, error: errorArtistInformation } = await supabase.from('artists')
-                    .select()
-                    .eq('id', params.id);
-
-                if (errorArtistInformation) {
-                    throw new Error(errorArtistInformation.message);
-                }
+                const artistInformation = await getArtistInformation(params.id);
 
                 if (artistInformation.length === 0) {
                     navigate('/', { state: { message: "Artist doesn't exist!", variant: "danger" } });
@@ -115,7 +83,7 @@ export default function EditArtist() {
             }
         }
 
-        getArtistInformation();
+        fetchData();
     }, []);
 
     if (isLoading) {
