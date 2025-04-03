@@ -7,7 +7,7 @@ import AuthContext from '../../context/AuthContext';
 import Spinner from '../../components/spinner/Spinner';
 import ScrollToTopButton from '../../components/scroll-to-top-button/ScrollToTopButton';
 import { useResetScroll } from '../../hooks/useResetScroll';
-
+import { getArtistInformation, getSongsByArtist, deleteSongsByArtist, deleteArtist, deleteArtistImage } from '../../services/deleteArtistService';
 import styles from './DeleteArtist.module.css';
 
 export default function DeleteArtist() {
@@ -22,15 +22,9 @@ export default function DeleteArtist() {
     useResetScroll();
 
     useEffect(() => {
-        async function getArtistInformation() {
+        const fetchData = async () => {
             try {
-                const { data: artistInformation, error: errorArtistInformation } = await supabase.from('artists')
-                    .select()
-                    .eq('id', params.id);
-
-                if (errorArtistInformation) {
-                    throw new Error(errorArtistInformation.message);
-                }
+                const artistInformation = await getArtistInformation(params.id);
 
                 if (artistInformation.length === 0) {
                     navigate('/', { state: { message: "Artist doesn't exist!", variant: "danger" } });
@@ -53,59 +47,23 @@ export default function DeleteArtist() {
             } catch (e) {
                 console.error(e.message);
                 navigate('/', { state: { message: "Something went wrong!", variant: "danger" } });
-            } finally {
-                actions.setSubmitting(false);
             }
         }
 
-        getArtistInformation();
+        fetchData();
     }, []);
 
     async function handleSubmit(e) {
         e.preventDefault();
 
         try {
-            const { data: artistToDelete, error: errorArtistToDelete } = await supabase.from('artists')
-                .select()
-                .eq('id', params.id);
+            const songsByArtist = await getSongsByArtist(params.id);
 
-            if (errorArtistToDelete) {
-                throw new Error(errorArtistToDelete.message);
-            }
+            await deleteSongsByArtist(songsByArtist);
 
-            const { data: songsByDeletedArtist, error: errorSongsByDeletedArtist } = await supabase.from('songs_artists')
-                .select('song_id')
-                .eq('artist_id', params.id);
+            await deleteArtist(params.id);
 
-            if (errorSongsByDeletedArtist) {
-                throw new Error(errorSongsByDeletedArtist.message);
-            }
-
-            const {error: deleteSongsByDeletedArtistError } = await supabase.from('songs')
-                .delete()
-                .in('id', songsByDeletedArtist.map(song => song.song_id))
-                .select();
-
-            if (deleteSongsByDeletedArtistError) {
-                throw new Error(deleteSongsByDeletedArtistError.message);
-            }
-
-            const { error: errorArtistDelete } = await supabase.from('artists')
-                .delete()
-                .eq('id', params.id)
-                .select();
-
-            if (errorArtistDelete) {
-                throw new Error(errorSongsDelete.message);
-            }
-
-            const { error: deleteArtistFileError } = await supabase.storage
-                .from('song-files')
-                .remove([`artist-images/${deleteFileNameRef.current}`]);
-
-            if (deleteArtistFileError) {
-                throw new Error(deleteArtistFileError.message);
-            }
+            await deleteArtistImage(deleteFileNameRef.current);
 
             navigate('/', { state: { message: "Artist deleted successfully!", variant: "success" } });
         } catch (e) {
