@@ -109,7 +109,8 @@ To disable RLS for each table:
   - `/styles` - Global styles
   - `/hooks` - Custom hooks
   - `/common` - Extracted functions
-  - `/schemas` - Forms Schemas
+  - `/schemas` - Forms schemas
+  - `/services` - Fetch requests
 
 ## Supabase Database Diagram 
 
