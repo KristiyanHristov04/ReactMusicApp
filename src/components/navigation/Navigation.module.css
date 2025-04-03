@@ -37,7 +37,7 @@
 .searchContainer {
     position: relative;
     width: 100%;
-    max-width: 400px;
+    max-width: 300px;
     display: flex;
     align-items: center;
 }
