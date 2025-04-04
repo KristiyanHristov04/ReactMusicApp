@@ -17,7 +17,6 @@ export default function ProtectedGuard({ children }) {
         async function checkAuth() {
             try {
                 const { data, error } = await supabase.auth.getSession();
-                //const { data, error } = await supabase.auth.getUser();
                 console.log(data);
                 console.log(error);
                 if (error) {
@@ -44,15 +43,15 @@ export default function ProtectedGuard({ children }) {
         checkAuth();
     }, [location]);
 
-    if (isLoading) {
-        return <main className={styles.loadingContainer}></main>
-    }
-
-    if (!authenticated) {
+    if (!isLoading && !authenticated) {
         console.log('Not authenticated');
         return (
             <Navigate to='/login' />
         );
+    }
+
+    if (isLoading) {
+        return <main className={styles.loadingContainer}></main>
     }
 
     console.log('Authenticated');

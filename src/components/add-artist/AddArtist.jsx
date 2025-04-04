@@ -5,62 +5,25 @@ import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import * as Yup from 'yup';
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
-
+import { CreateSchema } from "../../schemas/addArtistSchema";
+import { addArtistImage, getArtistImageUrl, createArtist } from "../../services/addArtistService";
 export default function AddArtist() {
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
 
     useResetScroll();
 
-    const CreateSchema = Yup.object().shape({
-        name: Yup.string().required('Please enter artist name.'),
-        artistImage: Yup.mixed().required('Please upload image of the artist.'),
-        biography: Yup.string().required('Please enter artist biography.'),
-    });
-
     async function submitHandler(values, actions) {
-        console.log(values);
-
         try {
             const fileName = Date.now();
-            const artistImageName = fileName;
 
-            console.log(artistImageName);
+            const artistImageData = await addArtistImage(fileName, values.artistImage);
+            const artistImageUrl = getArtistImageUrl(artistImageData.path);
+            await createArtist(values.name, values.biography, artistImageUrl, fileName, user.id);
 
-            const { data: artistImageData, error: artistImageError } = await supabase.storage
-                .from('song-files')
-                .upload(`artist-images/${artistImageName}`, values.artistImage);
-
-            console.log(artistImageData);
-
-            if (artistImageError) {
-                throw new Error(artistImageError.message);
-            }
-
-            const artistImageUrl = supabase.storage.from('song-files').getPublicUrl(artistImageData.path).data.publicUrl;
-
-            const { data, error } = await supabase
-                .from('artists')
-                .insert([
-                    {
-                        name: values.name,
-                        artist_image_url: artistImageUrl,
-                        biography: values.biography,
-                        file_name: fileName,
-                        user_id: user.id
-                    }
-                ])
-                .select();
-
-            if (error) {
-                throw new Error(error.message);
-            }
-
-            console.log("Artist added successfully!", data); 
             actions.resetForm();
             navigate('/', { state: { message: "Artist added successfully!", variant: "success" } });
         } catch (error) {

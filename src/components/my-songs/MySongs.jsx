@@ -6,6 +6,8 @@ import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../spinner/Spinner";
 import AuthContext from "../../context/AuthContext";
+import usePagination from "../../hooks/usePagination";
+import { getMySongs, getTotalPages } from "../../services/mySongsService";
 
 export default function MySongs() {
     const [songs, setSongs] = useState([]);
@@ -13,52 +15,22 @@ export default function MySongs() {
     const [user] = useContext(AuthContext);
 
     const [searchParent, setSearchParent] = useState('');
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
-    const songsPerPage = 2;
+    const songsPerPage = 5;
+    const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
 
-    const from = (page - 1) * songsPerPage;
-    const to = from + songsPerPage - 1;
+    const handlePageChange = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+    };
 
     useEffect(() => {
         setIsLoading(true);
-        const getMySongs = async () => {
+        const fetchData = async () => {
             try {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .eq('user_id', user.id)
-                    .or(`name.ilike.%${searchParent}%`)
-                    .range(from, to)
-                    .order('id', { ascending: false });
-
-                console.log(songsInformation);
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                const songs = songsInformation.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    song_image_url: song.song_image_url,
-                    song_url: song.song_url,
-                    artists: song.songs_artists.map(artist => artist.artists)
-                }));
-
+                const songs = await getMySongs(searchParent, from, to, user.id);
+                const totalPages = await getTotalPages(searchParent, user.id, songsPerPage);
                 setSongs(songs);
+                setTotalPages(totalPages);
             } catch (e) {
                 console.error(e.message);
             } finally {
@@ -66,29 +38,7 @@ export default function MySongs() {
             }
         }
 
-        const getTotalPages = async () => {
-            try {
-                const { data: totalPages, error: errorTotalPages } = await supabase
-                    .from('songs')
-                    .select('id', { count: 'exact' })
-                    .eq('user_id', user.id)
-                    .or(`name.ilike.%${searchParent}%`);
-
-                console.log(totalPages);
-                if (errorTotalPages) {
-                    throw new Error(errorTotalPages.message);
-                }
-
-                const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
-                console.log(totalPagesCount);
-                setTotalPages(totalPagesCount);
-            } catch (e) {
-                console.error(e.message);
-            }
-        }
-
-        getMySongs();
-        getTotalPages();
+        fetchData();
     }, [page, searchParent]);
 
     if (isLoading) {
@@ -151,7 +101,7 @@ export default function MySongs() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === 1}
-                            onClick={() => setPage(page - 1)}
+                            onClick={() => handlePageChange(page - 1)}
                         >
                             Previous Page
                         </button>
@@ -161,7 +111,7 @@ export default function MySongs() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === totalPages}
-                            onClick={() => setPage(page + 1)}
+                            onClick={() => handlePageChange(page + 1)}
                         >
                             Next Page
                         </button>

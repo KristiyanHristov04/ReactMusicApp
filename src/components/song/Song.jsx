@@ -1,11 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import styles from './Song.module.css';
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
-import { supabase } from '../../supabase';
-import Spinner from '../spinner/Spinner';
+import FavouriteSongsContext from '../../context/FavouriteSongsContext';
 
 export default function Song({
     id,
@@ -13,90 +12,26 @@ export default function Song({
     artists,
     thumbnailImage,
 }) {
-    const [isLiked, setIsLiked] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
     const [user] = useContext(AuthContext);
     const navigate = useNavigate();
+    const { favouriteSongs, toggleFavouriteSong } = useContext(FavouriteSongsContext);
 
-    useEffect(() => {
-        if (user.id) {
-            const checkIfSongLiked = async () => {
-                try {
-                    const { data, error } = await supabase
-                        .from('users_favourite_songs')
-                        .select()
-                        .eq('user_id', user.id)
-                        .eq('song_id', id);
+    const isSongLiked = favouriteSongs.some(song => song.id === id);
 
-                    if (error) {
-                        console.error(error.message);
-                        return;
-                    }
-
-                    if (data[0]) {
-                        setIsLiked(true);
-                    }
-                } catch (e) {
-                    console.error(e.message);
-                } finally {
-                    setIsLoading(false);
-                }
-            }
-
-            checkIfSongLiked();
-        } else {
-            setIsLoading(false);
-        }
-
-    }, [user.id, id]);
-
-    const clickHandlerAddToFavourite = async (e) => {
+    const clickHandlerToggleFavouriteSong = async (e) => {
         e.stopPropagation();
-
+ 
         if (!user.id) {
             navigate('/login');
             return;
         }
 
-        try {
-            if (isLiked) {
-                const { error } = await supabase
-                    .from('users_favourite_songs')
-                    .delete()
-                    .eq('user_id', user.id)
-                    .eq('song_id', id);
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                setIsLiked(false);
-            } else {
-                const { error } = await supabase
-                    .from('users_favourite_songs')
-                    .insert({
-                        user_id: user.id,
-                        song_id: id,
-                    });
-
-                if (error) {
-                    throw new Error(error.message);
-                }
-
-                setIsLiked(true);
-            }
-        } catch (e) {
-            console.error(e.message);
-        }
+        await toggleFavouriteSong(id);
     }
 
     const clickHandlerPreviewSong = () => {
         navigate(`/song/${id}/preview`);
     };
-
-    if (isLoading) {
-        return null;
-    }
 
     return (
         <article id={id} className={styles.card} onClick={clickHandlerPreviewSong}>
@@ -106,11 +41,12 @@ export default function Song({
                     alt={name}
                 />
                 <span
-                    onClick={clickHandlerAddToFavourite}
+                    data-testid="fav-button"
+                    onClick={clickHandlerToggleFavouriteSong}
                     className={styles["favourite-icon"]}
-                    aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
+                    aria-label={isSongLiked ? "Remove from favorites" : "Add to favorites"}
                 >
-                    {!isLiked ? <FaRegHeart /> : <FaHeart style={{ color: '#f36d6d' }} />}
+                    {!isSongLiked ? <FaRegHeart /> : <FaHeart style={{ color: '#f36d6d' }} />}
                 </span>
                 <div className={styles["card-avatar"]}>
                     <img

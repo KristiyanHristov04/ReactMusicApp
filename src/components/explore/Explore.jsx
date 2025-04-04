@@ -2,107 +2,48 @@ import Navigation from "../navigation/Navigation";
 import Song from "../../components/song/Song";
 import styles from './Explore.module.css'
 import { useEffect, useState } from "react";
-import { supabase } from "../../supabase";
 import { MdOutlineLibraryMusic } from "react-icons/md";
 import Spinner from "../../components/spinner/Spinner";
 import Alert from "../alert/Alert";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useLocation } from "react-router-dom";
+import usePagination from "../../hooks/usePagination";
+import { getSongs, getTotalPages } from "../../services/exploreService";
 
 export default function Explore() {
     const [songs, setSongs] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const location = useLocation();
-
-    const [searchParent, setSearchParent] = useState('');
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(0);
-    const songsPerPage = 2;
-
-    const from = (page - 1) * songsPerPage;
-    const to = from + songsPerPage - 1;
-
     const [isInitialRender, setIsInitialRender] = useState(true);
+    const [searchParent, setSearchParent] = useState('');
+
+    const songsPerPage = 5;
+    const { page, setPage, totalPages, setTotalPages, from, to } = usePagination(songsPerPage);
+
+    const handlePageChange = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+        setIsInitialRender(false);
+    };
 
     useEffect(() => {
         setIsLoading(true);
-        const getSongs = async () => {
+
+        const fetchData = async () => {
             try {
-                const { data: songsInformation, error: errorSongsInformation } = await supabase
-                    .from('songs')
-                    .select(`
-                    id,
-                    name,
-                    song_image_url,
-                    song_url,
-                    songs_artists (
-                        artists (
-                            id,
-                            name,
-                            artist_image_url
-                        )
-                    )
-                `)
-                    .or(`name.ilike.%${searchParent}%`)
-                    .range(from, to)
-                    .order('id', { ascending: false });
-
-                if (errorSongsInformation) {
-                    throw new Error(errorSongsInformation.message);
-                }
-
-                const songs = songsInformation.map(song => ({
-                    id: song.id,
-                    name: song.name,
-                    song_image_url: song.song_image_url,
-                    song_url: song.song_url,
-                    artists: song.songs_artists.map(artist => artist.artists)
-                }));
-
+                const songs = await getSongs(searchParent, from, to);
                 console.log(songs);
-
+                const totalPages = await getTotalPages(searchParent, songsPerPage);
                 setSongs(songs);
-
+                setTotalPages(totalPages);
             } catch (e) {
                 console.error(e.message);
-            }
-            finally {
+            } finally {
                 setIsLoading(false);
             }
-
         }
 
-        const getTotalPages = async () => {
-            try {
-                const { data: totalPages, error: errorTotalPages } = await supabase
-                    .from('songs')
-                    .select('id', { count: 'exact' })
-                    .or(`name.ilike.%${searchParent}%`);
-
-                if (errorTotalPages) {
-                    throw new Error(errorTotalPages.message);
-                }
-
-                const totalPagesCount = Math.ceil(totalPages.length / songsPerPage);
-                setTotalPages(totalPagesCount);
-            } catch (e) {
-                console.error(e.message);
-            }
-        }
-
-        getSongs();
-        getTotalPages();
+        fetchData();    
     }, [page, searchParent]);
-
-    function nextPage() {
-        setPage(page + 1);
-        setIsInitialRender(false);
-    }
-
-    function previousPage() {
-        setPage(page - 1);
-        setIsInitialRender(false);
-    }
 
     if (isLoading) {
         return (
@@ -164,7 +105,7 @@ export default function Explore() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === 1}
-                            onClick={previousPage}
+                            onClick={() => handlePageChange(page - 1)}
                         >
                             Previous Page
                         </button>
@@ -174,7 +115,7 @@ export default function Explore() {
                         <button
                             className={styles["pagination-button"]}
                             disabled={page === totalPages}
-                            onClick={nextPage}
+                            onClick={() => handlePageChange(page + 1)}
                         >
                             Next Page
                         </button>

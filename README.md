@@ -26,6 +26,7 @@ A modern web application for managing and exploring music, built with React and 
   - React Icons for beautiful icons
   - CSS Modules for styling
   - Search debounce request optimization
+  - Vitest, react testing library, jsdom for Unit Tests
 
 - **Backend**:
   - Supabase for backend services
@@ -107,6 +108,9 @@ To disable RLS for each table:
   - `/supabase` - Supabase configuration
   - `/styles` - Global styles
   - `/hooks` - Custom hooks
+  - `/common` - Extracted functions
+  - `/schemas` - Forms schemas
+  - `/services` - Fetch requests
 
 ## Supabase Database Diagram 
 

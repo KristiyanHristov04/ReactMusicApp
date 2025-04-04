@@ -10,6 +10,8 @@ import Spinner from "../../components/spinner/Spinner";
 import { MDBInput, MDBBtn, MDBTextArea, MDBFile } from "mdb-react-ui-kit";
 import ScrollToTopButton from "../../components/scroll-to-top-button/ScrollToTopButton";
 import { useResetScroll } from "../../hooks/useResetScroll";
+import { EditSchema } from "../../schemas/editArtistSchema";
+import { getArtistInformation, addArtistImage, getArtistImageUrl, editArtist, deleteArtistImage } from "../../services/editArtistService";
 
 export default function EditArtist() {
     const [user] = useContext(AuthContext);
@@ -21,55 +23,17 @@ export default function EditArtist() {
 
     useResetScroll();
 
-    const EditSchema = Yup.object().shape({
-        name: Yup.string().required('Please enter song name.'),
-        biography: Yup.string().required('Please enter song lyrics.'),
-        artistImage: Yup.mixed().required('Please upload image of the song.'),
-    });
-
     async function submitHandler(values, actions) {
-        console.log(values);
-
         try {
             const fileName = Date.now();
-            const artistImageName = fileName;
 
-            console.log(artistImageName);
+            const artistImageData = await addArtistImage(fileName, values.artistImage);
 
-            const { data: artistImageData, error: artistImageError } = await supabase.storage
-                .from('song-files')
-                .upload(`artist-images/${artistImageName}`, values.artistImage);
+            const artistImageUrl = getArtistImageUrl(artistImageData.path);
 
-            if (artistImageError) {
-                throw new Error(artistImageError.message);
-            }
+            const editedArtistData = await editArtist(params.id, values.name, values.biography, artistImageUrl, user.id, fileName);
 
-            const artistImageUrl = supabase.storage.from('song-files').getPublicUrl(artistImageData.path).data.publicUrl;
-
-            const { data: editedArtistData, error: editedArtistError } = await supabase
-                .from('artists')
-                .update(
-                    {
-                        name: values.name,
-                        biography: values.biography,
-                        artist_image_url: artistImageUrl,
-                        user_id: user.id,
-                        file_name: fileName
-                    }
-                )
-                .eq('id', params.id);
-
-            if (editedArtistError) {
-                throw new Error(editedArtistError.message);
-            }
-
-            const { error: filesDeleteError } = await supabase.storage
-                .from('song-files')
-                .remove([`artist-images/${deleteFileNameRef.current}`])
-
-            if (filesDeleteError) {
-                throw new Error(error.message);
-            }
+            await deleteArtistImage(deleteFileNameRef.current);
 
             console.log("Artist edited successfully!", editedArtistData);
             actions.resetForm();
@@ -92,15 +56,9 @@ export default function EditArtist() {
     });
 
     useEffect(() => {
-        async function getArtistInformation() {
+        const fetchData = async () => {
             try {
-                const { data: artistInformation, error: errorArtistInformation } = await supabase.from('artists')
-                    .select()
-                    .eq('id', params.id);
-
-                if (errorArtistInformation) {
-                    throw new Error(errorArtistInformation.message);
-                }
+                const artistInformation = await getArtistInformation(params.id);
 
                 if (artistInformation.length === 0) {
                     navigate('/', { state: { message: "Artist doesn't exist!", variant: "danger" } });
@@ -125,7 +83,7 @@ export default function EditArtist() {
             }
         }
 
-        getArtistInformation();
+        fetchData();
     }, []);
 
     if (isLoading) {
@@ -164,22 +122,6 @@ export default function EditArtist() {
                             </div>
 
                             <div className={styles["input-group"]}>
-                                <MDBTextArea
-                                    className={styles["textarea"]}
-                                    rows={10}
-                                    label="Biography"
-                                    id="biography"
-                                    name="biography"
-                                    value={formik.values.biography}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                />
-                                {formik.touched.biography && formik.errors.biography && (
-                                    <span className={styles["error"]}>{formik.errors.biography}</span>
-                                )}
-                            </div>
-
-                            <div className={styles["input-group"]}>
                                 <MDBFile
                                     className={styles["input"]}
                                     accept="image/*"
@@ -192,6 +134,22 @@ export default function EditArtist() {
                                 />
                                 {formik.touched.artistImage && formik.errors.artistImage && (
                                     <span className={styles["error"]}>{formik.errors.artistImage}</span>
+                                )}
+                            </div>
+
+                            <div className={styles["input-group"]}>
+                                <MDBTextArea
+                                    className={styles["textarea"]}
+                                    rows={10}
+                                    label="Biography"
+                                    id="biography"
+                                    name="biography"
+                                    value={formik.values.biography}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                                {formik.touched.biography && formik.errors.biography && (
+                                    <span className={styles["error"]}>{formik.errors.biography}</span>
                                 )}
                             </div>
 
