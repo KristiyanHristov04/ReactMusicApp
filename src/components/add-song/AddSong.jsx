@@ -52,11 +52,11 @@ export default function AddSong() {
             const createdSongData = await createSong(values.name, values.lyrics, songUrl, songImageUrl, user.id, fileName);
 
             for (const artist of values.selectedArtists) {
-                console.log(artist);    
+                // console.log(artist);    
                 await addSongArtist(createdSongData[0].id, artist.value);
             }
 
-            console.log("Song added successfully!", createdSongData);
+            // console.log("Song added successfully!", createdSongData);
             actions.resetForm();
             navigate('/', { state: { message: "Song added successfully!", variant: "success" } });
         } catch (error) {

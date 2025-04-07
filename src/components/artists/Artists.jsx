@@ -20,7 +20,7 @@ export default function Artists() {
         setPage(newPage);
     };
 
-    console.log(artists);
+    // console.log(artists);
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);

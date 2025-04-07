@@ -193,7 +193,6 @@
     text-decoration: underline;
 }
 
-/* Responsive styles */
 @media (min-width: 1400px) {
     .card {
         width: 300px;

@@ -35,7 +35,7 @@ export default function EditArtist() {
 
             await deleteArtistImage(deleteFileNameRef.current);
 
-            console.log("Artist edited successfully!", editedArtistData);
+            // console.log("Artist edited successfully!", editedArtistData);
             actions.resetForm();
             navigate('/', { state: { message: "Artist edited successfully!", variant: "success" } });
         } catch (error) {

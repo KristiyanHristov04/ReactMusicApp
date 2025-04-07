@@ -50,14 +50,14 @@ export default function Artist() {
                     return;
                 }
 
-                console.log(artistData);
+                // console.log(artistData);
 
 
                 artistData.songs_artists.sort((a, b) =>
                     b.songs.total_listenings - a.songs.total_listenings
                 );
 
-                console.log(artistData);
+                // console.log(artistData);
 
                 setArtist(artistData);
                 setIsLoading(false);

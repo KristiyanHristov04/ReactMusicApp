@@ -43,7 +43,7 @@ export default function EditSong() {
 
             await addSongArtists(params.id, values.selectedArtists);
 
-            console.log("Song edited successfully!", editedSongData);
+            // console.log("Song edited successfully!", editedSongData);
             actions.resetForm();
             navigate('/', { state: { message: "Song edited successfully!", variant: "success" } });
         } catch (error) {

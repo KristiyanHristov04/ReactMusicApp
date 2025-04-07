@@ -28,7 +28,6 @@ export default function Login() {
     });
 
     const submitHandler = async (values) => {
-        console.log('Attempting login...');
         setIsSubmitting(true);
         setError(null);
 
@@ -38,14 +37,11 @@ export default function Login() {
                 password: values.password
             });
 
-            console.log('Login response:', data);
-
             if (error) {
                 throw error;
             }
 
             if (data?.user) {
-                console.log('Login successful, updating user context...');
                 setUser({
                     email: data.user.email,
                     id: data.user.id
