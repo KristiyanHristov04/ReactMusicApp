@@ -2,7 +2,7 @@
 
 A modern web application for managing and exploring music, built with React and Supabase. This application provides a seamless experience for music enthusiasts to manage their favourite songs and artists.
 
-Preview 👉 [react-music-app-delta.vercel.app](react-music-app-delta.vercel.app)
+Preview 👉 [Music App](https://react-music-app-delta.vercel.app/)
 
 ## Features 🚀
 
