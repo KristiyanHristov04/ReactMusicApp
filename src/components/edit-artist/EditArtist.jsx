@@ -126,13 +126,13 @@ export default function EditArtist() {
                                     className={styles["input"]}
                                     accept="image/*"
                                     label="Artist Image"
-                                    id="artist"
+                                    id="artistImage"
                                     name="artistImage"
                                     type="file"
                                     onChange={(e) => formik.setFieldValue('artistImage', e.target.files[0])}
                                     onBlur={formik.handleBlur}
                                 />
-                                {formik.touched.artistImage && formik.errors.artistImage && (
+                                {(formik.touched.artistImage || formik.submitCount > 0) && formik.errors.artistImage && (
                                     <span className={styles["error"]}>{formik.errors.artistImage}</span>
                                 )}
                             </div>
