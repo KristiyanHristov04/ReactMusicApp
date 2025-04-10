@@ -164,3 +164,16 @@ To disable RLS for each table:
 
 ### Login(After Logout)
 ![logout](https://github.com/user-attachments/assets/eb2b96ee-eedd-4bc9-9797-e51aa4f09e6f)
+
+### Edit/Delete Song Which Was Not Created By Authenticated User
+![accesssomeoneelsessong](https://github.com/user-attachments/assets/f5380178-d80a-4d0b-ae31-934bf7184a9e)
+
+### Edit/Delete Artist Which Was Not Created By Authenticated User
+![accesssomeoneelsesartist](https://github.com/user-attachments/assets/76768503-d735-4e96-817c-cb5cdf728def)
+
+### Trying To View Information About Artist That Does Not Exist
+![accessartistthatdoesntexist](https://github.com/user-attachments/assets/74c34f43-0aca-4a20-bba1-98d2c616fed5)
+
+### Trying To Preview Information About Song That Does Not Exist
+![accesssongthatdoesnotexist](https://github.com/user-attachments/assets/d4155af1-7937-4844-994e-66a39560488c)
+
