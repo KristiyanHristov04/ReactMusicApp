@@ -129,6 +129,9 @@ To disable RLS for each table:
 ### Explore Page
 ![explore](https://github.com/user-attachments/assets/57270648-d6aa-4468-b7e8-48d725c978e4)
 
+### Preview Song Page
+![songpreview](https://github.com/user-attachments/assets/aef9926d-db1e-455c-9e43-81dc700b0b08)
+
 ### Artists Page
 ![artists](https://github.com/user-attachments/assets/6b362d56-19fb-40cd-ac29-47c98aff2bc0)
 
