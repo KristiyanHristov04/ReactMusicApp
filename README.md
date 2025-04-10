@@ -117,3 +117,50 @@ To disable RLS for each table:
 ## Supabase Database Diagram 
 
 ![supabasedatabase](https://github.com/user-attachments/assets/25f82a87-6265-4260-acca-bb4e65bafb45)
+
+## Music App Screenshots
+
+### Login Page
+![login](https://github.com/user-attachments/assets/94fbabb2-0fd2-43ec-a902-4d3a9afc334e)
+
+### Signup Page
+![signup](https://github.com/user-attachments/assets/c7355e8f-9033-4825-b51f-4912751c27a0)
+
+### Explore Page
+![explore](https://github.com/user-attachments/assets/57270648-d6aa-4468-b7e8-48d725c978e4)
+
+### Artists Page
+![artists](https://github.com/user-attachments/assets/6b362d56-19fb-40cd-ac29-47c98aff2bc0)
+
+### Add Song Page
+![addsong](https://github.com/user-attachments/assets/9d5b7a6b-a4f6-4740-a0ed-ced147700696)
+
+### Add Artist Page
+![addartist](https://github.com/user-attachments/assets/47f1ff68-f97c-4965-91eb-974ab3c5cfb4)
+
+### Favorites Page
+![favorites](https://github.com/user-attachments/assets/94ca8055-c480-424f-be14-bd384c78c535)
+
+### My Songs Page
+![mysongs](https://github.com/user-attachments/assets/a210dcef-002a-4eb5-945e-5877dec90c7e)
+
+### My Artists Page
+![myartists](https://github.com/user-attachments/assets/8f1edd5c-0919-421c-bc25-fb4171f57f6b)
+
+### Edit Song Page
+![editsong](https://github.com/user-attachments/assets/36c32cad-146b-4aa2-9d10-182d5a98e187)
+
+### Delete Song Page
+![deletesong](https://github.com/user-attachments/assets/92a69945-93f5-455e-8dbb-e458584ff78f)
+
+### Artist Information Page
+![artistinformation](https://github.com/user-attachments/assets/01c1f68d-48b0-4b99-9182-2121f2693548)
+
+### Edit Artist Page
+![editartist](https://github.com/user-attachments/assets/297d7c1f-f18e-4efd-aaaa-0252abb4411f)
+
+### Delete Artist Page
+![deleteartist](https://github.com/user-attachments/assets/015f06c1-8574-4662-9139-e8a7107dac25)
+
+### Login(After Logout)
+![logout](https://github.com/user-attachments/assets/eb2b96ee-eedd-4bc9-9797-e51aa4f09e6f)
